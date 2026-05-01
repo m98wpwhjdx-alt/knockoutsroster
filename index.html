@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <title>AICU Team Duty Dashboard</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
@@ -21,16 +21,218 @@
   line-height: 1.45;
 }
 #ledger th:nth-child(6), #ledger th:nth-child(7){min-width:170px}
+
+/* ================= RESPONSIVE UPGRADE: PHONE + LAPTOP ================= */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-x: hidden; }
+button, input, select { font: inherit; min-height: 42px; }
+input, select { max-width: 100%; }
+
+.hero, .panel, section, main, .dashboard, .container {
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.table-wrap, .ledger-wrap, .data-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 18px;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+#ledger {
+  min-width: 980px;
+}
+
+#ledger th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+#ledger th:first-child,
+#ledger td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+}
+
+#ledger td:first-child {
+  background: rgba(8, 14, 30, 0.96);
+}
+
+.responsive-note {
+  display: none;
+  margin: 10px 0 0;
+  font-size: 12px;
+  opacity: .82;
+}
+
+@media (min-width: 1025px) {
+  body { font-size: 15px; }
+  .hero { padding-left: 32px; padding-right: 32px; }
+  .panel { padding: 22px; }
+  .cards, .grid, .stats-grid, .kpi-grid { gap: 18px; }
+}
+
+@media (max-width: 1024px) {
+  body { font-size: 14px; }
+
+  .hero { padding: 22px 16px !important; }
+
+  h1 {
+    font-size: clamp(26px, 5vw, 46px) !important;
+    line-height: 1.05 !important;
+  }
+
+  h2 { font-size: clamp(18px, 4vw, 28px) !important; }
+
+  .subtitle {
+    font-size: 14px !important;
+    line-height: 1.45 !important;
+  }
+
+  .panel, section {
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+    padding: 14px !important;
+    border-radius: 18px !important;
+  }
+
+  .kpi-grid, .stats-grid, .cards, .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .toolbar, .controls, .filters {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+  }
+
+  .toolbar input, .toolbar select,
+  .controls input, .controls select,
+  .filters input, .filters select {
+    width: 100% !important;
+  }
+
+  .chart, canvas, svg { max-width: 100% !important; }
+
+  .responsive-note { display: block; }
+}
+
+@media (max-width: 720px) {
+  body { font-size: 13.5px; }
+
+  .hero {
+    min-height: auto !important;
+    padding: 18px 12px !important;
+  }
+
+  .hero::before, .hero::after {
+    opacity: .45;
+    transform: scale(.85);
+  }
+
+  h1 {
+    font-size: clamp(24px, 8vw, 34px) !important;
+    letter-spacing: -0.03em !important;
+  }
+
+  h2 { font-size: 19px !important; }
+
+  .subtitle, p { font-size: 13px !important; }
+
+  .kpi-grid, .stats-grid, .cards, .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .toolbar, .controls, .filters {
+    grid-template-columns: 1fr !important;
+  }
+
+  .kpi, .card, .resident-card {
+    padding: 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .kpi b, .metric b {
+    font-size: clamp(20px, 8vw, 30px) !important;
+  }
+
+  #ledger {
+    min-width: 880px;
+    font-size: 12px;
+  }
+
+  #ledger th, #ledger td {
+    padding: 9px 8px !important;
+    white-space: nowrap;
+  }
+
+  .ledger-clarification {
+    font-size: 12.5px !important;
+    padding: 10px 12px !important;
+  }
+
+  .pill, .badge {
+    display: inline-flex;
+    margin: 3px 4px 3px 0;
+    min-height: 30px;
+    align-items: center;
+  }
+
+  .responsive-note { display: block; }
+}
+
+@media (max-width: 420px) {
+  .panel, section {
+    margin-left: 6px !important;
+    margin-right: 6px !important;
+    padding: 12px !important;
+  }
+
+  #ledger {
+    min-width: 820px;
+    font-size: 11.5px;
+  }
+
+  #ledger th, #ledger td {
+    padding: 8px 7px !important;
+  }
+
+  .kpi b, .metric b { font-size: 24px !important; }
+}
+
+@media print {
+  body { overflow: visible; background: white !important; color: black !important; }
+  .toolbar, .controls, .filters { display: none !important; }
+  .panel, section { break-inside: avoid; box-shadow: none !important; }
+  #ledger { min-width: 100%; font-size: 10px; }
+  #ledger th, #ledger td {
+    position: static !important;
+    color: black !important;
+    background: white !important;
+  }
+}
 </style>
 </head>
 <body>
-<canvas id="bg"></canvas>
+<canvas id="bg" style="max-width:100%;height:auto"></canvas>
 <div class="shell">
-<section class="hero"><div class="glass title"><div class="badge">AICU Duty Equity Dashboard · till 03 May 2026</div><h1>Team Duties<br/>Workload Map</h1><div class="subtitle">Interactive view of Saturday/Sunday duties, ICU day-night duties, regular duties, till-7 assignments, and duties performed during official leave periods.</div></div><div class="glass summary" id="summary"></div></section><section class="glass panel" style="margin-top:22px"><h2>Detailed Duty Ledger — includes duties done during leave period</h2><div class="ledger-clarification">Clarification: “Emergency duty during leave” and “ICU duty during leave” are not leaves taken. They are duties actually performed on leave-period days, recorded separately to ensure fair distribution.</div><table id="ledger"><thead><tr><th>Doctor</th><th>Sat</th><th>Sun</th><th>ICU Day</th><th>ICU Night</th><th>Emergency duty during leave</th><th>ICU duty during leave</th><th>Duties</th><th>Till 7</th><th>Total</th><th>Δ vs mean</th></tr></thead><tbody></tbody></table></section>
+<section class="hero"><div class="glass title"><div class="badge">AICU Duty Equity Dashboard · till 03 May 2026</div><h1>Team Duties<br/>Workload Map</h1><div class="subtitle">Interactive view of Saturday/Sunday duties, ICU day-night duties, regular duties, till-7 assignments, and duties performed during official leave periods.</div></div><div class="glass summary" id="summary"></div></section><section class="glass panel" style="margin-top:22px"><h2>Detailed Duty Ledger — includes duties done during leave period</h2><div class="ledger-clarification">Clarification: “Emergency duty during leave” and “ICU duty during leave” are not leaves taken. They are duties actually performed on leave-period days, recorded separately to ensure fair distribution.</div><div class="table-wrap ledger-wrap"><table id="ledger"><thead><tr><th>Doctor</th><th>Sat</th><th>Sun</th><th>ICU Day</th><th>ICU Night</th><th>Emergency duty during leave</th><th>ICU duty during leave</th><th>Duties</th><th>Till 7</th><th>Total</th><th>Δ vs mean</th></tr></thead><tbody></tbody></table></div><div class="responsive-note">Phone view: swipe horizontally to see the complete detailed duty ledger.</div></section>
 <div class="toolbar"><input id="search" placeholder="Search doctor..."/><select id="sort"><option value="totalLoad">Sort: total workload</option><option value="duties">Sort: duties</option><option value="weekend">Sort: weekend</option><option value="icuTotal">Sort: ICU total</option><option value="till7">Sort: till 7</option><option value="balanceScore">Sort: deviation</option></select><button onclick="window.print()">Print / Save PDF</button></div>
-<section class="grid"><div class="glass panel"><h2>Workload comparison</h2><div class="chartBox"><canvas id="bar"></canvas></div><div class="legend"><span><i class="dot" style="background:var(--cyan)"></i>Total load</span><span><i class="dot" style="background:var(--violet)"></i>Team mean</span></div></div><div class="glass panel"><h2>Duty composition radar</h2><div class="chartBox"><canvas id="radar"></canvas></div><div class="note">Click a doctor card to highlight that doctor in the radar chart.</div></div></section>
+<section class="grid"><div class="glass panel"><h2>Workload comparison</h2><div class="chartBox"><canvas id="bar" style="max-width:100%;height:auto"></canvas></div><div class="legend"><span><i class="dot" style="background:var(--cyan)"></i>Total load</span><span><i class="dot" style="background:var(--violet)"></i>Team mean</span></div></div><div class="glass panel"><h2>Duty composition radar</h2><div class="chartBox"><canvas id="radar" style="max-width:100%;height:auto"></canvas></div><div class="note">Click a doctor card to highlight that doctor in the radar chart.</div></div></section>
 <div class="cards" id="cards"></div>
-
 </div>
 <script>
 const DATA=[{"doctor": "Dr. Sudip", "saturday": 11.0, "sunday": 10.5, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "4 (2oct, 5nov, 25dec, 4mar)", "icuLeaveText": "2(31mar)(1may)", "duties": 12.0, "till7": 8.0, "weekend": 21.5, "icuTotal": 6.0, "leaveEmergency": 4.0, "icuLeave": 2.0, "totalLoad": 53.5, "balanceScore": 6.14, "leavePeriodDutyTotal": 6.0}, {"doctor": "Dr. Devendra", "saturday": 10.0, "sunday": 11.0, "dayICU": 4.0, "nightICU": 2.0, "leaveEmergencyText": "3 (5nov, 15 feb, 4mar)", "icuLeaveText": "2(26 jan 31 mar)", "duties": 14.0, "till7": 6.0, "weekend": 21.0, "icuTotal": 6.0, "leaveEmergency": 3.0, "icuLeave": 2.0, "totalLoad": 52.0, "balanceScore": 4.64, "leavePeriodDutyTotal": 5.0}, {"doctor": "Dr. Abhiram", "saturday": 12.0, "sunday": 12.0, "dayICU": 3.0, "nightICU": 4.0, "leaveEmergencyText": "2 (2oct, 25dec)", "icuLeaveText": "1 (5nov)", "duties": 11.0, "till7": 6.0, "weekend": 24.0, "icuTotal": 7.0, "leaveEmergency": 2.0, "icuLeave": 1.0, "totalLoad": 51.0, "balanceScore": 3.64, "leavePeriodDutyTotal": 3.0}, {"doctor": "Dr. Aditi", "saturday": 9.0, "sunday": 9.0, "dayICU": 3.0, "nightICU": 4.0, "leaveEmergencyText": "2 (2oct, 5nov)", "icuLeaveText": "4(26jan,21mar,3 apr,1 may)", "duties": 8.0, "till7": 5.0, "weekend": 18.0, "icuTotal": 7.0, "leaveEmergency": 2.0, "icuLeave": 4.0, "totalLoad": 44.0, "balanceScore": -3.36, "leavePeriodDutyTotal": 6.0}, {"doctor": "Dr. Manju", "saturday": 10.5, "sunday": 10.5, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "2(21 mar)(1may)", "icuLeaveText": "3 (2oct, 25dec,3 apr)", "duties": 12.0, "till7": 1.0, "weekend": 21.0, "icuTotal": 6.0, "leaveEmergency": 2.0, "icuLeave": 3.0, "totalLoad": 45.0, "balanceScore": -2.36, "leavePeriodDutyTotal": 5.0}, {"doctor": "Dr. Ashwin", "saturday": 10.5, "sunday": 10.5, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "3(20oct, 15feb,31 mar)", "icuLeaveText": "1(2oct)", "duties": 9.0, "till7": 5.0, "weekend": 21.0, "icuTotal": 6.0, "leaveEmergency": 3.0, "icuLeave": 1.0, "totalLoad": 45.0, "balanceScore": -2.36, "leavePeriodDutyTotal": 4.0}, {"doctor": "Dr. Shivani", "saturday": 10.0, "sunday": 11.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "3 (5nov)(31 mar)(1 may)", "icuLeaveText": "2 (20oct, 4mar)", "duties": 10.0, "till7": 4.0, "weekend": 21.0, "icuTotal": 6.0, "leaveEmergency": 3.0, "icuLeave": 2.0, "totalLoad": 46.0, "balanceScore": -1.36, "leavePeriodDutyTotal": 5.0}, {"doctor": "Dr. Aman", "saturday": 12.0, "sunday": 11.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "2 (25dec,21mar)", "icuLeaveText": "2 (5nov, 4mar)", "duties": 13.0, "till7": 3.0, "weekend": 23.0, "icuTotal": 6.0, "leaveEmergency": 2.0, "icuLeave": 2.0, "totalLoad": 49.0, "balanceScore": 1.64, "leavePeriodDutyTotal": 4.0}, {"doctor": "Dr. Sharmila", "saturday": 9.5, "sunday": 10.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "3 (20oct,26jan,3 apr)", "icuLeaveText": "1(21mar)", "duties": 13.0, "till7": 5.0, "weekend": 19.5, "icuTotal": 6.0, "leaveEmergency": 3.0, "icuLeave": 1.0, "totalLoad": 47.5, "balanceScore": 0.14, "leavePeriodDutyTotal": 4.0}, {"doctor": "Dr. Vamshi", "saturday": 9.0, "sunday": 11.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "2 (20oct,26jan)", "icuLeaveText": "1 (25 dec)", "duties": 9.0, "till7": 3.0, "weekend": 20.0, "icuTotal": 6.0, "leaveEmergency": 2.0, "icuLeave": 1.0, "totalLoad": 41.0, "balanceScore": -6.36, "leavePeriodDutyTotal": 3.0}, {"doctor": "Dr. Himanshi", "saturday": 9.0, "sunday": 12.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "2(25dec,3 apr)", "icuLeaveText": "1 (oct)", "duties": 11.0, "till7": 6.0, "weekend": 21.0, "icuTotal": 6.0, "leaveEmergency": 2.0, "icuLeave": 1.0, "totalLoad": 47.0, "balanceScore": -0.36, "leavePeriodDutyTotal": 3.0}]; const STATS={"team": 11, "totalDuties": 122.0, "totalWeekend": 231.0, "totalICU": 68.0, "totalLoad": 521.0, "meanLoad": 47.36, "maxLoad": {"doctor": "Dr. Sudip", "saturday": 11.0, "sunday": 10.5, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "4 (2oct, 5nov, 25dec, 4mar)", "icuLeaveText": "2(31mar)(1may)", "duties": 12.0, "till7": 8.0, "weekend": 21.5, "icuTotal": 6.0, "leaveEmergency": 4.0, "icuLeave": 2.0, "totalLoad": 53.5, "balanceScore": 6.14, "leavePeriodDutyTotal": 6.0}, "minLoad": {"doctor": "Dr. Vamshi", "saturday": 9.0, "sunday": 11.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "2 (20oct,26jan)", "icuLeaveText": "1 (25 dec)", "duties": 9.0, "till7": 3.0, "weekend": 20.0, "icuTotal": 6.0, "leaveEmergency": 2.0, "icuLeave": 1.0, "totalLoad": 41.0, "balanceScore": -6.36, "leavePeriodDutyTotal": 3.0}, "totalLeavePeriodDuties": 48.0}; let active=DATA[0]?.doctor; let current=[...DATA];
@@ -46,5 +248,18 @@ function drawRadar(){const c=el('#radar'),[ctx,w,h]=fit(c);ctx.clearRect(0,0,w,h
 function filterSort(){const q=el('#search').value.toLowerCase(),s=el('#sort').value;current=DATA.filter(d=>d.doctor.toLowerCase().includes(q)).sort((a,b)=>b[s]-a[s]);renderCards();renderTable()}
 function drawBg(){const c=el('#bg'),ctx=c.getContext('2d');let t=0;function size(){c.width=innerWidth*(devicePixelRatio||1);c.height=innerHeight*(devicePixelRatio||1);ctx.setTransform(devicePixelRatio||1,0,0,devicePixelRatio||1,0,0)}size();addEventListener('resize',size);function loop(){t+=.006;ctx.clearRect(0,0,innerWidth,innerHeight);for(let i=0;i<70;i++){let x=(Math.sin(t+i)*.5+.5)*innerWidth,y=(Math.cos(t*.7+i*1.9)*.5+.5)*innerHeight;ctx.fillStyle=`rgba(${i%3?57:255},${i%3?215:106},${i%3?255:173},.10)`;ctx.beginPath();ctx.arc(x,y,1.3+(i%5),0,7);ctx.fill()}requestAnimationFrame(loop)}loop()}
 function drawAll(){drawBar();drawRadar();renderCards();renderTable()} el('#search').addEventListener('input',filterSort);el('#sort').addEventListener('change',filterSort);addEventListener('resize',drawAll);summary();filterSort();drawBg();drawAll();
+</script>
+
+<script>
+(function(){
+  document.querySelectorAll('table').forEach(function(tbl){
+    if(!tbl.parentElement.classList.contains('table-wrap')){
+      var wrap=document.createElement('div');
+      wrap.className='table-wrap';
+      tbl.parentNode.insertBefore(wrap,tbl);
+      wrap.appendChild(tbl);
+    }
+  });
+})();
 </script>
 </body></html>
