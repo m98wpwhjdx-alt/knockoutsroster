@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>RedDose Anaesthesia Record Pro</title>
+<style>
+:root{--bg:#150306;--card:#27090f;--text:#fff4f5;--muted:#d8a4ac;--accent:#ff3048;--accent2:#ff7a59;--line:rgba(255,255,255,.14);--warn:#ffd166;--shadow:0 18px 52px rgba(0,0,0,.45)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 10% 0,rgba(255,48,72,.34),transparent 35%),linear-gradient(180deg,var(--bg),#070203 75%);color:var(--text);padding-bottom:82px}
+header{position:sticky;top:0;z-index:10;background:rgba(21,3,6,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.wrap,.app{max-width:1160px;margin:auto;padding:12px}.hero{display:flex;justify-content:space-between;align-items:center;gap:10px}h1{margin:0;font-size:clamp(22px,7vw,42px);letter-spacing:-.06em}.sub{margin:5px 0 0;color:var(--muted);font-size:13px}.logo{width:48px;height:48px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));font-size:24px}
+.app{display:grid;gap:14px}.card{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}.head{padding:15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}.head h2{margin:0;font-size:18px}.body{padding:15px}
+label{display:block;margin:11px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900}input,select,textarea{width:100%;min-height:46px;border:1px solid var(--line);border-radius:16px;background:rgba(0,0,0,.28);color:var(--text);padding:11px 12px;font-size:16px;outline:none}textarea{min-height:92px;resize:vertical;line-height:1.45}input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(255,48,72,.14)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.wide{grid-column:1/-1}.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}button{border:0;border-radius:17px;min-height:48px;padding:12px 14px;font-weight:950;color:white;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 12px 28px rgba(255,48,72,.24);cursor:pointer}button.secondary{background:rgba(255,255,255,.07);border:1px solid var(--line);box-shadow:none}.badge{font-size:12px;font-weight:950;color:#ffd5d9;background:rgba(255,48,72,.15);border:1px solid rgba(255,48,72,.32);border-radius:999px;padding:7px 10px;white-space:nowrap}
+.segment{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:rgba(0,0,0,.2);padding:8px;border-radius:22px;margin-bottom:12px}.segment button{min-height:42px;border-radius:16px;background:transparent;box-shadow:none;border:1px solid transparent;color:var(--muted)}.segment button.active{background:rgba(255,48,72,.26);border-color:rgba(255,48,72,.35);color:var(--text)}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.kpi{padding:14px;border-radius:22px;background:rgba(255,255,255,.065);border:1px solid var(--line)}.kpi .v{font-size:21px;font-weight:1000;letter-spacing:-.04em}.kpi .t{font-size:12px;color:var(--muted);margin-top:4px}.note,.safe{margin-top:12px;padding:12px;border-radius:18px;font-size:13px;line-height:1.45}.note{border:1px solid rgba(255,209,102,.28);background:rgba(255,209,102,.08);color:#ffe3a1}.safe{border:1px solid rgba(255,48,72,.28);background:rgba(255,48,72,.09);color:#ffd2d7}.small{font-size:12px;color:var(--muted);line-height:1.5}
+.formGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.cards{display:grid;gap:10px}.item{border:1px solid var(--line);background:rgba(255,255,255,.065);border-radius:22px;padding:13px}.title{font-size:17px;font-weight:1000}.big{font-size:22px;font-weight:1000;margin:4px 0}.chips{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}.chip{font-size:12px;color:#ffd9dd;background:rgba(255,48,72,.13);border:1px solid rgba(255,48,72,.25);border-radius:999px;padding:6px 9px;font-weight:850}
+.section{display:none}.section.active{display:block}.timeTable{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}.timeTable th,.timeTable td{border:1px solid var(--line);padding:4px;min-width:72px}.timeTable input{min-height:34px;border-radius:8px;padding:6px;font-size:13px}.checkGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.checkGrid label{display:flex;align-items:center;gap:8px;margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--text)}.checkGrid input{width:18px;min-height:18px}.caseList{display:grid;gap:8px;margin-top:12px}.caseBtn{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid var(--line);border-radius:18px;padding:10px;background:rgba(255,255,255,.06)}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(21,3,6,.92);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px}.navin{max-width:720px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.nav a{text-align:center;text-decoration:none;color:var(--muted);font-size:10px;font-weight:950;border:1px solid var(--line);border-radius:15px;padding:8px 3px;background:rgba(255,255,255,.045)}.nav b{display:block;font-size:16px}
+#chatAnswer{white-space:pre-wrap;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:18px;padding:12px;min-height:80px}.printSheet{display:none}
+@media(min-width:930px){.app{grid-template-columns:380px 1fr}.span2{grid-column:1/-1}.kpis{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:700px){.row,.row3,.formGrid{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.card{border-radius:24px}.body,.head{padding:13px}.segment{grid-template-columns:1fr 1fr}.kpi .v{font-size:20px}}
+@media print{
+ @page{size:A4;margin:10mm}body{background:white;color:black;padding:0;font-family:Arial,sans-serif}.noPrint,header,.nav,.card{display:none!important}.printSheet{display:block;color:black}.page{page-break-after:always}.printSheet h2{text-align:center;margin:4px 0;font-size:16px}.printSheet h3{margin:8px 0 4px;font-size:13px}.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px}.box{border:1px solid #000;padding:4px;min-height:24px}.wide{grid-column:1/-1}.miniTable{width:100%;border-collapse:collapse;font-size:10px}.miniTable td,.miniTable th{border:1px solid #000;padding:3px;height:22px}.vitalsGrid{display:grid;grid-template-columns:70px repeat(11,1fr);font-size:9px}.vitalsGrid div{border:1px solid #000;min-height:18px;padding:2px}.blank{height:210px;border:1px solid #000;background:repeating-linear-gradient(0deg,#fff,#fff 11px,#bbb 12px),repeating-linear-gradient(90deg,transparent,transparent 23px,#bbb 24px)}
+}
+</style>
+</head>
+<body>
+<header class="noPrint"><div class="wrap hero"><div><h1>RedDose Record Pro</h1><p class="sub">Pre-anaesthesia, induction, intraoperative, postoperative + PDF/Word export.</p></div><div class="logo">✚</div></div></header>
+
+<main class="app noPrint">
+<section class="card" id="case">
+ <div class="head"><h2>Case + Patient</h2><span class="badge">CR 989262 + 9 digits</span></div>
+ <div class="body">
+  <div class="row"><div><label>CR last 9 digits</label><input id="crSuffix" maxlength="9" inputmode="numeric" oninput="syncCR()"></div><div><label>Full CR</label><input id="crFull" maxlength="15" inputmode="numeric" oninput="syncFullCR()"></div></div>
+  <div class="row"><div><label>Name</label><input id="ptName"></div><div><label>Date</label><input id="date" type="date"></div></div>
+  <div class="row3"><div><label>Age</label><input id="age" type="number" value="35" step="0.01"></div><div><label>Unit</label><select id="ageUnit"><option>years</option><option>months</option><option>days</option></select></div><div><label>Sex</label><select id="sex"><option value="male">M</option><option value="female">F</option></select></div></div>
+  <div class="row"><div><label>Height cm</label><input id="height" type="number" value="170"></div><div><label>Weight kg</label><input id="tbw" type="number" value="70"></div></div>
+  <div class="row"><div><label>Ward / Bed</label><input id="wardBed"></div><div><label>Department</label><input id="dept" value="Anaesthesiology and Critical Care"></div></div>
+  <label>Diagnosis</label><textarea id="diagnosis"></textarea>
+  <label>Procedure</label><input id="procedure">
+  <div class="row"><div><label>ASA</label><select id="asa"><option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option><option>E</option></select></div><div><label>Surgery type</label><select id="surgery"><option value="general">General abdominal</option><option value="lap">Laparoscopy</option><option value="neuro">Neurosurgery</option><option value="cardiac">Cardiac/CTVS</option><option value="thoracic">Thoracic/OLV</option><option value="obstetric">Obstetric</option><option value="pediatric">Pediatric</option><option value="trauma">Trauma/Emergency</option><option value="ent">ENT/Shared airway</option><option value="ortho">Orthopedic</option><option value="urology">Urology/TURP</option></select></div></div>
+  <div class="actions"><button onclick="saveCase()">Save Case</button><button class="secondary" onclick="newCase()">New Case</button></div>
+  <div class="caseList" id="caseList"></div>
+ </div>
+</section>
+
+<section class="card" id="form">
+ <div class="head"><h2>Record Sections</h2><span class="badge">as form</span></div>
+ <div class="body">
+  <div class="segment">
+    <button class="active" onclick="showSection('pre',this)">Pre</button>
+    <button onclick="showSection('induction',this)">Induction</button>
+    <button onclick="showSection('intra',this)">Intra-op</button>
+    <button onclick="showSection('post',this)">Post-op</button>
+  </div>
+
+  <div id="pre" class="section active formGrid">
+    <div><label>METS</label><select id="mets"><option>&gt;4</option><option>&lt;4</option></select></div><div><label>Pregnancy</label><select id="preg"><option>NA</option><option>N</option><option>Y</option></select></div>
+    <div><label>BP</label><input id="bp" placeholder="120/80"></div><div><label>PR</label><input id="pr"></div><div><label>SpO₂</label><input id="spo2"></div><div><label>RR</label><input id="rr"></div>
+    <div><label>Temp</label><input id="temp"></div><div><label>BHT</label><input id="bht"></div>
+    <div><label>Tobacco</label><select id="tobacco"><option>N</option><option>Y</option></select></div><div><label>Alcohol/Smoking</label><input id="alcoholSmoking" placeholder="Alcohol N/Y, Smoking N/Y"></div>
+    <div class="wide"><label>Medical history: CNS/CVS/Resp/Endocrine/Renal-GI-Hepatic-MSK-Hemat</label><textarea id="history"></textarea></div>
+    <div class="wide"><label>Drugs / allergies</label><textarea id="drugsAllergy"></textarea></div>
+    <div class="wide"><label>Previous surgeries / anaesthesia complications</label><textarea id="prevAnaes"></textarea></div>
+    <div><label>Mouth opening</label><select id="mouth"><option>Adequate</option><option>Inadequate</option></select></div><div><label>Neck movement</label><select id="neck"><option>Adequate</option><option>Inadequate</option></select></div>
+    <div><label>MPG</label><select id="mpg"><option>1</option><option>2</option><option>3</option><option>4</option></select></div><div><label>TM distance / Teeth</label><input id="tmdTeeth"></div>
+    <div class="wide"><label>Investigations</label><textarea id="invest" placeholder="Hb/Hct, TLC, DLC, Plt, PT/aPTT, INR, Sugar, BUN/Cr, Na/K, LFT, CXR, ECG"></textarea></div>
+    <div class="wide"><label>Preanaesthesia instructions / PAC remarks</label><textarea id="instructions"></textarea></div>
+  </div>
+
+  <div id="induction" class="section formGrid">
+    <div><label>Technique</label><select id="technique"><option>GA</option><option>Regional</option><option>IV Sedation</option><option>LA/MAC</option></select></div><div><label>NPO status</label><select id="npo"><option>Y</option><option>N</option></select></div>
+    <div><label>Premed: Glycopyrrolate</label><input id="premedGlyco"></div><div><label>Midazolam</label><input id="premedMida"></div><div><label>Dexamethasone</label><input id="premedDexa"></div><div><label>Lignocaine</label><input id="premedLigno"></div>
+    <div><label>ETT type</label><select id="ettType"><option value="cuffed">Cuffed</option><option value="uncuffed">Uncuffed</option></select></div><div><label>Induction type</label><select id="inductionType"><option>Elective induction</option><option>Rapid sequence induction</option><option>Inhalational induction</option></select></div>
+    <div><label>Airway device</label><select id="airwayDevice"><option>Intubation</option><option>LMA</option><option>Mask</option></select></div><div><label>CL grade / Attempts</label><input id="clAttempts"></div>
+    <div class="wide"><label>Induction drugs with time/dose</label><textarea id="inductionDrugs"></textarea></div>
+    <div class="wide"><label>Regional anaesthesia / block details</label><textarea id="regionalDetails"></textarea></div>
+  </div>
+
+  <div id="intra" class="section formGrid">
+    <div><label>OT no.</label><input id="otNo"></div><div><label>Anaesthetist(s)</label><input id="anaesthetists"></div>
+    <div><label>Surgeon(s)</label><input id="surgeons"></div><div><label>Body position</label><input id="position" placeholder="Supine / Prone / Lithotomy..."></div>
+    <div><label>Enter OT</label><input id="enterOT" type="time"></div><div><label>Leave OT</label><input id="leaveOT" type="time"></div>
+    <div><label>Incision time</label><input id="incisionTime" type="time"></div><div><label>Handover time</label><input id="handoverTime" type="time"></div>
+
+    <div class="wide">
+      <label>Intraoperative vitals according to time</label>
+      <div style="overflow-x:auto">
+      <table class="timeTable">
+        <thead><tr><th>Parameter</th><th>30 min</th><th>60 min</th><th>90 min</th><th>2 hr</th><th>2.5 hr</th><th>3 hr</th><th>3.5 hr</th><th>4 hr</th><th>4.5 hr</th><th>5 hr</th><th>5.5 hr</th></tr></thead>
+        <tbody id="vitalTimeRows"></tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="wide">
+      <label>Monitors & equipment</label>
+      <div class="checkGrid">
+        <label><input type="checkbox" id="monECG"> ECG</label><label><input type="checkbox" id="monSpO2"> Pulse oximeter</label>
+        <label><input type="checkbox" id="monNIBP"> NIBP</label><label><input type="checkbox" id="monArt"> Intraarterial BP</label>
+        <label><input type="checkbox" id="monEtCO2"> End tidal CO₂</label><label><input type="checkbox" id="monGas"> Gas analyzer</label>
+        <label><input type="checkbox" id="monTemp"> Temperature</label><label><input type="checkbox" id="monNMT"> NMT</label>
+        <label><input type="checkbox" id="monBIS"> BIS</label><label><input type="checkbox" id="monHumidifier"> Airway humidifier</label>
+        <label><input type="checkbox" id="monWarmer"> Fluid warmer</label><label><input type="checkbox" id="monNG"> NG/OG tube</label>
+        <label><input type="checkbox" id="monFoley"> Foley catheter</label><label><input type="checkbox" id="monCVC"> CVC</label>
+      </div>
+      <textarea id="monitors" placeholder="Additional monitors/equipment, IV lines, arterial line site, CVC site..."></textarea>
+    </div>
+
+    <div class="wide"><label>Induction and intraoperative drugs/doses/time</label><textarea id="intraDrugs" placeholder="O2, Air/N2O, Sevo/Iso/Des, induction agent, opioids, NMBD with time and total dose"></textarea></div>
+    <div class="wide"><label>Infusions used with rate</label><textarea id="infusionsUsed" placeholder="Noradrenaline __ mcg/kg/min, Vasopressin __ units/min, Propofol __ mcg/kg/min..."></textarea></div>
+
+    <div class="wide"><label>Airway management</label><textarea id="airwayManagement" placeholder="Oral/Nasal, PVC/Armoured/DLT/RAE, cuffed/uncuffed, tube size, secured depth, blade, attempts, breath sounds, CL grade, difficulty, ventilation mode"></textarea></div>
+    <div class="wide"><label>Regional anaesthesia / block</label><textarea id="regionalDetails" placeholder="Spinal/Epidural/Block, block type, position, site, technique, needle, attempts, drug/dose, catheter, onset, complications"></textarea></div>
+
+    <div><label>Fluid infused - crystalloid/colloid</label><input id="fluidInfused"></div><div><label>Blood/products infused</label><input id="bloodInfused"></div>
+    <div><label>Blood suction loss</label><input id="bloodSuction"></div><div><label>Drapes/swab loss</label><input id="drapeLoss"></div>
+    <div><label>Urine output</label><input id="urineOutput"></div><div><label>GIT/bowel/NG loss</label><input id="gitLoss"></div>
+    <div><label>Insensible loss</label><input id="insensibleLoss"></div><div><label>Total estimated loss</label><input id="totalLoss"></div>
+    <div class="wide"><label>Ventilation settings</label><textarea id="ventSettings" placeholder="TV, RR, PEEP, Ppeak, FiO2"></textarea></div>
+    <div class="wide"><label>Intraoperative remarks</label><textarea id="intraRemarks"></textarea></div>
+  </div>
+
+  <div id="post" class="section formGrid">
+    <div class="wide"><label>Reversal / antiemetic / extubation — comes before recovery arrival</label></div>
+    <div><label>Ondansetron time/dose</label><input id="ondansetronDose"></div><div><label>Reversal time</label><input id="reversalTime" type="time"></div>
+    <div><label>Neostigmine dose</label><input id="neostigmineDose"></div><div><label>Glycopyrrolate dose</label><input id="glycoReversalDose"></div>
+    <div><label>Sugammadex dose</label><input id="sugammadexDose" placeholder="e.g. 2 mg/kg / 4 mg/kg / total mg"></div><div><label>Extubation time</label><input id="extubationTime" type="time"></div>
+    <div class="wide"><label>Extubation status / remarks</label><input id="extubationStatus" placeholder="Smooth / coughing / desaturation / delayed / shifted intubated"></div>
+
+    <div class="wide"><label>Anaesthesia recovery</label></div>
+    <div><label>Recovery arrival time</label><input id="recoveryArrival" type="time"></div><div><label>Condition</label><input id="recoveryCondition"></div>
+    <div><label>Consciousness</label><select id="mental"><option>Fully awake</option><option>Sleepy</option><option>Drowsy</option></select></div><div><label>Response to pain / VAS</label><input id="vas"></div>
+    <div><label>Airway reflexes</label><select id="airwayReflexes"><option>Adequate</option><option>Inadequate</option></select></div><div><label>NM recovery</label><input id="nmRecovery" placeholder="Head lift / tongue protrusion / power grade"></div>
+    <div><label>Recovery PR</label><input id="postPR"></div><div><label>Recovery BP</label><input id="postBP"></div><div><label>Recovery RR</label><input id="postRR"></div><div><label>Recovery SpO₂</label><input id="postSpo2"></div>
+    <div><label>Respiration</label><input id="respiration" placeholder="Spontaneous / Assisted / IPPV"></div><div><label>Pattern / TV</label><input id="respPattern" placeholder="Regular / irregular; adequate/satisfactory/inadequate"></div>
+
+    <div class="wide"><label>Post operative progress — page 4 style final section</label></div>
+    <div><label>Oxygen</label><input id="postOxygen" placeholder="Not required / nasal mask / T-piece / CPAP / vent"></div><div><label>Position</label><input id="postPosition"></div>
+    <div><label>Airway</label><input id="postAirway" placeholder="Patent / oral airway / ETT / tracheostomy"></div><div><label>Suction instruction</label><input id="postSuction" placeholder="Every __; oropharyngeal / endotracheal"></div>
+    <div><label>Vital charting frequency</label><input id="vitalCharting" placeholder="Every __ for __"></div><div><label>I/O charting frequency</label><input id="ioCharting" placeholder="Every __ for __"></div>
+    <div><label>Oxygen therapy</label><input id="oxygenTherapy"></div><div><label>Investigations required</label><input id="postInvestigations"></div>
+    <div><label>I.V. fluids</label><input id="postIVFluids"></div><div><label>Analgesics</label><input id="postAnalgesics" placeholder="Systemic / epidural / block"></div>
+    <div class="wide"><label>Treatment / special measures</label><textarea id="postInstructions" placeholder="Treatment, special measures, nursing instructions"></textarea></div>
+    <div><label>Discharge score / Modified Aldrete</label><input id="aldreteScore"></div><div><label>Shifted to</label><input id="shiftedTo"></div>
+    <div class="wide"><label>Ward / ICU receiving notes and complications</label><textarea id="postComplications" placeholder="Pain, agitation, nausea/vomiting, shivering, hypothermia, respiratory complications, circulatory complications"></textarea></div>
+  </div>
+
+  <div class="actions">
+    <button onclick="autoFill()">Auto-fill calculated fields</button>
+    <button class="secondary" onclick="buildPrint();window.print()">Generate PDF</button>
+    <button onclick="downloadDoc()">Download Word .doc</button>
+    <button class="secondary" onclick="saveCase()">Save</button>
+  </div>
+ </div>
+</section>
+
+<section class="card" id="calc">
+ <div class="head"><h2>Airway + Weights</h2><span class="badge" id="ageBadge">Adult</span></div>
+ <div class="body">
+  <div class="kpis"><div class="kpi"><div class="v" id="ettSize">—</div><div class="t">ETT ID</div></div><div class="kpi"><div class="v" id="ettDepth">—</div><div class="t">Depth</div></div><div class="kpi"><div class="v" id="ibwOut">—</div><div class="t">IBW</div></div><div class="kpi"><div class="v" id="lbwOut">—</div><div class="t">LBW</div></div></div>
+  <div class="note" id="airwayNote"></div>
+ </div>
+</section>
+
+<section class="card" id="doses">
+ <div class="head"><h2>Drug + Infusion Doses</h2><span class="badge" id="doseCount"></span></div>
+ <div class="body">
+  <div class="segment"><button class="active" onclick="setDoseCat('all',this)">All</button><button onclick="setDoseCat('bolus',this)">Bolus</button><button onclick="setDoseCat('infusion',this)">Infusion</button><button onclick="setDoseCat('vasoactive',this)">Vasoactive</button></div>
+  <input id="doseSearch" placeholder="Search propofol, remifentanil, norad..." oninput="renderDoses()">
+  <div class="cards" id="doseCards"></div>
+  <div class="safe">Dose suggestions are reference starting ranges only. Use institutional protocols and consultant judgement.</div>
+ </div>
+</section>
+
+<section class="card span2" id="chat">
+ <div class="head"><h2>Working ChatGPT Capsule</h2><span class="badge">API</span></div>
+ <div class="body">
+  <div class="row"><div><label>OpenAI API key</label><input id="apiKey" type="password" placeholder="sk-..."></div><div><label>Model</label><select id="model"><option>gpt-5.1-mini</option><option>gpt-5.1</option><option>gpt-4.1-mini</option></select></div></div>
+  <div class="actions"><button onclick="saveKey()">Save key locally</button><button class="secondary" onclick="clearKey()">Clear key</button></div>
+  <label>Question</label><textarea id="userQuestion" placeholder="Ask about PAC, induction, infusion, intraop risk, postop plan..." oninput="makePrompt()"></textarea>
+  <label>Prompt</label><textarea id="promptBox" readonly></textarea>
+  <div class="actions"><button onclick="askAI()">Ask ChatGPT</button><button class="secondary" onclick="window.open('https://chatgpt.com/','_blank')">Open ChatGPT</button></div>
+  <label>Answer</label><div id="chatAnswer">Enter API key and ask.</div>
+ </div>
+</section>
+</main>
+
+<section id="printSheet" class="printSheet"></section>
+
+<nav class="nav noPrint"><div class="navin"><a href="#case"><b>➕</b>Case</a><a href="#form"><b>📋</b>Form</a><a href="#calc"><b>🫁</b>ETT</a><a href="#doses"><b>💉</b>Dose</a><a href="#chat"><b>🤖</b>AI</a></div></nav>
+
+<script>
+let state={section:'pre',doseCat:'all',weights:{},caseId:null};
+const doseList=[
+{name:'Propofol induction',cat:'bolus',dose:[1,2.5],unit:'mg/kg',wt:'LBW',note:'Reduce in elderly/shock.'},
+{name:'Propofol maintenance infusion',cat:'infusion',dose:[50,150],unit:'mcg/kg/min',wt:'LBW',note:'TIVA/sedation range; avoid prolonged high dose in children.'},
+{name:'Etomidate',cat:'bolus',dose:[0.2,0.3],unit:'mg/kg',wt:'TBW',note:'Hemodynamic stability.'},
+{name:'Ketamine induction',cat:'bolus',dose:[1,2],unit:'mg/kg IV',wt:'IBW',note:'Shock/bronchospasm context.'},
+{name:'Ketamine analgesic infusion',cat:'infusion',dose:[0.05,0.3],unit:'mg/kg/h',wt:'IBW',note:'Analgesic adjunct; psychomimetic/sympathetic effects.'},
+{name:'Dexmedetomidine infusion',cat:'infusion',dose:[0.2,0.7],unit:'mcg/kg/h',wt:'IBW',note:'Bradycardia/hypotension; loading often avoided.'},
+{name:'Midazolam infusion',cat:'infusion',dose:[0.02,0.1],unit:'mg/kg/h',wt:'IBW',note:'Sedation; accumulation possible.'},
+{name:'Fentanyl bolus',cat:'bolus',dose:[1,2],unit:'mcg/kg',wt:'LBW',note:'Titrate to ventilation/hemodynamics.'},
+{name:'Fentanyl infusion',cat:'infusion',dose:[0.5,2],unit:'mcg/kg/h',wt:'LBW',note:'Postop/ICU style infusion; titrate.'},
+{name:'Remifentanil infusion',cat:'infusion',dose:[0.05,0.2],unit:'mcg/kg/min',wt:'IBW',note:'Rapid offset; pump essential.'},
+{name:'Suxamethonium',cat:'bolus',dose:[1,1.5],unit:'mg/kg',wt:'TBW',note:'Contraindications apply.'},
+{name:'Rocuronium',cat:'bolus',dose:[0.6,1.2],unit:'mg/kg',wt:'IBW',note:'TOF/reversal plan.'},
+{name:'Atracurium infusion',cat:'infusion',dose:[5,10],unit:'mcg/kg/min',wt:'IBW',note:'Use NMT monitoring.'},
+{name:'Cisatracurium infusion',cat:'infusion',dose:[1,3],unit:'mcg/kg/min',wt:'IBW',note:'Use NMT monitoring.'},
+{name:'Noradrenaline infusion',cat:'vasoactive',dose:[0.02,0.5],unit:'mcg/kg/min',wt:'TBW',note:'Central line preferred for prolonged/high dose.'},
+{name:'Adrenaline infusion',cat:'vasoactive',dose:[0.02,0.3],unit:'mcg/kg/min',wt:'TBW',note:'Shock/anaphylaxis/cardiac support; titrate.'},
+{name:'Dopamine infusion',cat:'vasoactive',dose:[2,10],unit:'mcg/kg/min',wt:'TBW',note:'Arrhythmia risk; local practice varies.'},
+{name:'Dobutamine infusion',cat:'vasoactive',dose:[2,10],unit:'mcg/kg/min',wt:'TBW',note:'Inotrope; monitor tachyarrhythmia.'},
+{name:'Nitroglycerin infusion',cat:'vasoactive',dose:[0.5,5],unit:'mcg/kg/min',wt:'TBW',note:'Titrate for BP/ischemia.'},
+{name:'Phenylephrine infusion',cat:'vasoactive',dose:[0.2,1],unit:'mcg/kg/min',wt:'IBW',note:'Vasoconstrictor; reflex bradycardia.'},
+{name:'Vasopressin infusion',cat:'vasoactive',dose:[0.01,0.04],unit:'units/min',wt:'fixed',note:'Non-weight based infusion; common septic/vasodilatory shock adjunct. Titrate by protocol.'},
+{name:'Ondansetron',cat:'bolus',dose:[0.1,0.15],unit:'mg/kg',wt:'TBW',cap:4,capUnit:'mg',note:'PONV.'},
+{name:'Lignocaine max plain',cat:'bolus',dose:[4.5,4.5],unit:'mg/kg',wt:'IBW',cap:300,capUnit:'mg',note:'LAST precautions.'},
+{name:'Bupivacaine max',cat:'bolus',dose:[2,2.5],unit:'mg/kg',wt:'IBW',cap:175,capUnit:'mg',note:'Cardiotoxicity risk.'}
+];
+function ids(){return Array.from(document.querySelectorAll('input,select,textarea')).filter(e=>e.id).map(e=>e.id)}
+function ageYears(){let a=+age.value||0,u=ageUnit.value;return u==='months'?a/12:u==='days'?a/365:a}
+function r(x,d=1){return Number.isFinite(x)?+x.toFixed(d):0}
+function ibw(s,h){let inch=h/2.54,over=Math.max(0,inch-60);return(s==='male'?50:45.5)+2.3*over}
+function lbw(s,h,w){let bmi=w/(h/100)**2;return s==='male'?(9270*w)/(6680+216*bmi):(9270*w)/(8780+244*bmi)}
+function wt(type){let w=state.weights;if(type==='fixed')return null;return type==='TBW'?w.tbw:type==='IBW'?w.ibw:type==='LBW'?w.lbw:w.abw}
+function doseText(d){if(d.wt==='fixed'){return d.dose[0]===d.dose[1]?`${d.dose[0]} ${d.unit}`:`${d.dose[0]}–${d.dose[1]} ${d.unit}`}let w=wt(d.wt),lo=d.dose[0]*w,hi=d.dose[1]*w,unit=d.unit.split('/')[0];if(d.cap){lo=Math.min(lo,d.cap);hi=Math.min(hi,d.cap)}let dec=unit.includes('mcg')?0:1;return Math.abs(lo-hi)<.001?`${r(lo,dec)} ${unit}`:`${r(lo,dec)}–${r(hi,dec)} ${unit}`}
+function calc(){let w=+tbw.value||0,h=+height.value||0,raw=ibw(sex.value,h),ex=Math.max(0,w-raw),l=Math.min(w,lbw(sex.value,h,w));state.weights={tbw:w,ibw:Math.min(w,raw),ibwRaw:raw,abw:ex>0?raw+.4*ex:w,lbw:l};ibwOut.textContent=r(raw)+' kg';lbwOut.textContent=r(l)+' kg';ageBadge.textContent=ageYears()<12?'Pediatric':'Adult';airway();renderDoses();makePrompt();buildPrint()}
+function airway(){let a=ageYears(),w=state.weights.tbw,s=sex.value,c=ettType.value==='cuffed',sz,dep,n='';if(a<.08){sz='3.0';dep=r(w+6);n='Neonate depth ≈ weight+6 cm.'}else if(a<1){sz=c?'3.0–3.5':'3.5–4.0';dep='10–11'}else if(a<12){let z=(a/4)+(c?3.5:4);z=Math.round(z*2)/2;sz=z.toFixed(1);dep=r(3*z);n='Child: cuffed age/4+3.5; uncuffed age/4+4; depth ≈3×ID.'}else{sz=s==='male'?'7.5–8.5':'7.0–8.0';dep=s==='male'?'21–23':'20–22'}ettSize.textContent=sz+' mm';ettDepth.textContent=dep+' cm';airwayNote.textContent=(n||'Adult typical range.')+' Confirm by waveform capnography, bilateral chest movement, auscultation and cuff pressure.'}
+function renderDoses(){let q=doseSearch.value.toLowerCase(),arr=doseList.filter(d=>(state.doseCat==='all'||d.cat===state.doseCat)&&(!q||d.name.toLowerCase().includes(q)||d.note.toLowerCase().includes(q)));doseCount.textContent=arr.length+' items';doseCards.innerHTML=arr.map(d=>`<div class="item"><div class="title">${d.name}</div><div class="big">${doseText(d)}</div><div class="chips"><span class="chip">${d.cat}</span><span class="chip">${d.wt}</span><span class="chip">${d.dose[0]===d.dose[1]?d.dose[0]:d.dose[0]+'–'+d.dose[1]} ${d.unit}</span></div><div class="small">${d.note}${d.cap?` Cap ${d.cap} ${d.capUnit}.`:''}</div></div>`).join('')}
+function setDoseCat(c,e){state.doseCat=c;document.querySelectorAll('#doses .segment button').forEach(b=>b.classList.remove('active'));e.classList.add('active');renderDoses()}
+function showSection(id,e){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('#form .segment button').forEach(b=>b.classList.remove('active'));e.classList.add('active')}
+
+function buildVitalTimeInputs(){
+ const params=['ECG','SpO2','EtCO2','CVP','TEMP','BP systolic','BP mean','BP diastolic','Pulse','Urine ml','Tidal volume ml','Resp rate','Peak pressure','PEEP'];
+ const times=['30','60','90','120','150','180','210','240','270','300','330'];
+ let el=document.getElementById('vitalTimeRows'); if(!el)return;
+ el.innerHTML=params.map((p,ri)=>`<tr><th>${p}</th>${times.map(t=>`<td><input id="vt_${ri}_${t}" placeholder=""></td>`).join('')}</tr>`).join('');
+}
+function checked(id,label){let el=document.getElementById(id);return el&&el.checked?label:null}
+function monitorSummary(){
+ const arr=[checked('monECG','ECG'),checked('monSpO2','Pulse oximeter'),checked('monNIBP','NIBP'),checked('monArt','Intraarterial BP'),checked('monEtCO2','EtCO2'),checked('monGas','Gas analyzer'),checked('monTemp','Temperature'),checked('monNMT','NMT'),checked('monBIS','BIS'),checked('monHumidifier','Airway humidifier'),checked('monWarmer','Fluid warmer'),checked('monNG','NG/OG tube'),checked('monFoley','Foley catheter'),checked('monCVC','CVC')].filter(Boolean);
+ if(monitors.value)arr.push(monitors.value);
+ return arr.join(', ');
+}
+function vitalTimeData(){
+ const labels=['ECG','SpO2','EtCO2','CVP','TEMP','BP systolic','BP mean','BP diastolic','Pulse','Urine ml','Tidal volume ml','Resp rate','Peak pressure','PEEP'];
+ const times=['30','60','90','120','150','180','210','240','270','300','330'];
+ return {labels,times,values:labels.map((_,ri)=>times.map(t=>document.getElementById(`vt_${ri}_${t}`)?.value||''))};
+}
+
+function syncCR(){crSuffix.value=crSuffix.value.replace(/\D/g,'').slice(0,9);crFull.value=crSuffix.value?'989262'+crSuffix.value:''}
+function syncFullCR(){crFull.value=crFull.value.replace(/\D/g,'').slice(0,15);if(crFull.value.startsWith('989262'))crSuffix.value=crFull.value.slice(6)}
+function data(){let o={};ids().forEach(id=>{let el=document.getElementById(id);o[id]=el.type==='checkbox'?el.checked:el.value});return o}
+function loadData(o){Object.keys(o).forEach(k=>{let el=document.getElementById(k);if(el){if(el.type==='checkbox')el.checked=!!o[k];else el.value=o[k]}});calc()}
+function saveCase(){let cases=JSON.parse(localStorage.redDoseRecordCases||'[]'),o=data();o.id=state.caseId||Date.now();state.caseId=o.id;let i=cases.findIndex(c=>c.id===o.id);if(i>=0)cases[i]=o;else cases.unshift(o);localStorage.redDoseRecordCases=JSON.stringify(cases.slice(0,60));renderCases();alert('Case saved')}
+function renderCases(){let cases=JSON.parse(localStorage.redDoseRecordCases||'[]');caseList.innerHTML=cases.slice(0,8).map(c=>`<div class="caseBtn"><div><b>${c.ptName||'Unnamed'}</b><div class="small">${c.crFull||''} • ${c.age||''} ${c.ageUnit||''}/${c.sex||''}</div></div><button class="secondary" onclick="openCase(${c.id})">Open</button></div>`).join('')}
+function openCase(id){let c=JSON.parse(localStorage.redDoseRecordCases||'[]').find(x=>x.id===id);if(c){state.caseId=id;loadData(c)}}
+function newCase(){state.caseId=null;ids().forEach(id=>{let el=document.getElementById(id);if(el.tagName==='SELECT')el.selectedIndex=0;else el.value=''});date.value=new Date().toISOString().slice(0,10);age.value=35;height.value=170;tbw.value=70;dept.value='Anaesthesiology and Critical Care';calc()}
+function autoFill(){if(!instructions.value)instructions.value=`Written informed consent. Confirm NPO. Check investigations. Aspiration prophylaxis/antibiotic/VTE/ICU plan as per protocol. Airway: ETT ${ettSize.textContent}, depth ${ettDepth.textContent}.`;['monECG','monSpO2','monNIBP','monEtCO2','monTemp'].forEach(id=>{let el=document.getElementById(id);if(el)el.checked=true});if(!monitors.value)monitors.value='Gas analyzer, NMT as indicated, IV access, fluid warmer as indicated';if(!airwayManagement.value)airwayManagement.value=`${airwayDevice.value}, ${ettType.value}; tube ${ettSize.textContent}; secured at ${ettDepth.textContent}; confirm with EtCO2 and bilateral air entry.`;if(!postPosition.value)postPosition.value='As advised';if(!postAirway.value)postAirway.value='Patent';if(!postSuction.value)postSuction.value='As required';if(!vitalCharting.value)vitalCharting.value='Every 15 min initially, then as per protocol';if(!ioCharting.value)ioCharting.value='As per protocol';if(!postInstructions.value)postInstructions.value='Oxygen as indicated. Monitor vitals. Pain/PONV management. Intake-output charting. Shift as per recovery criteria.';makePrompt();buildPrint()}
+function esc(x){return String(x||'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+function makePrompt(){promptBox.value=`You are assisting an anaesthesiology clinician. Use a structured plan and do not replace local protocols.\nPatient: ${ptName.value}, CR ${crFull.value}, age ${age.value} ${ageUnit.value}/${sex.value}, wt ${tbw.value} kg, ht ${height.value} cm, diagnosis ${diagnosis.value}, procedure ${procedure.value}, ASA ${asa.value}. Airway: ${ettSize.textContent} at ${ettDepth.textContent}. IBW ${ibwOut.textContent}, LBW ${lbwOut.textContent}. Vitals: BP ${bp.value}, PR ${pr.value}, SpO2 ${spo2.value}. Investigations: ${invest.value}.\nQuestion: ${userQuestion.value||'Prepare pre-anaesthesia, induction, intraoperative infusion, and postoperative plan.'}`}
+async function askAI(){let key=apiKey.value||localStorage.openaiKey;if(!key){chatAnswer.textContent='Enter API key or open ChatGPT.';return}chatAnswer.textContent='Asking...';try{let res=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:model.value,input:promptBox.value})});let j=await res.json();if(!res.ok)throw new Error(j.error?.message||'API error');chatAnswer.textContent=j.output_text||JSON.stringify(j,null,2)}catch(e){chatAnswer.textContent='Error: '+e.message+'; if browser blocks local calls, run via localhost or paste prompt into ChatGPT.'}}
+function saveKey(){localStorage.openaiKey=apiKey.value;chatAnswer.textContent='Key saved locally.'}function clearKey(){localStorage.removeItem('openaiKey');apiKey.value='';chatAnswer.textContent='Key cleared.'}
+function printDrugTable(){return doseList.map(d=>`<tr><td>${esc(d.name)}</td><td>${esc(d.cat)}</td><td>${esc(d.wt)}</td><td>${esc(doseText(d))}</td><td>${esc(d.note)}</td></tr>`).join('')}
+function buildPrint(){
+let d=data(),bmi=r((+tbw.value)/((+height.value/100)**2),1),vtd=vitalTimeData();
+let times=['30 min','60 min','90 min','2 hr','2.5 hr','3 hr','3.5 hr','4 hr','4.5 hr','5 hr','5.5 hr'];
+let vitalGrid='<table class="miniTable"><tr><th>TIME</th>'+times.map(t=>`<th>${t}</th>`).join('')+'</tr>'+vtd.labels.map((rw,i)=>`<tr><th>${rw}</th>${vtd.values[i].map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')+'</table>';
+let fluidTable=`<table class="miniTable"><tr><th colspan="2">FLUID/BLOOD INFUSED</th><th colspan="2">FLUID LOSS</th></tr><tr><td>Crystalloid/colloid</td><td>${esc(d.fluidInfused)}</td><td>Blood suction</td><td>${esc(d.bloodSuction)}</td></tr><tr><td>Blood/products</td><td>${esc(d.bloodInfused)}</td><td>Drapes/swab</td><td>${esc(d.drapeLoss)}</td></tr><tr><td></td><td></td><td>GIT/Bowel/NG</td><td>${esc(d.gitLoss)}</td></tr><tr><td></td><td></td><td>Urine</td><td>${esc(d.urineOutput)}</td></tr><tr><td></td><td></td><td>Insensible</td><td>${esc(d.insensibleLoss)}</td></tr><tr><td>Total infused</td><td></td><td>Total loss</td><td>${esc(d.totalLoss)}</td></tr></table>`;
+printSheet.innerHTML=
+`<div class="page"><h2>ALL INDIA INSTITUTE OF MEDICAL SCIENCES, JODHPUR</h2><h2>ANAESTHESIA RECORD</h2><h3>1. PREANAESTHESIA EVALUATION</h3><div class="pgrid">
+<div class="box">Name: ${esc(d.ptName)}</div><div class="box">Age/Sex: ${esc(d.age)} ${esc(d.ageUnit)} / ${esc(d.sex)}</div>
+<div class="box">Date: ${esc(d.date)}</div><div class="box">Registration no.: ${esc(d.crFull)}</div>
+<div class="box wide">Diagnosis: ${esc(d.diagnosis)}</div><div class="box">Ward/Bed: ${esc(d.wardBed)}</div><div class="box">Dept: ${esc(d.dept)}</div>
+<div class="box wide">Procedure: ${esc(d.procedure)}</div><div class="box">ASA: ${esc(d.asa)}</div><div class="box">METS: ${esc(d.mets)} Preg: ${esc(d.preg)}</div>
+<div class="box">BHT: ${esc(d.bht)}</div><div class="box">Wt ${esc(d.tbw)} kg Ht ${esc(d.height)} cm BMI ${bmi} SpO2 ${esc(d.spo2)}%</div>
+<div class="box">Vitals: BP ${esc(d.bp)} PR ${esc(d.pr)} T ${esc(d.temp)} RR ${esc(d.rr)}</div><div class="box">Tobacco: ${esc(d.tobacco)} Alcohol/Smoking: ${esc(d.alcoholSmoking)}</div>
+<div class="box wide">Medical history: ${esc(d.history)}</div><div class="box wide">Drugs / Allergies: ${esc(d.drugsAllergy)}</div>
+<div class="box wide">Previous surgeries / anaesthesia complications: ${esc(d.prevAnaes)}</div>
+<div class="box">Mouth opening: ${esc(d.mouth)} Neck movement: ${esc(d.neck)}</div><div class="box">MPG: ${esc(d.mpg)} TM/Teeth: ${esc(d.tmdTeeth)}</div>
+<div class="box wide">Investigations: ${esc(d.invest)}</div><div class="box wide">Preanaesthesia instructions / PAC remarks: ${esc(d.instructions)}</div>
+<div class="box wide">Date: __________ Name: __________________ Signature: __________________</div></div></div>
+
+<div class="page"><h2>ANAESTHESIA RECORD</h2><h3>2. INTRAOPERATIVE NOTES + VITALS ACCORDING TO TIME</h3><div class="pgrid">
+<div class="box">Date: ${esc(d.date)}</div><div class="box">Diagnosis: ${esc(d.diagnosis)}</div><div class="box">OT No: ${esc(d.otNo)}</div><div class="box">Procedure: ${esc(d.procedure)}</div>
+<div class="box">Anaesthetist(s): ${esc(d.anaesthetists)}</div><div class="box">Surgeon(s): ${esc(d.surgeons)}</div>
+<div class="box">PAC/ASA: ${esc(d.asa)}</div><div class="box">NPO: ${esc(d.npo)}</div>
+<div class="box">Enter OT: ${esc(d.enterOT)}</div><div class="box">Leave OT: ${esc(d.leaveOT)}</div><div class="box">Incision: ${esc(d.incisionTime)}</div><div class="box">Handover: ${esc(d.handoverTime)}</div>
+<div class="box wide">Technique: ${esc(d.technique)} | Position: ${esc(d.position)}</div>
+<div class="box wide">Premedications: Glycopyrrolate ${esc(d.premedGlyco)} Midazolam ${esc(d.premedMida)} Dexamethasone ${esc(d.premedDexa)} Lignocaine ${esc(d.premedLigno)}</div></div>
+${vitalGrid}<div class="box wide">Ventilation settings: ${esc(d.ventSettings)}</div><div class="box wide">Intraoperative remark: ${esc(d.intraRemarks)}</div></div>
+
+<div class="page"><h2>ANAESTHESIA RECORD</h2><h3>3. INDUCTION / INTRAOPERATIVE DRUGS, MONITORS, AIRWAY, FLUIDS</h3>
+<table class="miniTable"><tr><th>Drug/infusion</th><th>Type</th><th>Weight</th><th>Calculated dose/rate</th><th>Note</th></tr>${printDrugTable()}</table>
+<div class="pgrid"><div class="box wide">Induction and intraoperative drugs/doses/time: ${esc(d.intraDrugs || d.inductionDrugs)}</div>
+<div class="box wide">Infusions: ${esc(d.infusionsUsed)}</div>
+<div class="box wide">Monitors & equipment: ${esc(monitorSummary())}</div>
+<div class="box wide">General anaesthesia / airway management: ${esc(d.airwayManagement)} | Suggested ETT ${ettSize.textContent}, depth ${ettDepth.textContent}</div>
+<div class="box wide">Regional anaesthesia: ${esc(d.regionalDetails)}</div></div>
+${fluidTable}
+<div class="pgrid"><div class="box">Ondansetron time/dose: ${esc(d.ondansetronDose)}</div><div class="box">Reversal time: ${esc(d.reversalTime)}</div>
+<div class="box">Neostigmine: ${esc(d.neostigmineDose)}</div><div class="box">Glycopyrrolate: ${esc(d.glycoReversalDose)}</div>
+<div class="box">Sugammadex: ${esc(d.sugammadexDose)}</div><div class="box">Extubation time: ${esc(d.extubationTime)}</div>
+<div class="box wide">Extubation status: ${esc(d.extubationStatus)}</div></div></div>
+
+<div class="page"><h2>ANAESTHESIA RECORD</h2><h3>4. REVERSAL / EXTUBATION, ANAESTHESIA RECOVERY AND POST OPERATIVE PROGRESS</h3>
+<h3>Reversal, antiemetic and extubation</h3><div class="pgrid">
+<div class="box">Ondansetron time/dose: ${esc(d.ondansetronDose)}</div><div class="box">Reversal time: ${esc(d.reversalTime)}</div>
+<div class="box">Neostigmine: ${esc(d.neostigmineDose)}</div><div class="box">Glycopyrrolate: ${esc(d.glycoReversalDose)}</div>
+<div class="box">Sugammadex: ${esc(d.sugammadexDose)}</div><div class="box">Extubation time: ${esc(d.extubationTime)}</div>
+<div class="box wide">Extubation status / remarks: ${esc(d.extubationStatus)}</div></div>
+
+<h3>Anaesthesia recovery</h3><div class="pgrid">
+<div class="box">Arrival time: ${esc(d.recoveryArrival)}</div><div class="box">Condition: ${esc(d.recoveryCondition)}</div>
+<div class="box">Consciousness: ${esc(d.mental)}</div><div class="box">Response to pain / VAS: ${esc(d.vas)}</div>
+<div class="box">Airway reflexes: ${esc(d.airwayReflexes)}</div><div class="box">NM recovery: ${esc(d.nmRecovery)}</div>
+<div class="box">Vitals: PR ${esc(d.postPR)} BP ${esc(d.postBP)} RR ${esc(d.postRR)} SpO2 ${esc(d.postSpo2)}</div><div class="box">Respiration: ${esc(d.respiration)} | Pattern/TV: ${esc(d.respPattern)}</div></div>
+
+<h3>Post operative progress — notes in recovery room / ward / ICU</h3><div class="pgrid">
+<div class="box">Oxygen: ${esc(d.postOxygen)}</div><div class="box">Position: ${esc(d.postPosition)}</div>
+<div class="box">Airway: ${esc(d.postAirway)}</div><div class="box">Suction: ${esc(d.postSuction)}</div>
+<div class="box">Vital charting: ${esc(d.vitalCharting)}</div><div class="box">I/O charting: ${esc(d.ioCharting)}</div>
+<div class="box">Oxygen therapy: ${esc(d.oxygenTherapy)}</div><div class="box">Investigations required: ${esc(d.postInvestigations)}</div>
+<div class="box">I.V. fluids: ${esc(d.postIVFluids)}</div><div class="box">Analgesics: ${esc(d.postAnalgesics)}</div>
+<div class="box wide">Treatment / special measures: ${esc(d.postInstructions)}</div>
+<div class="box">Modified Aldrete / discharge score: ${esc(d.aldreteScore)}</div><div class="box">Shifted to: ${esc(d.shiftedTo)}</div>
+<div class="box wide">Ward / ICU receiving notes: ${esc(d.postComplications)}</div>
+<div class="box">Pain acceptable: Yes / No</div><div class="box">Agitation: Yes / No</div><div class="box">Nausea & vomiting: Yes / No</div><div class="box">Shivering / hypothermia: Yes / No</div>
+<div class="box wide">Respiratory complications: Airway obstruction / hypoventilation / hypoxemia: Yes / No</div>
+<div class="box wide">Circulatory complications: Hypotension / hypertension / arrhythmias: Yes / No</div>
+<div class="box wide">Name: __________________ Signature: __________________ Date & Time: __________________</div></div></div>`;
+}
+
+function downloadDoc(){buildPrint();let blob=new Blob(['<html><head><meta charset="utf-8"><style>body{font-family:Arial}.page{page-break-after:always}.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px}.box{border:1px solid #000;padding:5px;min-height:24px}.wide{grid-column:1/-1}.miniTable{width:100%;border-collapse:collapse}.miniTable td,.miniTable th{border:1px solid #000;padding:4px}</style></head><body>'+printSheet.innerHTML+'</body></html>'],{type:'application/msword'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(ptName.value||'anaesthesia_record')+'.doc';a.click()}
+document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',()=>{if(['age','ageUnit','sex','height','tbw','ettType'].includes(el.id))calc();else{makePrompt();buildPrint()}}));
+buildVitalTimeInputs();
+apiKey.value=localStorage.openaiKey||'';date.value=new Date().toISOString().slice(0,10);document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',()=>{if(['age','ageUnit','sex','height','tbw','ettType'].includes(el.id))calc();else{makePrompt();buildPrint()}}));syncCR();calc();renderCases();
+</script>
+</body>
+</html>
