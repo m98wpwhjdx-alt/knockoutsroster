@@ -96,10 +96,11 @@
     }
 
     .tabs {
+      width: min(780px, 100%);
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 18px;
-      margin-top: 24px;
+      margin: 0 auto;
     }
 
     .tab {
@@ -205,14 +206,6 @@
 </head>
 <body>
   <main class="shell">
-    <section class="hero" aria-labelledby="page-title">
-      <div class="badge">⚕ Anaesthesia workspace</div>
-      <h1 id="page-title">Clinical Dashboard</h1>
-      <p class="subtitle">
-        Open your roster dashboard or anaesthesia companion from one clean GitHub Pages landing page.
-      </p>
-    </section>
-
     <nav class="tabs" aria-label="Main app links">
       <a class="tab" href="Roster.html" style="--glow: rgba(57,215,255,.24)">
         <div>
@@ -233,9 +226,6 @@
       </a>
     </nav>
 
-    <div class="footer">
-      Keep this <strong>index.html</strong>, <strong>anaesthesia.jpg</strong>, <strong>Roster.html</strong>, and <strong>Anaesthesia companion.html</strong> in the same GitHub repository folder.
-    </div>
   </main>
 </body>
 </html>
