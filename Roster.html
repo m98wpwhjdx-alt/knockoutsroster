@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<title>AICU Team Duty Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+:root{--bg:#070A19;--panel:rgba(255,255,255,.08);--text:#F8FAFC;--muted:#AAB4C8;--line:rgba(255,255,255,.14);--cyan:#39D7FF;--violet:#9B7CFF;--pink:#FF6AAD;--amber:#FFD166;--green:#64F4AC;--danger:#FF6B6B;}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at top left,#1b2b69 0,#070A19 36%,#050713 100%);color:var(--text);font-family:Inter,system-ui,sans-serif;min-height:100vh;overflow-x:hidden} canvas#bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;opacity:.55}.shell{max-width:1440px;margin:0 auto;padding:34px 24px 60px}.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:22px;align-items:stretch}.glass{background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.05));border:1px solid var(--line);box-shadow:0 24px 80px rgba(0,0,0,.35);backdrop-filter:blur(18px);border-radius:32px}.title{padding:34px;position:relative;overflow:hidden}.title:after{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;background:radial-gradient(circle,var(--cyan),transparent 67%);opacity:.25}h1{margin:0 0 10px;font-size:clamp(34px,5vw,64px);line-height:.95;letter-spacing:-.055em}.subtitle{font-size:17px;color:var(--muted);max-width:760px;line-height:1.6}.badge{display:inline-flex;gap:8px;align-items:center;background:rgba(57,215,255,.12);border:1px solid rgba(57,215,255,.3);color:#BDF4FF;padding:8px 12px;border-radius:999px;font-weight:700;font-size:13px;margin-bottom:18px}.summary{padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px}.kpi{border-radius:24px;background:rgba(255,255,255,.08);padding:20px;border:1px solid var(--line)}.kpi span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800}.kpi b{display:block;font-size:31px;margin-top:8px;letter-spacing:-.04em}.toolbar{margin:22px 0;display:grid;grid-template-columns:1fr auto auto;gap:12px}input,select,button{border:1px solid var(--line);background:rgba(255,255,255,.1);color:var(--text);border-radius:18px;padding:14px 16px;font:600 14px Inter;outline:none}select option{color:#101828}button{cursor:pointer;background:linear-gradient(135deg,var(--cyan),var(--violet));border:0;color:#06101c}.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}.panel{padding:22px}.panel h2{margin:0 0 16px;font-size:22px;letter-spacing:-.025em}.chartBox{height:390px;position:relative}.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin-top:22px}.card{position:relative;padding:18px;border-radius:26px;background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.055));border:1px solid var(--line);overflow:hidden;transition:.25s transform,.25s border-color}.card:hover{transform:translateY(-4px);border-color:rgba(57,215,255,.55)}.rank{position:absolute;right:14px;top:14px;font:800 13px JetBrains Mono;color:var(--cyan)}.name{font-weight:800;font-size:20px;letter-spacing:-.03em;margin-bottom:12px}.pillrow{display:flex;flex-wrap:wrap;gap:8px}.pill{font:700 12px JetBrains Mono;padding:7px 9px;border-radius:999px;background:rgba(255,255,255,.09);color:#DDE6FA;border:1px solid rgba(255,255,255,.1)}.meter{height:10px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden;margin:16px 0 8px}.meter>i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--green),var(--cyan),var(--violet))}.note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:12px}table{width:100%;border-collapse:separate;border-spacing:0 10px}th{text-align:left;color:var(--muted);font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:0 12px}td{background:rgba(255,255,255,.075);padding:13px 12px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}td:first-child{border-left:1px solid var(--line);border-radius:16px 0 0 16px;font-weight:800}td:last-child{border-right:1px solid var(--line);border-radius:0 16px 16px 0}.delta.plus{color:var(--danger)}.delta.minus{color:var(--green)}.delta.neutral{color:var(--amber)}.legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-top:10px}.dot{width:10px;height:10px;border-radius:999px;display:inline-block;margin-right:6px}@media(max-width:960px){.hero,.grid,.toolbar{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}}@media print{body{background:#fff;color:#111}canvas#bg,.toolbar,button{display:none}.glass,.card{box-shadow:none;border:1px solid #ddd;background:#fff;color:#111}.subtitle,.note,th{color:#555}}
+
+.ledger-clarification{
+  margin: 8px 0 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(57,215,255,.25);
+  background: rgba(57,215,255,.08);
+  border-radius: 14px;
+  color: #D9F7FF;
+  font-size: 13px;
+  line-height: 1.45;
+}
+#ledger th:nth-child(6), #ledger th:nth-child(7){min-width:170px}
+
+
+.upcoming-roster{margin-top:22px;padding:22px}.roster-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}.roster-head h2{margin:0;font-size:24px;letter-spacing:-.03em}.roster-range{font:800 13px JetBrains Mono;color:#BDF4FF;background:rgba(57,215,255,.1);border:1px solid rgba(57,215,255,.28);padding:9px 12px;border-radius:999px}.roster-grid{display:grid;grid-template-columns:repeat(7,minmax(135px,1fr));gap:12px}.roster-day{border:1px solid var(--line);background:rgba(255,255,255,.075);border-radius:22px;padding:14px;min-height:142px}.roster-day b{display:block;font-size:15px;margin-bottom:4px}.roster-date{font:800 12px JetBrains Mono;color:var(--cyan);margin-bottom:12px}.roster-name{display:block;margin:7px 0;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.09);font-weight:800;font-size:13px}.icu-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}.icu-box{border:1px solid rgba(100,244,172,.24);background:rgba(100,244,172,.08);border-radius:18px;padding:12px}.icu-box span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:800}.icu-box b{font-size:16px}@media(max-width:1024px){.roster-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.icu-strip{grid-template-columns:1fr}}@media(max-width:520px){.roster-grid{grid-template-columns:1fr}.upcoming-roster{padding:14px!important}}
+
+/* ================= RESPONSIVE UPGRADE: PHONE + LAPTOP ================= */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-x: hidden; }
+button, input, select { font: inherit; min-height: 42px; }
+input, select { max-width: 100%; }
+
+.hero, .panel, section, main, .dashboard, .container {
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.table-wrap, .ledger-wrap, .data-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 18px;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+#ledger {
+  min-width: 980px;
+}
+
+#ledger th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+#ledger th:first-child,
+#ledger td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+}
+
+#ledger td:first-child {
+  background: rgba(8, 14, 30, 0.96);
+}
+
+.responsive-note {
+  display: none;
+  margin: 10px 0 0;
+  font-size: 12px;
+  opacity: .82;
+}
+
+@media (min-width: 1025px) {
+  body { font-size: 15px; }
+  .hero { padding-left: 32px; padding-right: 32px; }
+  .panel { padding: 22px; }
+  .cards, .grid, .stats-grid, .kpi-grid { gap: 18px; }
+}
+
+@media (max-width: 1024px) {
+  body { font-size: 14px; }
+
+  .hero { padding: 22px 16px !important; }
+
+  h1 {
+    font-size: clamp(26px, 5vw, 46px) !important;
+    line-height: 1.05 !important;
+  }
+
+  h2 { font-size: clamp(18px, 4vw, 28px) !important; }
+
+  .subtitle {
+    font-size: 14px !important;
+    line-height: 1.45 !important;
+  }
+
+  .panel, section {
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+    padding: 14px !important;
+    border-radius: 18px !important;
+  }
+
+  .kpi-grid, .stats-grid, .cards, .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .toolbar, .controls, .filters {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+  }
+
+  .toolbar input, .toolbar select,
+  .controls input, .controls select,
+  .filters input, .filters select {
+    width: 100% !important;
+  }
+
+  .chart, canvas, svg { max-width: 100% !important; }
+
+  .responsive-note { display: block; }
+}
+
+@media (max-width: 720px) {
+  body { font-size: 13.5px; }
+
+  .hero {
+    min-height: auto !important;
+    padding: 18px 12px !important;
+  }
+
+  .hero::before, .hero::after {
+    opacity: .45;
+    transform: scale(.85);
+  }
+
+  h1 {
+    font-size: clamp(24px, 8vw, 34px) !important;
+    letter-spacing: -0.03em !important;
+  }
+
+  h2 { font-size: 19px !important; }
+
+  .subtitle, p { font-size: 13px !important; }
+
+  .kpi-grid, .stats-grid, .cards, .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .toolbar, .controls, .filters {
+    grid-template-columns: 1fr !important;
+  }
+
+  .kpi, .card, .resident-card {
+    padding: 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .kpi b, .metric b {
+    font-size: clamp(20px, 8vw, 30px) !important;
+  }
+
+  #ledger {
+    min-width: 880px;
+    font-size: 12px;
+  }
+
+  #ledger th, #ledger td {
+    padding: 9px 8px !important;
+    white-space: nowrap;
+  }
+
+  .ledger-clarification {
+    font-size: 12.5px !important;
+    padding: 10px 12px !important;
+  }
+
+  .pill, .badge {
+    display: inline-flex;
+    margin: 3px 4px 3px 0;
+    min-height: 30px;
+    align-items: center;
+  }
+
+  .responsive-note { display: block; }
+}
+
+@media (max-width: 420px) {
+  .panel, section {
+    margin-left: 6px !important;
+    margin-right: 6px !important;
+    padding: 12px !important;
+  }
+
+  #ledger {
+    min-width: 820px;
+    font-size: 11.5px;
+  }
+
+  #ledger th, #ledger td {
+    padding: 8px 7px !important;
+  }
+
+  .kpi b, .metric b { font-size: 24px !important; }
+}
+
+@media print {
+  body { overflow: visible; background: white !important; color: black !important; }
+  .toolbar, .controls, .filters { display: none !important; }
+  .panel, section { break-inside: avoid; box-shadow: none !important; }
+  #ledger { min-width: 100%; font-size: 10px; }
+  #ledger th, #ledger td {
+    position: static !important;
+    color: black !important;
+    background: white !important;
+  }
+}
+</style>
+</head>
+<body>
+<canvas id="bg" style="max-width:100%;height:auto"></canvas>
+<div class="shell">
+<section class="hero"><div class="glass title"><div class="badge">AICU Duty Equity Dashboard · updated till 10 May 2026</div><h1>Team Duties<br/>Workload Map</h1><div class="subtitle">Interactive view of Saturday/Sunday duties, ICU day-night duties, regular duties, till-7 assignments, and duties performed during official leave periods.</div></div><div class="glass summary" id="summary"></div></section><section class="glass upcoming-roster"><div class="roster-head"><div><h2>Upcoming Week Roster</h2><div class="subtitle">Rule: first name = 24-hour duty; second name = till 7 PM. Weekend till-7 counts as 0.5 Saturday/Sunday point.</div></div><div class="roster-range">04 May 2026 – 10 May 2026</div></div><div class="roster-grid"><div class="roster-day"><b>Monday</b><div class="roster-date">04 May 2026</div><span class="roster-name">24h · Shivani</span><span class="roster-name">Till 7 · Sharmila</span></div><div class="roster-day"><b>Tuesday</b><div class="roster-date">05 May 2026</div><span class="roster-name">24h · Sudip</span><span class="roster-name">Till 7 · Abhiram</span></div><div class="roster-day"><b>Wednesday</b><div class="roster-date">06 May 2026</div><span class="roster-name">24h · Abhiram</span><span class="roster-name">Till 7 · Vamshi</span></div><div class="roster-day"><b>Thursday</b><div class="roster-date">07 May 2026</div><span class="roster-name">24h · Manju</span><span class="roster-name">Till 7 · Himanshi</span></div><div class="roster-day"><b>Friday</b><div class="roster-date">08 May 2026</div><span class="roster-name">24h · Aman</span><span class="roster-name">Till 7 · Aswin</span></div><div class="roster-day"><b>Saturday</b><div class="roster-date">09 May 2026</div><span class="roster-name">24h · Himanshi</span><span class="roster-name">Till 7 · Shivani · 0.5</span></div><div class="roster-day"><b>Sunday</b><div class="roster-date">10 May 2026</div><span class="roster-name">24h · Aswin</span><span class="roster-name">Till 7 · Sudip · 0.5</span></div></div><div class="icu-strip"><div class="icu-box"><span>ICU Day</span><b>Aditi</b></div><div class="icu-box"><span>ICU Night</span><b>Devendra</b></div><div class="icu-box"><span>ICU from Saturday</span><b>Vamshi · 09 May 2026</b></div></div></section><section class="glass panel" style="margin-top:22px"><h2>Detailed Duty Ledger — includes duties done during leave period</h2><div class="ledger-clarification">Clarification: “Emergency duty during leave” and “ICU duty during leave” are not leaves taken. They are duties actually performed on leave-period days, recorded separately to ensure fair distribution.</div><div class="table-wrap ledger-wrap"><table id="ledger"><thead><tr><th>Doctor</th><th>Sat</th><th>Sun</th><th>ICU Day</th><th>ICU Night</th><th>Emergency duty during leave</th><th>ICU duty during leave</th><th>Duties</th><th>Till 7</th><th>Total</th><th>Δ vs mean</th></tr></thead><tbody></tbody></table></div><div class="responsive-note">Phone view: swipe horizontally to see the complete detailed duty ledger.</div></section>
+<div class="toolbar"><input id="search" placeholder="Search doctor..."/><select id="sort"><option value="totalLoad">Sort: total workload</option><option value="duties">Sort: duties</option><option value="weekend">Sort: weekend</option><option value="icuTotal">Sort: ICU total</option><option value="till7">Sort: till 7</option><option value="balanceScore">Sort: deviation</option></select><button onclick="window.print()">Print / Save PDF</button></div>
+<section class="grid"><div class="glass panel"><h2>Workload comparison</h2><div class="chartBox"><canvas id="bar" style="max-width:100%;height:auto"></canvas></div><div class="legend"><span><i class="dot" style="background:var(--cyan)"></i>Total load</span><span><i class="dot" style="background:var(--violet)"></i>Team mean</span></div></div><div class="glass panel"><h2>Duty composition radar</h2><div class="chartBox"><canvas id="radar" style="max-width:100%;height:auto"></canvas></div><div class="note">Click a doctor card to highlight that doctor in the radar chart.</div></div></section>
+<div class="cards" id="cards"></div>
+</div>
+<script>
+const BASE_DATA=[{"doctor": "Dr. Sudip", "saturday": 11.0, "sunday": 10.5, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "4 (2oct, 5nov, 25dec, 4mar)", "icuLeaveText": "2(31mar)(1may)", "duties": 12.0, "till7": 8.0, "weekend": 21.5, "icuTotal": 6.0, "leaveEmergency": 4.0, "icuLeave": 2.0, "totalLoad": 53.5, "balanceScore": 6.14, "leavePeriodDutyTotal": 6.0}, {"doctor": "Dr. Devendra", "saturday": 10.0, "sunday": 11.0, "dayICU": 4.0, "nightICU": 2.0, "leaveEmergencyText": "3 (5nov, 15 feb, 4mar)", "icuLeaveText": "2(26 jan 31 mar)", "duties": 14.0, "till7": 6.0, "weekend": 21.0, "icuTotal": 6.0, "leaveEmergency": 3.0, "icuLeave": 2.0, "totalLoad": 52.0, "balanceScore": 4.64, "leavePeriodDutyTotal": 5.0}, {"doctor": "Dr. Abhiram", "saturday": 12.0, "sunday": 12.0, "dayICU": 3.0, "nightICU": 4.0, "leaveEmergencyText": "2 (2oct, 25dec)", "icuLeaveText": "1 (5nov)", "duties": 11.0, "till7": 6.0, "weekend": 24.0, "icuTotal": 7.0, "leaveEmergency": 2.0, "icuLeave": 1.0, "totalLoad": 51.0, "balanceScore": 3.64, "leavePeriodDutyTotal": 3.0}, {"doctor": "Dr. Aditi", "saturday": 9.0, "sunday": 9.0, "dayICU": 3.0, "nightICU": 4.0, "leaveEmergencyText": "2 (2oct, 5nov)", "icuLeaveText": "4(26jan,21mar,3 apr,1 may)", "duties": 8.0, "till7": 5.0, "weekend": 18.0, "icuTotal": 7.0, "leaveEmergency": 2.0, "icuLeave": 4.0, "totalLoad": 44.0, "balanceScore": -3.36, "leavePeriodDutyTotal": 6.0}, {"doctor": "Dr. Manju", "saturday": 10.5, "sunday": 10.5, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "2(21 mar)(1may)", "icuLeaveText": "3 (2oct, 25dec,3 apr)", "duties": 12.0, "till7": 1.0, "weekend": 21.0, "icuTotal": 6.0, "leaveEmergency": 2.0, "icuLeave": 3.0, "totalLoad": 45.0, "balanceScore": -2.36, "leavePeriodDutyTotal": 5.0}, {"doctor": "Dr. Ashwin", "saturday": 10.5, "sunday": 10.5, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "3(20oct, 15feb,31 mar)", "icuLeaveText": "1(2oct)", "duties": 9.0, "till7": 5.0, "weekend": 21.0, "icuTotal": 6.0, "leaveEmergency": 3.0, "icuLeave": 1.0, "totalLoad": 45.0, "balanceScore": -2.36, "leavePeriodDutyTotal": 4.0}, {"doctor": "Dr. Shivani", "saturday": 10.0, "sunday": 11.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "3 (5nov)(31 mar)(1 may)", "icuLeaveText": "2 (20oct, 4mar)", "duties": 10.0, "till7": 4.0, "weekend": 21.0, "icuTotal": 6.0, "leaveEmergency": 3.0, "icuLeave": 2.0, "totalLoad": 46.0, "balanceScore": -1.36, "leavePeriodDutyTotal": 5.0}, {"doctor": "Dr. Aman", "saturday": 12.0, "sunday": 11.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "2 (25dec,21mar)", "icuLeaveText": "2 (5nov, 4mar)", "duties": 13.0, "till7": 3.0, "weekend": 23.0, "icuTotal": 6.0, "leaveEmergency": 2.0, "icuLeave": 2.0, "totalLoad": 49.0, "balanceScore": 1.64, "leavePeriodDutyTotal": 4.0}, {"doctor": "Dr. Sharmila", "saturday": 9.5, "sunday": 10.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "3 (20oct,26jan,3 apr)", "icuLeaveText": "1(21mar)", "duties": 13.0, "till7": 5.0, "weekend": 19.5, "icuTotal": 6.0, "leaveEmergency": 3.0, "icuLeave": 1.0, "totalLoad": 47.5, "balanceScore": 0.14, "leavePeriodDutyTotal": 4.0}, {"doctor": "Dr. Vamshi", "saturday": 9.0, "sunday": 11.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "2 (20oct,26jan)", "icuLeaveText": "1 (25 dec)", "duties": 9.0, "till7": 3.0, "weekend": 20.0, "icuTotal": 6.0, "leaveEmergency": 2.0, "icuLeave": 1.0, "totalLoad": 41.0, "balanceScore": -6.36, "leavePeriodDutyTotal": 3.0}, {"doctor": "Dr. Himanshi", "saturday": 9.0, "sunday": 12.0, "dayICU": 3.0, "nightICU": 3.0, "leaveEmergencyText": "2(25dec,3 apr)", "icuLeaveText": "1 (oct)", "duties": 11.0, "till7": 6.0, "weekend": 21.0, "icuTotal": 6.0, "leaveEmergency": 2.0, "icuLeave": 1.0, "totalLoad": 47.0, "balanceScore": -0.36, "leavePeriodDutyTotal": 3.0}];
+
+/*
+HOW TO UPDATE NEXT WEEK:
+Only edit WEEKLY_ROSTER below. Rules are built in:
+- emergency full = first name = 24-hour duty
+- emergency till7 = second name = till 7 PM only
+- Monday-Friday: first name adds +1 Duties; second name adds +1 Till 7
+- Saturday/Sunday: first name adds +1 Sat/Sun; second name adds +0.5 Sat/Sun
+- ICU Day adds +1 ICU Day; ICU Night adds +1 ICU Night
+- ICU from Saturday is recorded as +1 ICU duty during leave for that doctor
+*/
+const WEEKLY_ROSTER={"range": "04 May 2026 – 10 May 2026", "days": [{"day": "Monday", "date": "04 May 2026", "full": "Shivani", "till7": "Sharmila"}, {"day": "Tuesday", "date": "05 May 2026", "full": "Sudip", "till7": "Abhiram"}, {"day": "Wednesday", "date": "06 May 2026", "full": "Abhiram", "till7": "Vamshi"}, {"day": "Thursday", "date": "07 May 2026", "full": "Manju", "till7": "Himanshi"}, {"day": "Friday", "date": "08 May 2026", "full": "Aman", "till7": "Aswin"}, {"day": "Saturday", "date": "09 May 2026", "full": "Himanshi", "till7": "Shivani"}, {"day": "Sunday", "date": "10 May 2026", "full": "Aswin", "till7": "Sudip"}], "icu": {"day": "Aditi", "night": "Devendra", "fromSaturday": "Vamshi", "fromSaturdayDate": "09 May 2026"}};
+const NAME_ALIASES={'aswin':'Ashwin','ashwin':'Ashwin'};
+function canonicalName(name){const raw=String(name||'').trim();return NAME_ALIASES[raw.toLowerCase()]||raw;}
+function doctorKey(name){return 'Dr. '+canonicalName(name).replace(/^Dr\.\s*/i,'');}
+function addDateText(existing,date){const s=String(existing||'').trim();return s ? `${s}, ${date}` : date;}
+function computeTotal(d){
+  d.weekend=(Number(d.saturday)||0)+(Number(d.sunday)||0);
+  d.icuTotal=(Number(d.dayICU)||0)+(Number(d.nightICU)||0);
+  d.leavePeriodDutyTotal=(Number(d.leaveEmergency)||0)+(Number(d.icuLeave)||0);
+  d.totalLoad=d.weekend+d.icuTotal+(Number(d.leaveEmergency)||0)+(Number(d.icuLeave)||0)+(Number(d.duties)||0)+(Number(d.till7)||0);
+}
+function applyRoster(base, roster){
+  const data=base.map(x=>JSON.parse(JSON.stringify(x)));
+  const byDoctor=Object.fromEntries(data.map(d=>[d.doctor,d]));
+  const get=(name)=>byDoctor[doctorKey(name)];
+  roster.days.forEach(item=>{
+    const full=get(item.full), till=get(item.till7);
+    const isSat=/^sat/i.test(item.day), isSun=/^sun/i.test(item.day);
+    if(full){
+      if(isSat) full.saturday+=1;
+      else if(isSun) full.sunday+=1;
+      else full.duties+=1;
+    }
+    if(till){
+      if(isSat) till.saturday+=0.5;
+      else if(isSun) till.sunday+=0.5;
+      else till.till7+=1;
+    }
+  });
+  if(roster.icu?.day){const d=get(roster.icu.day); if(d) d.dayICU+=1;}
+  if(roster.icu?.night){const d=get(roster.icu.night); if(d) d.nightICU+=1;}
+  if(roster.icu?.fromSaturday){
+    const d=get(roster.icu.fromSaturday);
+    if(d){d.icuLeave+=1; d.icuLeaveText=addDateText(d.icuLeaveText, roster.icu.fromSaturdayDate||'upcoming Saturday');}
+  }
+  data.forEach(computeTotal);
+  const mean=data.reduce((a,d)=>a+d.totalLoad,0)/data.length;
+  data.forEach(d=>d.balanceScore=Number((d.totalLoad-mean).toFixed(2)));
+  return data;
+}
+const DATA=applyRoster(BASE_DATA,WEEKLY_ROSTER);
+const STATS={
+  team:DATA.length,
+  totalDuties:DATA.reduce((a,d)=>a+d.duties,0),
+  totalWeekend:DATA.reduce((a,d)=>a+d.weekend,0),
+  totalICU:DATA.reduce((a,d)=>a+d.icuTotal,0),
+  totalLoad:DATA.reduce((a,d)=>a+d.totalLoad,0),
+  meanLoad:Number((DATA.reduce((a,d)=>a+d.totalLoad,0)/DATA.length).toFixed(2)),
+  maxLoad:DATA.reduce((a,d)=>d.totalLoad>a.totalLoad?d:a,DATA[0]),
+  minLoad:DATA.reduce((a,d)=>d.totalLoad<a.totalLoad?d:a,DATA[0]),
+  totalLeavePeriodDuties:DATA.reduce((a,d)=>a+d.leavePeriodDutyTotal,0)
+}; let active=DATA[0]?.doctor; let current=[...DATA];
+const maxLoad=Math.max(...DATA.map(d=>d.totalLoad)); const mean=STATS.meanLoad;
+function el(s){return document.querySelector(s)} function fmt(n){return Number(n).toLocaleString(undefined,{maximumFractionDigits:1})} function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function summary(){el('#summary').innerHTML=`<div class="kpi"><span>Team members</span><b>${STATS.team}</b></div><div class="kpi"><span>Total worked duties</span><b>${fmt(STATS.totalLoad)}</b></div><div class="kpi"><span>Leave-period duties done</span><b>${fmt(STATS.totalLeavePeriodDuties)}</b></div><div class="kpi"><span>Mean worked load</span><b>${fmt(STATS.meanLoad)}</b></div><div class="kpi"><span>Highest load</span><b>${esc(STATS.maxLoad.doctor?.replace('Dr. ',''))}</b></div>`} function cls(v){return Math.abs(v)<1?'neutral':v>0?'plus':'minus'}
+function renderCards(){el('#cards').innerHTML=current.map((d,i)=>`<article class="card" onclick="active='${esc(d.doctor)}';drawAll()"><div class="rank">#${i+1}</div><div class="name">${esc(d.doctor)}</div><div class="pillrow"><span class="pill">Load ${fmt(d.totalLoad)}</span><span class="pill">Weekend ${fmt(d.weekend)}</span><span class="pill">ICU ${fmt(d.icuTotal)}</span><span class="pill">Till7 ${fmt(d.till7)}</span><span class="pill">Leave-period duty ${fmt(d.leavePeriodDutyTotal)}</span></div><div class="meter"><i style="width:${Math.max(4,d.totalLoad/maxLoad*100)}%"></i></div><div class="note">Emergency duty during leave: ${esc(d.leaveEmergencyText||'—')}<br/>ICU duty during leave: ${esc(d.icuLeaveText||'—')}<br/><b class="delta ${cls(d.balanceScore)}">Δ ${fmt(d.balanceScore)} vs team mean</b></div></article>`).join('')}
+function renderTable(){el('#ledger tbody').innerHTML=current.map(d=>`<tr><td>${esc(d.doctor)}</td><td>${fmt(d.saturday)}</td><td>${fmt(d.sunday)}</td><td>${fmt(d.dayICU)}</td><td>${fmt(d.nightICU)}</td><td>${esc(d.leaveEmergencyText)}</td><td>${esc(d.icuLeaveText)}</td><td>${fmt(d.duties)}</td><td>${fmt(d.till7)}</td><td><b>${fmt(d.totalLoad)}</b></td><td class="delta ${cls(d.balanceScore)}">${fmt(d.balanceScore)}</td></tr>`).join('')}
+function fit(c){const r=c.getBoundingClientRect(),dpr=devicePixelRatio||1;c.width=r.width*dpr;c.height=r.height*dpr;const x=c.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);return [x,r.width,r.height]}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function drawBar(){const c=el('#bar'),[ctx,w,h]=fit(c);ctx.clearRect(0,0,w,h);const pad=38,bw=(w-pad*2)/DATA.length*.64,gap=(w-pad*2)/DATA.length*.36;ctx.font='700 11px Inter';ctx.strokeStyle='rgba(255,255,255,.12)';ctx.fillStyle='rgba(255,255,255,.42)';for(let i=0;i<=4;i++){let y=h-pad-(h-pad*2)*i/4;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(w-pad,y);ctx.stroke();ctx.fillText(fmt(maxLoad*i/4),8,y+4)}let meanY=h-pad-(h-pad*2)*(mean/maxLoad);ctx.strokeStyle='#9B7CFF';ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(pad,meanY);ctx.lineTo(w-pad,meanY);ctx.stroke();ctx.setLineDash([]);DATA.forEach((d,i)=>{let x=pad+i*(bw+gap)+gap/2,y=h-pad-(h-pad*2)*d.totalLoad/maxLoad;let grad=ctx.createLinearGradient(0,y,0,h-pad);grad.addColorStop(0,d.doctor===active?'#FF6AAD':'#39D7FF');grad.addColorStop(1,'#9B7CFF');ctx.fillStyle=grad;roundRect(ctx,x,y,bw,h-pad-y,9);ctx.fill();ctx.save();ctx.translate(x+bw/2,h-10);ctx.rotate(-Math.PI/5);ctx.fillStyle='rgba(255,255,255,.72)';ctx.textAlign='right';ctx.fillText(d.doctor.replace('Dr. ',''),0,0);ctx.restore()})}
+function drawRadar(){const c=el('#radar'),[ctx,w,h]=fit(c);ctx.clearRect(0,0,w,h);const d=DATA.find(x=>x.doctor===active)||DATA[0],labels=['Sat','Sun','Day ICU','Night ICU','Emerg duty leave','ICU duty leave','Duties','Till7'],vals=[d.saturday,d.sunday,d.dayICU,d.nightICU,d.leaveEmergency,d.icuLeave,d.duties,d.till7],maxes=labels.map((_,i)=>Math.max(...DATA.map(x=>[x.saturday,x.sunday,x.dayICU,x.nightICU,x.leaveEmergency,x.icuLeave,x.duties,x.till7][i])));const cx=w/2,cy=h/2+8,R=Math.min(w,h)*.36;ctx.strokeStyle='rgba(255,255,255,.14)';ctx.fillStyle='rgba(255,255,255,.68)';ctx.font='700 12px Inter';for(let ring=1;ring<=4;ring++){ctx.beginPath();for(let i=0;i<labels.length;i++){let a=-Math.PI/2+i*2*Math.PI/labels.length,rr=R*ring/4,x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.stroke()}labels.forEach((lab,i)=>{let a=-Math.PI/2+i*2*Math.PI/labels.length;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);ctx.stroke();ctx.fillText(lab,cx+Math.cos(a)*(R+22)-22,cy+Math.sin(a)*(R+22)+4)});let grad=ctx.createLinearGradient(cx-R,cy-R,cx+R,cy+R);grad.addColorStop(0,'rgba(57,215,255,.52)');grad.addColorStop(1,'rgba(255,106,173,.32)');ctx.beginPath();vals.forEach((v,i)=>{let a=-Math.PI/2+i*2*Math.PI/labels.length,rr=R*(v/(maxes[i]||1)),x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.closePath();ctx.fillStyle=grad;ctx.fill();ctx.strokeStyle='#39D7FF';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#fff';ctx.font='800 18px Inter';ctx.textAlign='center';ctx.fillText(d.doctor,cx,28);ctx.font='700 13px JetBrains Mono';ctx.fillStyle='#AAB4C8';ctx.fillText('Total load '+fmt(d.totalLoad),cx,50)}
+function filterSort(){const q=el('#search').value.toLowerCase(),s=el('#sort').value;current=DATA.filter(d=>d.doctor.toLowerCase().includes(q)).sort((a,b)=>b[s]-a[s]);renderCards();renderTable()}
+function drawBg(){const c=el('#bg'),ctx=c.getContext('2d');let t=0;function size(){c.width=innerWidth*(devicePixelRatio||1);c.height=innerHeight*(devicePixelRatio||1);ctx.setTransform(devicePixelRatio||1,0,0,devicePixelRatio||1,0,0)}size();addEventListener('resize',size);function loop(){t+=.006;ctx.clearRect(0,0,innerWidth,innerHeight);for(let i=0;i<70;i++){let x=(Math.sin(t+i)*.5+.5)*innerWidth,y=(Math.cos(t*.7+i*1.9)*.5+.5)*innerHeight;ctx.fillStyle=`rgba(${i%3?57:255},${i%3?215:106},${i%3?255:173},.10)`;ctx.beginPath();ctx.arc(x,y,1.3+(i%5),0,7);ctx.fill()}requestAnimationFrame(loop)}loop()}
+function drawAll(){drawBar();drawRadar();renderCards();renderTable()} el('#search').addEventListener('input',filterSort);el('#sort').addEventListener('change',filterSort);addEventListener('resize',drawAll);summary();filterSort();drawBg();drawAll();
+</script>
+
+<script>
+(function(){
+  document.querySelectorAll('table').forEach(function(tbl){
+    if(!tbl.parentElement.classList.contains('table-wrap')){
+      var wrap=document.createElement('div');
+      wrap.className='table-wrap';
+      tbl.parentNode.insertBefore(wrap,tbl);
+      wrap.appendChild(tbl);
+    }
+  });
+})();
+</script>
+</body></html>
