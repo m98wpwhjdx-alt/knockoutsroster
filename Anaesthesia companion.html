@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Anaesthesia Monitoring</title>
+<style>
+:root{--bg:#150306;--card:#27090f;--text:#fff4f5;--muted:#d8a4ac;--accent:#ff3048;--accent2:#ff7a59;--line:rgba(255,255,255,.14);--warn:#ffd166;--shadow:0 18px 52px rgba(0,0,0,.45)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 10% 0,rgba(255,48,72,.34),transparent 35%),linear-gradient(180deg,var(--bg),#070203 75%);color:var(--text);padding-bottom:82px}
+header{position:sticky;top:0;z-index:10;background:rgba(21,3,6,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.wrap,.app{max-width:1160px;margin:auto;padding:12px}.hero{display:flex;justify-content:space-between;align-items:center;gap:10px}h1{margin:0;font-size:clamp(22px,7vw,42px);letter-spacing:-.06em}.sub{margin:5px 0 0;color:var(--muted);font-size:13px}.logo{width:48px;height:48px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));font-size:24px}
+.app{display:grid;gap:14px}.card{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}.head{padding:15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}.head h2{margin:0;font-size:18px}.body{padding:15px}
+label{display:block;margin:11px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900}input,select,textarea{width:100%;min-height:46px;border:1px solid var(--line);border-radius:16px;background:rgba(0,0,0,.28);color:var(--text);padding:11px 12px;font-size:16px;outline:none}textarea{min-height:92px;resize:vertical;line-height:1.45}input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(255,48,72,.14)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.wide{grid-column:1/-1}.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}button{border:0;border-radius:17px;min-height:48px;padding:12px 14px;font-weight:950;color:white;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 12px 28px rgba(255,48,72,.24);cursor:pointer}button.secondary{background:rgba(255,255,255,.07);border:1px solid var(--line);box-shadow:none}.badge{font-size:12px;font-weight:950;color:#ffd5d9;background:rgba(255,48,72,.15);border:1px solid rgba(255,48,72,.32);border-radius:999px;padding:7px 10px;white-space:nowrap}
+.segment{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:rgba(0,0,0,.2);padding:8px;border-radius:22px;margin-bottom:12px}
+#doses .segment{grid-template-columns:repeat(5,1fr)}.segment button{min-height:42px;border-radius:16px;background:transparent;box-shadow:none;border:1px solid transparent;color:var(--muted)}.segment button.active{background:rgba(255,48,72,.26);border-color:rgba(255,48,72,.35);color:var(--text)}
+.doseTabs{grid-template-columns:repeat(3,1fr)}
+@media(min-width:760px){.doseTabs{grid-template-columns:repeat(6,1fr)}}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.kpi{padding:14px;border-radius:22px;background:rgba(255,255,255,.065);border:1px solid var(--line)}.kpi .v{font-size:21px;font-weight:1000;letter-spacing:-.04em}.kpi .t{font-size:12px;color:var(--muted);margin-top:4px}.note,.safe{margin-top:12px;padding:12px;border-radius:18px;font-size:13px;line-height:1.45}.note{border:1px solid rgba(255,209,102,.28);background:rgba(255,209,102,.08);color:#ffe3a1}.safe{border:1px solid rgba(255,48,72,.28);background:rgba(255,48,72,.09);color:#ffd2d7}.small{font-size:12px;color:var(--muted);line-height:1.5}
+.formGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.cards{display:grid;gap:10px}.item{border:1px solid var(--line);background:rgba(255,255,255,.065);border-radius:22px;padding:13px}.title{font-size:17px;font-weight:1000}.big{font-size:22px;font-weight:1000;margin:4px 0}.chips{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}.chip{font-size:12px;color:#ffd9dd;background:rgba(255,48,72,.13);border:1px solid rgba(255,48,72,.25);border-radius:999px;padding:6px 9px;font-weight:850}
+.section{display:none}.section.active{display:block}.timeTable{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}.timeTable th,.timeTable td{border:1px solid var(--line);padding:4px;min-width:72px}.timeTable input{min-height:34px;border-radius:8px;padding:6px;font-size:13px}.checkGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.checkGrid label{display:flex;align-items:center;gap:8px;margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--text)}.checkGrid input{width:18px;min-height:18px}
+.simPanel{display:grid;gap:14px}
+.simTop{display:grid;grid-template-columns:1fr;gap:10px}
+.simModeTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:rgba(0,0,0,.2);padding:8px;border-radius:22px}
+.simModeTabs button{min-height:42px;border-radius:16px;background:transparent;box-shadow:none;border:1px solid transparent;color:var(--muted);font-size:12px}
+.simModeTabs button.active{background:linear-gradient(135deg,rgba(255,48,72,.38),rgba(255,122,89,.2));border-color:rgba(255,48,72,.4);color:white}
+.simChart{position:relative;height:430px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(0,0,0,.16));overflow:hidden;padding:8px}
+.simChart svg{width:100%;height:100%;display:block;touch-action:none}
+.simLegend{display:flex;flex-wrap:wrap;gap:8px}
+.simLegend span{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:rgba(255,255,255,.06);font-weight:900}
+.simLegend span.activeMetric{background:rgba(255,48,72,.18);border-color:rgba(255,48,72,.35);color:white}
+.simTimeTabs{display:flex;overflow-x:auto;gap:8px;padding-bottom:4px;scroll-snap-type:x proximity}
+.simTimeTabs button{min-width:78px;min-height:42px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid var(--line);box-shadow:none;color:var(--text);font-size:12px;scroll-snap-align:start}
+.simTimeTabs button.active{background:linear-gradient(135deg,var(--accent),var(--accent2));}
+.simControls{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.rangeRow{display:grid;grid-template-columns:80px 1fr 58px;gap:10px;align-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:18px;padding:10px}
+.rangeRow label{margin:0;font-size:13px;color:var(--text);text-transform:none;letter-spacing:0}
+.rangeRow input{min-height:38px;padding:0;accent-color:var(--accent)}
+.rangeRow b{font-size:14px;text-align:right;color:white}
+.simSummary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.simMini{border:1px solid var(--line);background:rgba(255,255,255,.055);border-radius:16px;padding:9px}
+.simMini b{display:block;font-size:16px}.simMini span{font-size:11px;color:var(--muted)}
+.simActions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.simActions button{min-height:40px;font-size:12px;border-radius:14px}
+.dragHint{font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:700px){.simModeTabs{grid-template-columns:1fr}.simControls{grid-template-columns:1fr}.simChart{height:380px}.rangeRow{grid-template-columns:70px 1fr 52px}.simSummary{grid-template-columns:repeat(2,1fr)}.simActions{grid-template-columns:1fr}}
+
+
+.simFullscreen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:linear-gradient(180deg,#150306,#050102);
+  padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+  display:none;
+  overflow:auto;
+}
+.simFullscreen.active{display:block}
+.simFullscreen .simFullHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.simFullscreen h2{margin:0;font-size:20px;letter-spacing:-.03em}
+.simFullscreen .simChart{height:58vh;min-height:430px;border-radius:26px}
+.simFullscreen .simPanel{max-width:1100px;margin:0 auto}
+.simFullscreen .simControls{grid-template-columns:repeat(2,1fr)}
+.fullscreenBtn{
+  position:absolute;
+  right:12px;
+  top:12px;
+  z-index:2;
+  min-height:36px;
+  border-radius:999px;
+  padding:8px 11px;
+  font-size:12px;
+  box-shadow:none;
+  background:rgba(0,0,0,.42);
+  border:1px solid rgba(255,255,255,.24);
+}
+body.simLocked{overflow:hidden}
+@media(max-width:700px){
+  .simFullscreen{padding:calc(10px + env(safe-area-inset-top)) 8px calc(10px + env(safe-area-inset-bottom))}
+  .simFullscreen .simChart{height:52vh;min-height:360px}
+  .simFullscreen .simControls{grid-template-columns:1fr}
+  .simFullscreen h2{font-size:18px}
+}
+
+.caseList{display:grid;gap:8px;margin-top:12px}.caseBtn{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid var(--line);border-radius:18px;padding:10px;background:rgba(255,255,255,.06)}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(21,3,6,.92);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px}.navin{max-width:720px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.nav a{text-align:center;text-decoration:none;color:var(--muted);font-size:10px;font-weight:950;border:1px solid var(--line);border-radius:15px;padding:8px 3px;background:rgba(255,255,255,.045)}.nav b{display:block;font-size:16px}
+#chatAnswer{white-space:pre-wrap;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:18px;padding:12px;min-height:80px}.printSheet{display:none}
+@media(min-width:930px){.app{grid-template-columns:380px 1fr}.span2{grid-column:1/-1}.kpis{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:700px){.row,.row3,.formGrid{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.card{border-radius:24px}.body,.head{padding:13px}.segment,#doses .segment{grid-template-columns:1fr 1fr}.kpi .v{font-size:20px}}
+.fluidPlan{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.fluidStep{border:1px solid var(--line);border-radius:18px;padding:12px;background:rgba(255,255,255,.055)}.fluidStep b{display:block;font-size:18px}.fluidStep span{display:block;color:var(--muted);font-size:12px;margin-top:4px}@media(max-width:760px){.fluidPlan{grid-template-columns:1fr}}
+@media print{
+ @page{size:A4;margin:8mm}body{background:white;color:black;padding:0;font-family:Arial,Helvetica,sans-serif}.noPrint,header,.nav,.card{display:none!important}.printSheet{display:block;color:black}.page{page-break-after:always;break-after:page}.page:last-child{page-break-after:auto;break-after:auto}.printSheet h1,.printSheet h2{text-align:center;margin:2px 0;font-size:15px;line-height:1.05}.printSheet h3{margin:6px 0 3px;font-size:12px;text-align:left}.formTable{width:100%;border-collapse:collapse;font-size:10.3px;table-layout:fixed}.formTable td,.formTable th{border:1px solid #000;padding:3px;vertical-align:top;min-height:18px}.formTable th{font-weight:bold;background:#ddd;text-align:center}.label{font-weight:bold}.smallPrint{font-size:9px}.checkline{display:inline-block;margin-right:8px}.bigCell{height:48px}.xlCell{height:78px}.xxlCell{height:115px}.miniTable{width:100%;border-collapse:collapse;font-size:9px;table-layout:fixed}.miniTable td,.miniTable th{border:1px solid #000;padding:2px;height:17px;vertical-align:top}.graphGrid{height:240px;border:1px solid #000;background-image:linear-gradient(#999 1px,transparent 1px),linear-gradient(90deg,#999 1px,transparent 1px);background-size:100% 12px,24px 100%;position:relative}.graphGrid:before{content:'BP / PULSE / SpO₂';position:absolute;left:4px;top:4px;font-size:10px;font-weight:bold}.twoCol{display:grid;grid-template-columns:1fr 1fr;gap:0}.threeCol{display:grid;grid-template-columns:1fr 1.4fr 1.2fr;gap:0}.boxPrint{border:1px solid #000;padding:4px;min-height:26px;font-size:10px}.mt4{margin-top:4px}.center{text-align:center}.right{text-align:right}
+}
+
+/* Anaesthesia Monitoring smooth simulator upgrades */
+.monitoringDock{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:4px}
+.monitorTile{border:1px solid var(--line);border-radius:20px;padding:11px;background:rgba(255,255,255,.055);position:relative;overflow:hidden}
+.monitorTile:before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:rgba(255,255,255,.22)}
+.monitorTile.ok:before{background:#42d392}.monitorTile.watch:before{background:#ffd166}.monitorTile.alert:before{background:#ff4d5e}
+.monitorTile b{display:block;font-size:18px;letter-spacing:-.03em}.monitorTile span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.monitorTile em{font-style:normal;font-size:11px;font-weight:900}
+.eventStrip{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.eventPill{border:1px solid var(--line);border-radius:999px;padding:8px 10px;background:rgba(255,255,255,.055);font-size:12px;font-weight:900;white-space:nowrap;color:#ffe5e8}
+.eventPill.active{background:rgba(255,48,72,.20);border-color:rgba(255,48,72,.40)}
+.quickEvents{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.quickEvents button{min-height:38px;border-radius:14px;font-size:12px;background:rgba(255,255,255,.07);border:1px solid var(--line);box-shadow:none}
+.simChart svg .plotLine{filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))}.simChart svg circle{transition:r .12s ease, stroke-width .12s ease}.simChart svg text{user-select:none}
+@media(max-width:760px){.monitoringDock{grid-template-columns:repeat(2,1fr)}.quickEvents{grid-template-columns:repeat(2,1fr)}}
+
+
+/* Separate app blocks: only one main block visible at a time */
+.app{display:block;max-width:1160px;margin:auto;padding:12px}
+.app > .card{display:none;margin:0 auto 14px;max-width:1160px}
+.app > .card.activePage{display:block;animation:pageIn .18s ease-out}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.nav a.activeNav{color:white;background:rgba(255,48,72,.22);border-color:rgba(255,48,72,.45)}
+.patientContext{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.patientContext .kpi{min-height:72px}
+@media(max-width:700px){.patientContext{grid-template-columns:1fr 1fr}.patientContext .kpi:last-child{grid-column:1/-1}}
+
+
+/* Remade record-form block: structured drug rows and print-friendly B/W output */
+.drugGrid{display:grid;gap:10px}.drugRow{display:grid;grid-template-columns:1.35fr .8fr .7fr 1fr;gap:8px;align-items:end;border:1px solid var(--line);background:rgba(255,255,255,.055);border-radius:18px;padding:10px}.drugRow label{margin:0 0 5px}.drugRow select,.drugRow input{min-height:40px;border-radius:12px;font-size:14px}.formHint{font-size:12px;color:var(--muted);line-height:1.45;margin:8px 0 12px}
+@media(max-width:760px){.drugRow{grid-template-columns:1fr 1fr}.drugRow .wideMobile{grid-column:1/-1}}
+@media print{.drugPrintTable{width:100%;border-collapse:collapse;font-size:9.2px;table-layout:fixed}.drugPrintTable th,.drugPrintTable td{border:1px solid #000;padding:2px;height:16px;vertical-align:top}.drugPrintTable th{background:#ddd;font-weight:bold;text-align:center}.mutedPrint{color:#222;font-size:8.5px}.page h1{letter-spacing:.04em}.page h2{letter-spacing:.03em}.printSheet{font-family:Arial,Helvetica,sans-serif}.tick{font-family:Arial,Helvetica,sans-serif}}
+
+</style>
+</head>
+<body>
+<header class="noPrint"><div class="wrap hero"><div><h1>Anaesthesia Monitoring</h1><p class="sub">Smooth intraoperative monitoring, anaesthesia record, dosing, PDF/Word export and GitHub backup.</p></div><div class="logo">✚</div></div></header>
+
+<main class="app noPrint">
+<section class="card" id="case">
+ <div class="head"><h2>Case + Patient</h2><span class="badge">CR 989262 + 9 digits</span></div>
+ <div class="body">
+  <div class="row"><div><label>CR last 9 digits</label><input id="crSuffix" maxlength="9" inputmode="numeric" oninput="syncCR()"></div><div><label>Full CR</label><input id="crFull" maxlength="15" inputmode="numeric" oninput="syncFullCR()"></div></div>
+  <div class="row"><div><label>Name</label><input id="ptName"></div><div><label>Date</label><input id="date" type="date"></div></div>
+  <div class="row3"><div><label>Age</label><input id="age" type="number" value="35" step="0.01"></div><div><label>Unit</label><select id="ageUnit"><option>years</option><option>months</option><option>days</option></select></div><div><label>Sex</label><select id="sex"><option value="male">M</option><option value="female">F</option></select></div></div>
+  <div class="row"><div><label>Height cm</label><input id="height" type="number" value="170"></div><div><label>Weight kg</label><input id="tbw" type="number" value="70"></div></div>
+  <div class="row"><div><label>Ward / Bed</label><input id="wardBed"></div><div><label>Department</label><input id="dept" value="Anaesthesiology and Critical Care"></div></div>
+  <label>Diagnosis</label><textarea id="diagnosis"></textarea>
+  <label>Procedure</label><input id="procedure">
+  <div class="row"><div><label>ASA</label><select id="asa"><option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option><option>E</option></select></div><div><label>Surgery type</label><select id="surgery"><option value="general">General abdominal</option><option value="lap">Laparoscopy</option><option value="neuro">Neurosurgery</option><option value="cardiac">Cardiac/CTVS</option><option value="thoracic">Thoracic/OLV</option><option value="obstetric">Obstetric</option><option value="pediatric">Pediatric</option><option value="trauma">Trauma/Emergency</option><option value="ent">ENT/Shared airway</option><option value="ortho">Orthopedic</option><option value="urology">Urology/TURP</option></select></div></div>
+  <div class="actions"><button onclick="saveCase()">Save Case</button><button class="secondary" onclick="newCase()">New Case</button></div>
+  <div class="caseList" id="caseList"></div>
+ </div>
+</section>
+
+<section class="card" id="form">
+ <div class="head"><h2>Record Sections</h2><span class="badge">as form</span></div>
+ <div class="body">
+  <div class="segment">
+    <button class="active" onclick="showSection('pre',this)">Pre</button>
+    <button onclick="showSection('induction',this)">Induction</button>
+    <button onclick="showSection('intra',this)">Intra-op</button>
+    <button onclick="showSection('post',this)">Post-op</button>
+  </div>
+
+  <div id="pre" class="section active formGrid">
+    <div><label>METS</label><select id="mets"><option>&gt;4</option><option>&lt;4</option></select></div><div><label>Pregnancy</label><select id="preg"><option>NA</option><option>N</option><option>Y</option></select></div>
+    <div><label>BP</label><input id="bp" placeholder="120/80"></div><div><label>PR</label><input id="pr"></div><div><label>SpO₂</label><input id="spo2"></div><div><label>RR</label><input id="rr"></div>
+    <div><label>Temp</label><input id="temp"></div><div><label>BHT</label><input id="bht"></div>
+    <div><label>Tobacco</label><select id="tobacco"><option>N</option><option>Y</option></select></div><div><label>Alcohol/Smoking</label><input id="alcoholSmoking" placeholder="Alcohol N/Y, Smoking N/Y"></div>
+    <div class="wide"><label>Medical history: CNS/CVS/Resp/Endocrine/Renal-GI-Hepatic-MSK-Hemat</label><textarea id="history"></textarea></div>
+    <div class="wide"><label>Drugs / allergies</label><textarea id="drugsAllergy"></textarea></div>
+    <div class="wide"><label>Previous surgeries / anaesthesia complications</label><textarea id="prevAnaes"></textarea></div>
+    <div><label>Mouth opening</label><select id="mouth"><option>Adequate</option><option>Inadequate</option></select></div><div><label>Neck movement</label><select id="neck"><option>Adequate</option><option>Inadequate</option></select></div>
+    <div><label>MPG</label><select id="mpg"><option>1</option><option>2</option><option>3</option><option>4</option></select></div><div><label>TM distance / Teeth</label><input id="tmdTeeth"></div>
+    <div class="wide"><label>Investigations</label><textarea id="invest" placeholder="Hb/Hct, TLC, DLC, Plt, PT/aPTT, INR, Sugar, BUN/Cr, Na/K, LFT, CXR, ECG"></textarea></div>
+    <div class="wide"><label>Preanaesthesia instructions / PAC remarks</label><textarea id="instructions"></textarea></div>
+  </div>
+
+  <div id="induction" class="section formGrid">
+    <div><label>Technique</label><select id="technique"><option>GA</option><option>Regional</option><option>IV Sedation</option><option>LA/MAC</option></select></div><div><label>NPO status</label><select id="npo"><option>Y</option><option>N</option></select></div>
+    <div><label>Premed: Glycopyrrolate</label><input id="premedGlyco"></div><div><label>Midazolam</label><input id="premedMida"></div><div><label>Dexamethasone</label><input id="premedDexa"></div><div><label>Lignocaine</label><input id="premedLigno"></div>
+    <div><label>ETT type</label><select id="ettType"><option value="cuffed">Cuffed</option><option value="uncuffed">Uncuffed</option></select></div><div><label>Induction type</label><select id="inductionType"><option>Elective induction</option><option>Rapid sequence induction</option><option>Inhalational induction</option></select></div>
+    <div><label>Airway device</label><select id="airwayDevice"><option>Intubation</option><option>LMA</option><option>Mask</option></select></div><div><label>CL grade / Attempts</label><input id="clAttempts"></div>
+    <div class="wide"><label>Induction drugs with time/dose</label><div class="formHint">Choose common induction agents, opioids and NMBDs. “Other” keeps a free-text entry for local drugs.</div><div class="drugGrid" id="inductionDrugGrid">
+      <div class="drugRow"><div class="wideMobile"><label>Induction agent</label><select id="indAgent1"><option>Propofol</option><option>Etomidate</option><option>Ketamine</option><option>Thiopentone/Thiopental</option><option>Sevoflurane inhalational induction</option><option>Midazolam</option><option>Other</option></select></div><div><label>Dose</label><input id="indAgentDose1" placeholder="mg / mg/kg"></div><div><label>Time</label><input id="indAgentTime1" type="time"></div><div><label>Other/details</label><input id="indAgentOther1"></div></div>
+      <div class="drugRow"><div class="wideMobile"><label>Opioid</label><select id="indOpioid1"><option>Fentanyl</option><option>Morphine</option><option>Remifentanil</option><option>Sufentanil</option><option>Alfentanil</option><option>Buprenorphine</option><option>Other</option></select></div><div><label>Dose</label><input id="indOpioidDose1" placeholder="mcg / mg"></div><div><label>Time</label><input id="indOpioidTime1" type="time"></div><div><label>Other/details</label><input id="indOpioidOther1"></div></div>
+      <div class="drugRow"><div class="wideMobile"><label>NMBD / relaxant</label><select id="indNMBD1"><option>Succinylcholine/Suxamethonium</option><option>Rocuronium</option><option>Vecuronium</option><option>Atracurium</option><option>Cisatracurium</option><option>Pancuronium</option><option>Other</option></select></div><div><label>Dose</label><input id="indNMBDDose1" placeholder="mg"></div><div><label>Time</label><input id="indNMBDTime1" type="time"></div><div><label>Other/details</label><input id="indNMBDOther1"></div></div>
+    </div><textarea id="inductionDrugs" placeholder="Extra induction notes: preoxygenation, difficult airway aids, additional doses..."></textarea></div>
+    <div class="wide">
+      <label>Monitors & equipment</label>
+      <div class="checkGrid">
+        <label><input type="checkbox" id="monECG"> ECG</label><label><input type="checkbox" id="monSpO2"> Pulse oximeter</label>
+        <label><input type="checkbox" id="monNIBP"> NIBP</label><label><input type="checkbox" id="monArt"> Intraarterial BP</label>
+        <label><input type="checkbox" id="monEtCO2"> End tidal CO₂</label><label><input type="checkbox" id="monGas"> Gas analyzer</label>
+        <label><input type="checkbox" id="monTemp"> Temperature</label><label><input type="checkbox" id="monNMT"> NMT</label>
+        <label><input type="checkbox" id="monBIS"> BIS</label><label><input type="checkbox" id="monHumidifier"> Airway humidifier</label>
+        <label><input type="checkbox" id="monWarmer"> Fluid warmer</label><label><input type="checkbox" id="monNG"> NG/OG tube</label>
+        <label><input type="checkbox" id="monFoley"> Foley catheter</label><label><input type="checkbox" id="monCVC"> CVC</label>
+      </div>
+      <textarea id="monitors" placeholder="Additional monitors/equipment, IV lines, arterial line site, CVC site..."></textarea>
+    </div>
+    <div class="wide"><label>Regional anaesthesia / block details</label><textarea id="regionalDetails"></textarea></div>
+  </div>
+
+  <div id="intra" class="section formGrid">
+    <div><label>OT no.</label><input id="otNo"></div><div><label>Anaesthetist(s)</label><input id="anaesthetists"></div>
+    <div><label>Surgeon(s)</label><input id="surgeons"></div><div><label>Body position</label><select id="position"><option>Supine</option><option>Prone</option><option>Lateral decubitus - Right</option><option>Lateral decubitus - Left</option><option>Lithotomy</option><option>Sitting</option><option>Knee elbow</option><option>Trendelenburg</option><option>Reverse Trendelenburg</option><option>Beach chair</option><option>Other</option></select></div>
+    <div><label>Enter OT</label><input id="enterOT" type="time"></div><div><label>Leave OT</label><input id="leaveOT" type="time"></div>
+    <div><label>Incision time</label><input id="incisionTime" type="time"></div><div><label>Handover time</label><input id="handoverTime" type="time"></div>
+    <div class="wide"><label>OT entry baseline vitals (separate from pre-op exam)</label></div>
+    <div><label>BP on OT entry</label><input id="otBP" placeholder="120/80"></div><div><label>PR on OT entry</label><input id="otPR"></div>
+    <div><label>SpO₂ on OT entry</label><input id="otSpo2"></div><div><label>Temp on OT entry</label><input id="otTemp"></div>
+    <div><label>RR on OT entry</label><input id="otRR"></div><div><label>FiO₂ / O₂ on entry</label><input id="otFiO2"></div>
+    <div class="wide"><label>OT-day pre-op remarks (separate from PAC instructions)</label><textarea id="preopRemarksOT" placeholder="Confirm fasting, consent, last drugs, BP/PR review, IV access, OT-day notes..."></textarea></div>
+
+    <div class="wide">
+      <label>Intraoperative monitoring chart</label>
+      <div class="note">Simple printable grid. Enter values at each time point. This replaces the simulator for easier phone use and better black-and-white printing.</div>
+      <div style="overflow-x:auto;margin-top:8px">
+        <table class="timeTable">
+          <thead><tr><th>Parameter</th><th>30 min</th><th>60 min</th><th>90 min</th><th>2 hr</th><th>2.5 hr</th><th>3 hr</th><th>3.5 hr</th><th>4 hr</th><th>4.5 hr</th><th>5 hr</th><th>5.5 hr</th></tr></thead>
+          <tbody id="vitalTimeRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="wide"><label>Intraop drugs with time/dose</label><div class="drugGrid" id="intraDrugGrid">
+      <div class="drugRow"><div class="wideMobile"><label>Volatile / maintenance</label><select id="intraMaint1"><option>Oxygen</option><option>Air</option><option>N₂O</option><option>Sevoflurane</option><option>Isoflurane</option><option>Desflurane</option><option>Propofol infusion</option><option>Other</option></select></div><div><label>Dose/rate</label><input id="intraMaintDose1" placeholder="L/min, %, mL/hr"></div><div><label>Time</label><input id="intraMaintTime1" type="time"></div><div><label>Other/details</label><input id="intraMaintOther1"></div></div>
+      <div class="drugRow"><div class="wideMobile"><label>Opioid / analgesic</label><select id="intraOpioid1"><option>Fentanyl</option><option>Morphine</option><option>Remifentanil infusion</option><option>Paracetamol</option><option>Diclofenac</option><option>Tramadol</option><option>Other</option></select></div><div><label>Dose/rate</label><input id="intraOpioidDose1"></div><div><label>Time</label><input id="intraOpioidTime1" type="time"></div><div><label>Other/details</label><input id="intraOpioidOther1"></div></div>
+      <div class="drugRow"><div class="wideMobile"><label>NMBD top-up</label><select id="intraNMBD1"><option>Atracurium</option><option>Vecuronium</option><option>Rocuronium</option><option>Cisatracurium</option><option>Succinylcholine/Suxamethonium</option><option>Pancuronium</option><option>Other</option></select></div><div><label>Dose</label><input id="intraNMBDDose1" placeholder="mg"></div><div><label>Time</label><input id="intraNMBDTime1" type="time"></div><div><label>Other/details</label><input id="intraNMBDOther1"></div></div>
+      <div class="drugRow"><div class="wideMobile"><label>Antibiotic / other</label><select id="intraOtherDrug1"><option>Cefazolin</option><option>Ceftriaxone</option><option>Piperacillin-tazobactam</option><option>Metronidazole</option><option>Dexamethasone</option><option>Ondansetron</option><option>Tranexamic acid</option><option>Other</option></select></div><div><label>Dose</label><input id="intraOtherDose1"></div><div><label>Time</label><input id="intraOtherTime1" type="time"></div><div><label>Other/details</label><input id="intraOtherOther1"></div></div>
+    </div><textarea id="intraDrugs" placeholder="Extra intraoperative drugs/remarks: vasoactive boluses, antibiotic timing, analgesics, rescue drugs..."></textarea></div>
+    <div class="wide"><label>Infusions used with rate</label><textarea id="infusionsUsed" placeholder="Noradrenaline __ mcg/kg/min, Vasopressin __ units/min, Propofol __ mcg/kg/min..."></textarea></div>
+
+    <div class="wide"><label>Airway management</label><textarea id="airwayManagement" placeholder="Oral/Nasal, PVC/Armoured/DLT/RAE, cuffed/uncuffed, tube size, secured depth, blade, attempts, breath sounds, CL grade, difficulty, ventilation mode"></textarea></div>
+    <div class="wide"><label>Regional anaesthesia / block (intra-op)</label><textarea id="regionalDetailsIntra" placeholder="Spinal/Epidural/Block, block type, position, site, technique, needle, attempts, drug/dose, catheter, onset, complications"></textarea></div>
+
+    <div><label>Fluid infused - crystalloid/colloid</label><input id="fluidInfused"></div><div><label>Blood/products infused</label><input id="bloodInfused"></div>
+    <div><label>Blood suction loss</label><input id="bloodSuction"></div><div><label>Drapes/swab loss</label><input id="drapeLoss"></div>
+    <div><label>Urine output</label><input id="urineOutput"></div><div><label>GIT/bowel/NG loss</label><input id="gitLoss"></div>
+    <div><label>Insensible loss</label><input id="insensibleLoss"></div><div><label>Total estimated loss</label><input id="totalLoss"></div>
+    <div class="wide"><label>Ventilation settings</label><textarea id="ventSettings" placeholder="TV, RR, PEEP, Ppeak, FiO2"></textarea></div>
+    <div class="wide"><label>Intraoperative remarks</label><textarea id="intraRemarks"></textarea></div>
+  </div>
+
+  <div id="post" class="section formGrid">
+    <div class="wide"><label>Reversal / antiemetic / extubation — comes before recovery arrival</label></div>
+    <div><label>Ondansetron time/dose</label><input id="ondansetronDose"></div><div><label>Reversal time</label><input id="reversalTime" type="time"></div>
+    <div><label>Neostigmine dose</label><input id="neostigmineDose"></div><div><label>Glycopyrrolate dose</label><input id="glycoReversalDose"></div>
+    <div><label>Sugammadex dose</label><input id="sugammadexDose" placeholder="e.g. 2 mg/kg / 4 mg/kg / total mg"></div><div><label>Extubation time</label><input id="extubationTime" type="time"></div>
+    <div class="wide"><label>Extubation status / remarks</label><input id="extubationStatus" placeholder="Smooth / coughing / desaturation / delayed / shifted intubated"></div>
+
+    <div class="wide"><label>Anaesthesia recovery</label></div>
+    <div><label>Recovery arrival time</label><input id="recoveryArrival" type="time"></div><div><label>Condition</label><input id="recoveryCondition"></div>
+    <div><label>Consciousness</label><select id="mental"><option>Fully awake</option><option>Sleepy</option><option>Drowsy</option></select></div><div><label>Response to pain / VAS</label><input id="vas"></div>
+    <div><label>Airway reflexes</label><select id="airwayReflexes"><option>Adequate</option><option>Inadequate</option></select></div><div><label>NM recovery</label><input id="nmRecovery" placeholder="Head lift / tongue protrusion / power grade"></div>
+    <div><label>Recovery PR</label><input id="postPR"></div><div><label>Recovery BP</label><input id="postBP"></div><div><label>Recovery RR</label><input id="postRR"></div><div><label>Recovery SpO₂</label><input id="postSpo2"></div>
+    <div><label>Respiration</label><input id="respiration" placeholder="Spontaneous / Assisted / IPPV"></div><div><label>Pattern / TV</label><input id="respPattern" placeholder="Regular / irregular; adequate/satisfactory/inadequate"></div>
+
+    <div class="wide"><label>Post operative progress — page 4 style final section</label></div>
+    <div><label>Oxygen</label><input id="postOxygen" placeholder="Not required / nasal mask / T-piece / CPAP / vent"></div><div><label>Position</label><input id="postPosition"></div>
+    <div><label>Airway</label><input id="postAirway" placeholder="Patent / oral airway / ETT / tracheostomy"></div><div><label>Suction instruction</label><input id="postSuction" placeholder="Every __; oropharyngeal / endotracheal"></div>
+    <div><label>Vital charting frequency</label><input id="vitalCharting" placeholder="Every __ for __"></div><div><label>I/O charting frequency</label><input id="ioCharting" placeholder="Every __ for __"></div>
+    <div><label>Oxygen therapy</label><input id="oxygenTherapy"></div><div><label>Investigations required</label><input id="postInvestigations"></div>
+    <div><label>I.V. fluids</label><input id="postIVFluids"></div><div><label>Analgesics</label><input id="postAnalgesics" placeholder="Systemic / epidural / block"></div>
+    <div class="wide"><label>Treatment / special measures</label><textarea id="postInstructions" placeholder="Treatment, special measures, nursing instructions"></textarea></div>
+    <div><label>Discharge score / Modified Aldrete</label><input id="aldreteScore"></div><div><label>Shifted to</label><input id="shiftedTo"></div>
+    <div class="wide"><label>Ward / ICU receiving notes and complications</label><textarea id="postComplications" placeholder="Pain, agitation, nausea/vomiting, shivering, hypothermia, respiratory complications, circulatory complications"></textarea></div>
+  </div>
+
+  <div class="actions">
+    <button onclick="autoFill()">Auto-fill calculated fields</button>
+    <button class="secondary" onclick="buildPrint();window.print()">Generate PDF</button>
+    <button onclick="downloadDoc()">Download Word .doc</button>
+    <button class="secondary" onclick="saveCase()">Save</button>
+  </div>
+ </div>
+</section>
+
+<section class="card" id="calc">
+ <div class="head"><h2>Airway + Weights</h2><span class="badge" id="ageBadge">Adult</span></div>
+ <div class="body">
+  <div class="patientContext">
+    <div class="kpi"><div class="v" id="ettWeightCtx">—</div><div class="t">Patient weight</div></div>
+    <div class="kpi"><div class="v" id="ettAgeCtx">—</div><div class="t">Patient age</div></div>
+    <div class="kpi"><div class="v" id="ettClassCtx">—</div><div class="t">Adult / pediatric / neonate</div></div>
+  </div>
+  <div class="kpis"><div class="kpi"><div class="v" id="ettSize">—</div><div class="t">ETT ID</div></div><div class="kpi"><div class="v" id="ettDepth">—</div><div class="t">Depth</div></div><div class="kpi"><div class="v" id="ibwOut">—</div><div class="t">IBW</div></div><div class="kpi"><div class="v" id="lbwOut">—</div><div class="t">LBW</div></div></div>
+  <div class="note" id="airwayNote"></div>
+ </div>
+</section>
+
+<section class="card" id="doses">
+ <div class="head"><h2>Drug + Infusion Doses</h2><span class="badge" id="doseCount"></span></div>
+ <div class="body">
+  <div class="patientContext">
+    <div class="kpi"><div class="v" id="doseWeightCtx">—</div><div class="t">Patient weight</div></div>
+    <div class="kpi"><div class="v" id="doseAgeCtx">—</div><div class="t">Patient age</div></div>
+    <div class="kpi"><div class="v" id="doseClassCtx">—</div><div class="t">Adult / pediatric / neonate</div></div>
+  </div>
+  <div class="segment doseTabs"><button class="active" onclick="setDoseCat('all',this)">All</button><button onclick="setDoseCat('bolus',this)">Bolus</button><button onclick="setDoseCat('infusion',this)">Infusion</button><button onclick="setDoseCat('vasoactive',this)">Vasoactive</button><button onclick="setDoseCat('relaxant',this)">Relaxants</button><button onclick="setDoseCat('converter',this)">mL/hr Converter</button></div>
+  <div id="doseListPanel">
+  <input id="doseSearch" placeholder="Search propofol, remifentanil, atracurium, norad..." oninput="renderDoses()">
+  <details class="item" style="margin:10px 0">
+    <summary class="title" style="cursor:pointer">➕ Add new drug</summary>
+    <div class="row3" style="margin-top:10px">
+      <div><label>Drug name</label><input id="newDrugName" placeholder="e.g. Esmolol infusion"></div>
+      <div><label>Category</label><select id="newDrugCat"><option value="bolus">Bolus</option><option value="infusion">Infusion</option><option value="vasoactive">Vasoactive</option></select></div>
+      <div><label>Relaxant?</label><select id="newDrugRelaxant"><option value="no">No</option><option value="yes">Yes</option></select></div>
+    </div>
+    <div class="row3">
+      <div><label>Low dose</label><input id="newDrugDoseLow" type="number" step="0.001" placeholder="0.05"></div>
+      <div><label>High dose</label><input id="newDrugDoseHigh" type="number" step="0.001" placeholder="0.2"></div>
+      <div><label>Dose unit</label><select id="newDrugUnit"><option>mg/kg</option><option>mcg/kg</option><option>mcg/kg/min</option><option>mcg/kg/h</option><option>mg/kg/h</option><option>units/min</option></select></div>
+    </div>
+    <div class="row3">
+      <div><label>Weight scalar</label><select id="newDrugWt"><option>TBW</option><option>IBW</option><option>LBW</option><option>fixed</option></select></div>
+      <div><label>Market/final concentration</label><input id="newDrugConc" placeholder="e.g. 10 mg/mL vial"></div>
+      <div><label>Converter conc value</label><input id="newDrugConcValue" type="number" step="0.001" placeholder="10"></div>
+    </div>
+    <div class="row">
+      <div><label>Conc unit</label><select id="newDrugConcUnit"><option>mg/mL</option><option>mcg/mL</option><option>units/mL</option></select></div>
+      <div><label>Clinical note</label><input id="newDrugNote" placeholder="Titrate by response / institutional protocol"></div>
+    </div>
+    <div class="actions"><button type="button" onclick="addCustomDrug()">Add drug</button><button type="button" class="secondary" onclick="clearCustomDrugForm()">Clear</button></div>
+    <div class="small">Custom drugs are saved in this browser localStorage and included in search, tabs and the mL/hr converter.</div>
+  </details>
+  <div class="cards" id="doseCards"></div>
+  </div>
+  <div class="item" id="infusionConverterPanel" style="margin:10px 0;display:none">
+    <div class="title">Infusion mL/hr converter</div>
+    <div class="row3">
+      <div><label>Drug</label><select id="infDrug" onchange="loadInfusionDrug()"></select></div>
+      <div><label>Target dose/rate</label><input id="infTarget" type="number" step="0.001" value="0.05" oninput="calcInfusionRate()"></div>
+      <div><label>Weight kg</label><input id="infWeight" type="number" step="0.1" oninput="calcInfusionRate()"></div>
+    </div>
+    <div class="row3">
+      <div><label>Unit</label><select id="infUnit" onchange="calcInfusionRate()"><option>mcg/kg/min</option><option>mcg/kg/h</option><option>mg/kg/h</option><option>mg/kg/min</option><option>units/min</option><option>units/kg/h</option></select></div>
+      <div><label>Final concentration</label><input id="infConc" type="number" step="0.001" oninput="calcInfusionRate()"></div>
+      <div><label>Conc unit</label><select id="infConcUnit" onchange="calcInfusionRate()"><option>mg/mL</option><option>mcg/mL</option><option>units/mL</option></select></div>
+    </div>
+    <div class="kpis" style="margin-top:10px"><div class="kpi"><div class="v" id="infMlHr">—</div><div class="t">Pump rate mL/hr</div></div><div class="kpi"><div class="v" id="infMgHr">—</div><div class="t">Drug delivery / hr</div></div></div>
+    <div class="small" id="infCalcNote">Choose an infusion drug. Dilution/final concentration can be edited to match local preparation.</div>
+  </div>
+  <div class="safe">Dose suggestions are reference starting ranges only. Use institutional protocols and consultant judgement.</div>
+ </div>
+</section>
+
+
+<section class="card span2" id="githubSync">
+ <div class="head"><h2>GitHub Auto-Sync</h2><span class="badge" id="syncBadge">Local only</span></div>
+ <div class="body">
+  <div class="safe">Use a <b>private GitHub repo</b>. This may contain patient identifiers. Create a fine-grained GitHub token limited to this one repo with <b>Contents: Read and write</b>. The token is stored only in this phone/browser localStorage.</div>
+  <div class="row">
+    <div><label>GitHub username / owner</label><input id="ghOwner" placeholder="your-github-username"></div>
+    <div><label>Repository</label><input id="ghRepo" placeholder="anaesthesia-records"></div>
+  </div>
+  <div class="row">
+    <div><label>Branch</label><input id="ghBranch" value="main"></div>
+    <div><label>Backup file path</label><input id="ghPath" value="records/reddose-records.json"></div>
+  </div>
+  <label>Fine-grained GitHub token</label>
+  <input id="ghToken" type="password" placeholder="github_pat_..." autocomplete="off">
+  <div class="row">
+    <div><label>Auto-sync</label><select id="ghAuto"><option value="off">Off</option><option value="on">On - sync after edits</option></select></div>
+    <div><label>Sync status</label><input id="ghStatus" readonly value="Not configured"></div>
+  </div>
+  <div class="actions">
+    <button onclick="saveGitHubSettings()">Save GitHub settings</button>
+    <button class="secondary" onclick="clearGitHubSettings()">Clear settings</button>
+    <button onclick="syncNow()">Sync now</button>
+    <button class="secondary" onclick="downloadLocalBackup()">Download local backup</button>
+  </div>
+  <div class="note">Phone workflow: open this HTML in Chrome → fill records → Save Case → Sync now or Auto-sync. Keep a local backup download also.</div>
+ </div>
+</section>
+
+<section class="card span2" id="fluidCalc">
+ <div class="head"><h2>MABL + Perioperative Fluids</h2><span class="badge">Holliday-Segar</span></div>
+ <div class="body">
+  <div class="patientContext">
+    <div class="kpi"><div class="v" id="fluidWeightCtx">—</div><div class="t">Patient weight</div></div>
+    <div class="kpi"><div class="v" id="fluidAgeCtx">—</div><div class="t">Patient age</div></div>
+    <div class="kpi"><div class="v" id="fluidClassCtx">—</div><div class="t">Adult / pediatric / neonate</div></div>
+  </div>
+  <div class="row3">
+    <div><label>Initial Hb g/dL</label><input id="initialHb" type="number" step="0.1" value="12" oninput="calcFluid()"></div>
+    <div><label>Lowest acceptable Hb g/dL</label><input id="targetHb" type="number" step="0.1" value="9" oninput="calcFluid()"></div>
+    <div><label>EBV category</label><select id="ebvCategory" onchange="calcFluid()"><option value="auto">Auto by age/sex</option><option value="adultMale">Adult male 75 mL/kg</option><option value="adultFemale">Adult female 65 mL/kg</option><option value="infant">Infant 80 mL/kg</option><option value="termNeonate">Term neonate 85 mL/kg</option><option value="pretermNeonate">Preterm neonate 95 mL/kg</option><option value="custom">Custom</option></select></div>
+  </div>
+  <div class="row3">
+    <div><label>Custom EBV mL/kg</label><input id="customEbv" type="number" step="1" placeholder="e.g. 70" oninput="calcFluid()"></div>
+    <div><label>Fasting hours</label><input id="fastingHours" type="number" step="0.5" value="6" oninput="calcFluid()"></div>
+    <div><label>Surgical loss category</label><select id="thirdSpace" onchange="calcFluid()"><option value="0">Minimal / no third-space</option><option value="2">Mild tissue trauma 2 mL/kg/hr</option><option value="4">Moderate trauma 4 mL/kg/hr</option><option value="6">Major trauma 6 mL/kg/hr</option></select></div>
+  </div>
+  <div class="row3">
+    <div><label>Planned duration hours</label><input id="caseDurationHr" type="number" step="0.5" value="2" oninput="calcFluid()"></div>
+    <div><label>Measured blood loss mL</label><input id="measuredBloodLoss" type="number" step="10" placeholder="optional" oninput="calcFluid()"></div>
+    <div><label>Replacement fluid</label><select id="replacementFluid" onchange="calcFluid()"><option value="crystalloid3">Crystalloid 3:1 for blood loss</option><option value="colloid1">Colloid 1:1 for blood loss</option><option value="blood">Blood/product as indicated</option></select></div>
+  </div>
+  <div class="kpis" style="margin-top:10px">
+    <div class="kpi"><div class="v" id="ebvOut">—</div><div class="t">Estimated blood volume</div></div>
+    <div class="kpi"><div class="v" id="mablOut">—</div><div class="t">MABL before transfusion trigger</div></div>
+    <div class="kpi"><div class="v" id="maintOut">—</div><div class="t">Maintenance by Holliday-Segar</div></div>
+    <div class="kpi"><div class="v" id="deficitOut">—</div><div class="t">Fasting deficit</div></div>
+  </div>
+  <div class="item" style="margin-top:10px">
+    <div class="title">Suggested intraoperative crystalloid plan</div>
+    <div class="fluidPlan" id="fluidPlan"></div>
+    <div class="small" id="fluidNote" style="margin-top:8px"></div>
+  </div>
+  <div class="safe">MABL and fluid values are planning aids. Adjust for hemodynamics, urine output, blood gas/lactate, cardiac/renal disease, bleeding, glucose need in neonates/infants, and institutional protocol.</div>
+ </div>
+</section>
+</main>
+
+<section id="printSheet" class="printSheet"></section>
+
+
+<nav class="nav noPrint"><div class="navin"><a href="#case" onclick="showPage('case');return false"><b>➕</b>Case</a><a href="#form" onclick="showPage('form');return false"><b>📋</b>Form</a><a href="#calc" onclick="showPage('calc');return false"><b>🫁</b>ETT</a><a href="#doses" onclick="showPage('doses');return false"><b>💉</b>Dose</a><a href="#fluidCalc" onclick="showPage('fluidCalc');return false"><b>💧</b>Fluid</a></div></nav>
+
+<script>
+let state={section:'pre',doseCat:'all',weights:{},caseId:null};
+let customDoseList=[];
+const doseList=[
+{name:'Propofol induction',cat:'bolus',dose:[1,2.5],unit:'mg/kg',wt:'LBW',conc:'10 mg/mL emulsion',concValue:10,concUnit:'mg/mL',note:'Reduce in elderly/shock.'},
+{name:'Propofol maintenance infusion',cat:'infusion',dose:[50,150],unit:'mcg/kg/min',wt:'LBW',conc:'10 mg/mL emulsion',concValue:10,concUnit:'mg/mL',note:'TIVA/sedation range; avoid prolonged high dose in children.'},
+{name:'Etomidate',cat:'bolus',dose:[0.2,0.3],unit:'mg/kg',wt:'TBW',conc:'2 mg/mL commonly supplied',concValue:2,concUnit:'mg/mL',note:'Hemodynamic stability.'},
+{name:'Ketamine induction',cat:'bolus',dose:[1,2],unit:'mg/kg IV',wt:'IBW',conc:'50 mg/mL commonly supplied',concValue:50,concUnit:'mg/mL',note:'Shock/bronchospasm context.'},
+{name:'Ketamine analgesic infusion',cat:'infusion',dose:[0.05,0.3],unit:'mg/kg/h',wt:'IBW',conc:'50 mg/mL vial; dilute for infusion',concValue:1,concUnit:'mg/mL',note:'Analgesic adjunct; psychomimetic/sympathetic effects.'},
+{name:'Dexmedetomidine infusion',cat:'infusion',dose:[0.2,0.7],unit:'mcg/kg/h',wt:'IBW',conc:'100 mcg/mL concentrate commonly supplied; dilute for infusion',concValue:4,concUnit:'mcg/mL',note:'Bradycardia/hypotension; loading often avoided.'},
+{name:'Midazolam infusion',cat:'infusion',dose:[0.02,0.1],unit:'mg/kg/h',wt:'IBW',conc:'1 mg/mL or 5 mg/mL amp/vial; dilute as needed',concValue:1,concUnit:'mg/mL',note:'Sedation; accumulation possible.'},
+{name:'Fentanyl bolus',cat:'bolus',dose:[1,2],unit:'mcg/kg',wt:'LBW',conc:'50 mcg/mL ampoule',concValue:50,concUnit:'mcg/mL',note:'Titrate to ventilation/hemodynamics.'},
+{name:'Fentanyl infusion',cat:'infusion',dose:[0.5,2],unit:'mcg/kg/h',wt:'LBW',conc:'50 mcg/mL ampoule; dilute for infusion',concValue:10,concUnit:'mcg/mL',note:'Postop/ICU style infusion; titrate.'},
+{name:'Remifentanil infusion',cat:'infusion',dose:[0.05,0.2],unit:'mcg/kg/min',wt:'IBW',conc:'1 mg or 2 mg vial; reconstitute/dilute, e.g. 20–50 mcg/mL',concValue:50,concUnit:'mcg/mL',note:'Rapid offset; pump essential.'},
+{name:'Suxamethonium',cat:'bolus',dose:[1,1.5],unit:'mg/kg',wt:'TBW',tags:['relaxant'],conc:'50 mg/mL commonly supplied',concValue:50,concUnit:'mg/mL',note:'Depolarising relaxant; contraindications apply.'},
+{name:'Rocuronium',cat:'bolus',dose:[0.6,1.2],unit:'mg/kg',wt:'IBW',tags:['relaxant'],conc:'10 mg/mL vial',concValue:10,concUnit:'mg/mL',note:'Nondepolarising relaxant; TOF/reversal plan.'},
+{name:'Atracurium bolus',cat:'bolus',dose:[0.4,0.5],unit:'mg/kg',wt:'IBW',tags:['relaxant'],conc:'10 mg/mL vial/ampoule',concValue:10,concUnit:'mg/mL',note:'Hofmann elimination; histamine-related effects possible.'},
+{name:'Atracurium infusion',cat:'infusion',dose:[5,10],unit:'mcg/kg/min',wt:'IBW',tags:['relaxant'],conc:'10 mg/mL vial/ampoule; dilute for infusion',concValue:10,concUnit:'mg/mL',note:'Use NMT monitoring.'},
+{name:'Vecuronium bolus',cat:'bolus',dose:[0.08,0.1],unit:'mg/kg',wt:'IBW',tags:['relaxant'],conc:'10 mg lyophilized vial; concentration after dilution varies',concValue:1,concUnit:'mg/mL',note:'Nondepolarising relaxant; hepatic/renal prolongation possible.'},
+{name:'Vecuronium infusion',cat:'infusion',dose:[0.8,1.2],unit:'mcg/kg/min',wt:'IBW',tags:['relaxant'],conc:'10 mg lyophilized vial; dilute for infusion',concValue:1,concUnit:'mg/mL',note:'Use NMT monitoring; accumulation possible.'},
+{name:'Cisatracurium infusion',cat:'infusion',dose:[1,3],unit:'mcg/kg/min',wt:'IBW',tags:['relaxant'],conc:'2 mg/mL commonly supplied',concValue:2,concUnit:'mg/mL',note:'Use NMT monitoring.'},
+{name:'Noradrenaline infusion',cat:'vasoactive',dose:[0.02,0.5],unit:'mcg/kg/min',wt:'TBW',conc:'1 mg/mL base equivalent; often 4 mg/4 mL ampoule',concValue:16,concUnit:'mcg/mL',note:'Central line preferred for prolonged/high dose. Converter default assumes 4 mg in 250 mL = 16 mcg/mL.'},
+{name:'Adrenaline infusion',cat:'vasoactive',dose:[0.02,0.3],unit:'mcg/kg/min',wt:'TBW',conc:'1 mg/mL ampoule commonly supplied; dilute for infusion',concValue:4,concUnit:'mcg/mL',note:'Shock/anaphylaxis/cardiac support; titrate. Converter default assumes 1 mg in 250 mL = 4 mcg/mL.'},
+{name:'Dopamine infusion',cat:'vasoactive',dose:[2,10],unit:'mcg/kg/min',wt:'TBW',conc:'40 mg/mL ampoule/vial commonly supplied; dilute for infusion',concValue:1600,concUnit:'mcg/mL',note:'Arrhythmia risk; local practice varies. Default assumes 400 mg in 250 mL.'},
+{name:'Dobutamine infusion',cat:'vasoactive',dose:[2,10],unit:'mcg/kg/min',wt:'TBW',conc:'12.5 mg/mL commonly supplied; dilute for infusion',concValue:1000,concUnit:'mcg/mL',note:'Inotrope; monitor tachyarrhythmia. Default assumes 250 mg in 250 mL.'},
+{name:'Nitroglycerin infusion',cat:'vasoactive',dose:[0.5,5],unit:'mcg/kg/min',wt:'TBW',conc:'5 mg/mL ampoule commonly supplied; dilute for infusion',concValue:200,concUnit:'mcg/mL',note:'Titrate for BP/ischemia. Default assumes 50 mg in 250 mL.'},
+{name:'Phenylephrine infusion',cat:'vasoactive',dose:[0.2,1],unit:'mcg/kg/min',wt:'IBW',conc:'10 mg/mL vial commonly supplied; dilute for infusion',concValue:100,concUnit:'mcg/mL',note:'Vasoconstrictor; reflex bradycardia.'},
+{name:'Vasopressin infusion',cat:'vasoactive',dose:[0.01,0.04],unit:'units/min',wt:'fixed',conc:'20 units/mL vial/ampoule; dilute for infusion',concValue:1,concUnit:'units/mL',note:'Non-weight based infusion; common vasodilatory shock adjunct. Converter default assumes 20 units in 20 mL = 1 unit/mL.'},
+{name:'Ondansetron',cat:'bolus',dose:[0.1,0.15],unit:'mg/kg',wt:'TBW',cap:4,capUnit:'mg',conc:'2 mg/mL commonly supplied',concValue:2,concUnit:'mg/mL',note:'PONV.'},
+{name:'Lignocaine max plain',cat:'bolus',dose:[4.5,4.5],unit:'mg/kg',wt:'IBW',cap:300,capUnit:'mg',conc:'1% = 10 mg/mL; 2% = 20 mg/mL',concValue:10,concUnit:'mg/mL',note:'LAST precautions.'},
+{name:'Bupivacaine max',cat:'bolus',dose:[2,2.5],unit:'mg/kg',wt:'IBW',cap:175,capUnit:'mg',conc:'0.5% = 5 mg/mL commonly supplied',concValue:5,concUnit:'mg/mL',note:'Cardiotoxicity risk.'},
+{name:'Thiopentone induction',cat:'bolus',dose:[3,5],unit:'mg/kg',wt:'TBW',conc:'Powder vial commonly reconstituted to 25 mg/mL',concValue:25,concUnit:'mg/mL',note:'Alternative IV induction agent; reduce in frailty/shock.'},
+{name:'Cisatracurium bolus',cat:'bolus',dose:[0.1,0.2],unit:'mg/kg',wt:'IBW',tags:['relaxant'],conc:'2 mg/mL or 5 mg/mL amp/vial',concValue:2,concUnit:'mg/mL',note:'Organ-independent Hofmann elimination; titrate with NMT.'},
+];
+
+function loadCustomDrugs(){
+  try{customDoseList=JSON.parse(localStorage.getItem('customDoseList')||'[]')||[];}catch(e){customDoseList=[];}
+}
+function saveCustomDrugs(){localStorage.setItem('customDoseList',JSON.stringify(customDoseList));}
+function allDoses(){return doseList.concat(customDoseList);}
+function clearCustomDrugForm(){['newDrugName','newDrugDoseLow','newDrugDoseHigh','newDrugConc','newDrugConcValue','newDrugNote'].forEach(id=>{const el=document.getElementById(id); if(el)el.value='';});}
+function addCustomDrug(){
+  const name=(newDrugName.value||'').trim();
+  const lo=parseFloat(newDrugDoseLow.value), hi=parseFloat(newDrugDoseHigh.value||newDrugDoseLow.value);
+  if(!name || Number.isNaN(lo) || Number.isNaN(hi)){alert('Enter drug name and dose range.');return;}
+  const d={name,cat:newDrugCat.value,dose:[lo,hi],unit:newDrugUnit.value,wt:newDrugWt.value,conc:(newDrugConc.value||'custom/local preparation'),concValue:parseFloat(newDrugConcValue.value)||0,concUnit:newDrugConcUnit.value,note:(newDrugNote.value||'Custom drug. Verify dose and concentration before use.'),custom:true};
+  if(newDrugRelaxant.value==='yes')d.tags=['relaxant'];
+  customDoseList.push(d); saveCustomDrugs(); clearCustomDrugForm(); renderDoses(); alert('Drug added.');
+}
+function deleteCustomDrug(i){
+  if(i<0 || i>=customDoseList.length)return;
+  if(confirm('Delete this custom drug?')){customDoseList.splice(i,1);saveCustomDrugs();renderDoses();}
+}
+function ids(){return Array.from(document.querySelectorAll('input,select,textarea')).filter(e=>e.id).map(e=>e.id)}
+function ageYears(){let a=+age.value||0,u=ageUnit.value;return u==='months'?a/12:u==='days'?a/365:a}
+function r(x,d=1){return Number.isFinite(x)?+x.toFixed(d):0}
+function ibw(s,h){let inch=h/2.54,over=Math.max(0,inch-60);return(s==='male'?50:45.5)+2.3*over}
+function lbw(s,h,w){let bmi=w/(h/100)**2;return s==='male'?(9270*w)/(6680+216*bmi):(9270*w)/(8780+244*bmi)}
+function wt(type){let w=state.weights;if(type==='fixed')return null;return type==='TBW'?w.tbw:type==='IBW'?w.ibw:type==='LBW'?w.lbw:w.abw}
+function doseText(d){if(d.wt==='fixed'){return d.dose[0]===d.dose[1]?`${d.dose[0]} ${d.unit}`:`${d.dose[0]}–${d.dose[1]} ${d.unit}`}let w=wt(d.wt),lo=d.dose[0]*w,hi=d.dose[1]*w,unit=d.unit.split('/')[0];if(d.cap){lo=Math.min(lo,d.cap);hi=Math.min(hi,d.cap)}let dec=unit.includes('mcg')?0:1;return Math.abs(lo-hi)<.001?`${r(lo,dec)} ${unit}`:`${r(lo,dec)}–${r(hi,dec)} ${unit}`}
+function patientClass(){
+  const a=ageYears();
+  if(a <= 28/365) return 'Neonate';
+  if(a < 12) return 'Pediatric';
+  return 'Adult';
+}
+function patientAgeLabel(){
+  const a=+age.value||0;
+  const u=ageUnit.value||'years';
+  return `${r(a, u==='years'?1:0)} ${u}`;
+}
+function updatePatientContext(){
+  const w=+tbw.value||0;
+  const wtText=w?`${r(w,1)} kg`:'—';
+  const ageText=patientAgeLabel();
+  const cls=patientClass();
+  [['ettWeightCtx',wtText],['ettAgeCtx',ageText],['ettClassCtx',cls],['doseWeightCtx',wtText],['doseAgeCtx',ageText],['doseClassCtx',cls],['fluidWeightCtx',wtText],['fluidAgeCtx',ageText],['fluidClassCtx',cls]].forEach(([id,val])=>{const el=document.getElementById(id); if(el)el.textContent=val;});
+  if(typeof ageBadge!=='undefined' && ageBadge)ageBadge.textContent=cls;
+}
+function calc(){let w=+tbw.value||0,h=+height.value||0,raw=ibw(sex.value,h),ex=Math.max(0,w-raw),l=Math.min(w,lbw(sex.value,h,w));state.weights={tbw:w,ibw:Math.min(w,raw),ibwRaw:raw,abw:ex>0?raw+.4*ex:w,lbw:l};ibwOut.textContent=r(raw)+' kg';lbwOut.textContent=r(l)+' kg';updatePatientContext();airway();renderDoses();calcInfusionRate();calcFluid();makePrompt();buildPrint()}
+function airway(){let a=ageYears(),w=state.weights.tbw,s=sex.value,c=ettType.value==='cuffed',sz,dep,n='';if(a<.08){sz='3.0';dep=r(w+6);n='Neonate depth ≈ weight+6 cm.'}else if(a<1){sz=c?'3.0–3.5':'3.5–4.0';dep='10–11'}else if(a<12){let z=(a/4)+(c?3.5:4);z=Math.round(z*2)/2;sz=z.toFixed(1);dep=r(3*z);n='Child: cuffed age/4+3.5; uncuffed age/4+4; depth ≈3×ID.'}else{sz=s==='male'?'7.5–8.5':'7.0–8.0';dep=s==='male'?'21–23':'20–22'}ettSize.textContent=sz+' mm';ettDepth.textContent=dep+' cm';airwayNote.textContent=(n||'Adult typical range.')+' Confirm by waveform capnography, bilateral chest movement, auscultation and cuff pressure.'}
+function doseMatchesCat(d){return state.doseCat==='all'||d.cat===state.doseCat||(state.doseCat==='relaxant'&&Array.isArray(d.tags)&&d.tags.includes('relaxant'))}
+function renderDoses(){
+  const isConverter=state.doseCat==='converter';
+  const listPanel=document.getElementById('doseListPanel');
+  const converterPanel=document.getElementById('infusionConverterPanel');
+  if(listPanel)listPanel.style.display=isConverter?'none':'block';
+  if(converterPanel)converterPanel.style.display=isConverter?'block':'none';
+  if(isConverter){doseCount.textContent='converter';renderInfusionDrugOptions();calcInfusionRate();return;}
+  let q=doseSearch.value.toLowerCase(),arr=allDoses().filter(d=>doseMatchesCat(d)&&(!q||d.name.toLowerCase().includes(q)||d.note.toLowerCase().includes(q)||(d.conc||'').toLowerCase().includes(q)));
+  doseCount.textContent=arr.length+' items';
+  doseCards.innerHTML=arr.map(d=>{const ci=customDoseList.indexOf(d);return `<div class="item"><div class="title">${esc(d.name)}</div><div class="big">${esc(doseText(d))}</div><div class="chips"><span class="chip">${esc(d.cat)}</span>${d.tags?.includes('relaxant')?'<span class="chip">relaxant</span>':''}${d.custom?'<span class="chip">custom</span>':''}<span class="chip">${esc(d.wt)}</span><span class="chip">${d.dose[0]===d.dose[1]?esc(d.dose[0]):esc(d.dose[0])+'–'+esc(d.dose[1])} ${esc(d.unit)}</span></div><div class="small"><b>Market concentration:</b> ${esc(d.conc||'check local brand')}<br>${esc(d.note)}${d.cap?` Cap ${esc(d.cap)} ${esc(d.capUnit)}.`:''}</div>${d.custom?`<div class="actions"><button type="button" class="secondary" onclick="deleteCustomDrug(${ci})">Delete custom drug</button></div>`:''}</div>`}).join('');
+  renderInfusionDrugOptions();
+}
+function setDoseCat(c,e){state.doseCat=c;document.querySelectorAll('#doses .segment button').forEach(b=>b.classList.remove('active'));e.classList.add('active');renderDoses()}
+function renderInfusionDrugOptions(){
+  const sel=document.getElementById('infDrug'); if(!sel)return;
+  const old=sel.value;
+  const infs=allDoses().filter(d=>['infusion','vasoactive'].includes(d.cat)||d.tags?.includes('relaxant')).filter(d=>d.cat!=='bolus'||d.tags?.includes('relaxant'));
+  sel.innerHTML=infs.map((d,i)=>`<option value="${d.name}">${d.name}</option>`).join('');
+  if(old && infs.some(d=>d.name===old))sel.value=old;
+  else if(infs.length)sel.value=infs[0].name;
+  if(!sel.dataset.ready){sel.dataset.ready='1';loadInfusionDrug();}
+}
+function concentrationToBase(conc,unit){
+  conc=parseFloat(conc)||0;
+  if(unit==='mg/mL')return {mgMl:conc,mcgMl:conc*1000,unitsMl:null};
+  if(unit==='mcg/mL')return {mgMl:conc/1000,mcgMl:conc,unitsMl:null};
+  return {mgMl:null,mcgMl:null,unitsMl:conc};
+}
+function loadInfusionDrug(){
+  const d=allDoses().find(x=>x.name===infDrug.value); if(!d)return;
+  infTarget.value=d.dose[0]; infUnit.value=d.unit;
+  if(![...infUnit.options].some(o=>o.value===infUnit.value))infUnit.value='mcg/kg/min';
+  infConc.value=d.concValue||''; infConcUnit.value=d.concUnit||'mg/mL'; infWeight.value=(+tbw.value||70);
+  infCalcNote.textContent=`Market concentration/prep note: ${d.conc||'check local brand'}. Edit final concentration after dilution.`;
+  calcInfusionRate();
+}
+function calcInfusionRate(){
+  const target=parseFloat(infTarget?.value)||0, kg=parseFloat(infWeight?.value)||(+tbw.value||0), unit=infUnit?.value, conc=concentrationToBase(infConc?.value,infConcUnit?.value);
+  let mlhr=NaN, perHrText='—';
+  if(unit==='mcg/kg/min'){let mcgHr=target*kg*60; mlhr=mcgHr/(conc.mcgMl||0); perHrText=`${r(mcgHr/1000,3)} mg/hr`;}
+  else if(unit==='mcg/kg/h'){let mcgHr=target*kg; mlhr=mcgHr/(conc.mcgMl||0); perHrText=`${r(mcgHr/1000,3)} mg/hr`;}
+  else if(unit==='mg/kg/h'){let mgHr=target*kg; mlhr=mgHr/(conc.mgMl||0); perHrText=`${r(mgHr,2)} mg/hr`;}
+  else if(unit==='mg/kg/min'){let mgHr=target*kg*60; mlhr=mgHr/(conc.mgMl||0); perHrText=`${r(mgHr,2)} mg/hr`;}
+  else if(unit==='units/min'){let uHr=target*60; mlhr=uHr/(conc.unitsMl||0); perHrText=`${r(uHr,2)} units/hr`;}
+  else if(unit==='units/kg/h'){let uHr=target*kg; mlhr=uHr/(conc.unitsMl||0); perHrText=`${r(uHr,2)} units/hr`;}
+  infMlHr.textContent=Number.isFinite(mlhr)?`${r(mlhr,2)} mL/hr`:'—'; infMgHr.textContent=perHrText;
+}
+
+function showPage(pageId){
+  const pages=['case','form','calc','doses','fluidCalc'];
+  if(!pages.includes(pageId)) pageId='case';
+  document.querySelectorAll('.app > .card').forEach(sec=>sec.classList.remove('activePage'));
+  const target=document.getElementById(pageId); if(target)target.classList.add('activePage');
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('activeNav',a.getAttribute('href')==='#'+pageId));
+  try{history.replaceState(null,'','#'+pageId);}catch(e){/* sandboxed iframe blocks history API */}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showSection(id,e){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('#form .segment button').forEach(b=>b.classList.remove('active'));e.classList.add('active')}
+
+
+const simTimes=[
+  {key:'30',label:'30 min'},{key:'60',label:'60 min'},{key:'90',label:'90 min'},{key:'120',label:'2 hr'},
+  {key:'150',label:'2.5 hr'},{key:'180',label:'3 hr'},{key:'210',label:'3.5 hr'},{key:'240',label:'4 hr'},
+  {key:'270',label:'4.5 hr'},{key:'300',label:'5 hr'},{key:'330',label:'5.5 hr'}
+];
+const simParams=[
+  {id:'sbp',label:'SBP',row:'BP systolic',min:40,max:260,base:120},
+  {id:'map',label:'MAP',row:'BP mean',min:30,max:180,base:80},
+  {id:'dbp',label:'DBP',row:'BP diastolic',min:20,max:160,base:70},
+  {id:'hr',label:'HR',row:'Pulse',min:20,max:220,base:80},
+  {id:'spo2',label:'SpO₂',row:'SpO2',min:50,max:100,base:99},
+  {id:'etco2',label:'EtCO₂',row:'EtCO2',min:10,max:80,base:35},
+  {id:'temp',label:'Temp',row:'TEMP',min:32,max:42,base:36.8,step:0.1},
+  {id:'tv',label:'TV',row:'Tidal volume ml',min:100,max:900,base:450},
+  {id:'rrv',label:'RR',row:'Resp rate',min:4,max:40,base:12},
+  {id:'ppeak',label:'Ppeak',row:'Peak pressure',min:5,max:60,base:18},
+  {id:'peep',label:'PEEP',row:'PEEP',min:0,max:20,base:5},
+  {id:'urine',label:'Urine',row:'Urine ml',min:0,max:1000,base:0}
+];
+let simActiveTime='30';
+let simMode='hemo';
+let simData={};
+let simDrag=null;
+// Removed simulator UI - the SVG/cockpit/fullscreen markup never existed in this build.
+// These are no-op stubs so the table-based intra-op chart still works.
+function drawSimChart(){}
+function drawFullSimChart(){}
+function renderSimSummary(){}
+function renderFullSimSummary(){}
+function buildSimControls(){}
+function buildFullSimControls(){}
+function renderMonitoringDock(){}
+function renderEventStrip(){}
+function queueSimRender(){}
+function statusClass(){return 'ok';}
+function addSimEvent(){}
+function ensureMonitoringUpgradeUI(){}
+function openSimFullscreen(){}
+function closeSimFullscreen(){}
+const simEvents=[];
+const simGroups={
+  hemo:['sbp','map','dbp','hr'],
+  resp:['spo2','etco2','temp'],
+  vent:['tv','rrv','ppeak','peep','urine']
+};
+
+function initSimData(){
+  simTimes.forEach(t=>{
+    if(!simData[t.key]) simData[t.key]={};
+    simParams.forEach(p=>{
+      if(simData[t.key][p.id]===undefined) simData[t.key][p.id]=p.base;
+    });
+    if(simData[t.key].ecg===undefined) simData[t.key].ecg='Y';
+    if(simData[t.key].cvp===undefined) simData[t.key].cvp='';
+  });
+}
+function buildVitalTimeInputs(){
+  initSimData();
+  const manualRows=['ECG','CVP'];
+  const labels=[...manualRows,...simParams.map(p=>p.row)];
+  let el=document.getElementById('vitalTimeRows'); if(!el)return;
+  el.innerHTML=labels.map((p,ri)=>`<tr><th>${p}</th>${simTimes.map(t=>`<td><input id="vt_${ri}_${t.key}" placeholder=""></td>`).join('')}</tr>`).join('');
+  let st=document.getElementById('simTimeTabs'); if(st)st.innerHTML=simTimes.map(t=>`<button type="button" id="tab_${t.key}" onclick="setSimTime('${t.key}')">${t.label}</button>`).join('');
+  let ft=document.getElementById('fsimTimeTabs'); if(ft)ft.innerHTML=simTimes.map(t=>`<button type="button" id="ftab_${t.key}" onclick="setSimTime('${t.key}')">${t.label}</button>`).join('');
+  buildSimControls(); buildFullSimControls();
+  syncSimToTable();
+  drawSimChart(); drawFullSimChart();
+  renderSimSummary(); renderFullSimSummary();
+  setSimTime(simActiveTime);
+}
+function currentSimParams(){
+  const ids=simGroups[simMode]||simGroups.hemo;
+  return simParams.filter(p=>ids.includes(p.id));
+}
+function setSimMode(mode){
+  simMode=mode;
+  document.querySelectorAll('.simModeTabs button').forEach(b=>b.classList.remove('active'));
+  let m=document.getElementById('mode_'+mode); if(m)m.classList.add('active');
+  let fm=document.getElementById('fmode_'+mode); if(fm)fm.classList.add('active');
+  buildSimControls(); buildFullSimControls(); drawSimChart(); drawFullSimChart(); renderSimSummary(); renderFullSimSummary();
+}
+// (Original simulator panel functions removed - markup did not exist; no-op stubs above keep callers working.)
+function applySimPreset(type){
+  initSimData();
+  simTimes.forEach((t,i)=>{
+    if(type==='stable'){
+      Object.assign(simData[t.key],{sbp:120,map:80,dbp:70,hr:80,spo2:99,etco2:35,temp:36.8,tv:450,rrv:12,ppeak:18,peep:5,urine:i*20});
+    }else if(type==='hypotension'){
+      Object.assign(simData[t.key],{sbp:90,map:60,dbp:50,hr:105,spo2:98,etco2:34,temp:36.5,tv:450,rrv:12,ppeak:18,peep:5,urine:i*10});
+    }else if(type==='desaturation'){
+      Object.assign(simData[t.key],{sbp:115,map:75,dbp:65,hr:95,spo2:i<3?98:90,etco2:i<3?36:45,temp:36.6,tv:420,rrv:14,ppeak:i<3?20:30,peep:i<3?5:8,urine:i*15});
+    }
+  });
+  syncSimToTable(); buildSimControls(); buildFullSimControls(); drawSimChart(); drawFullSimChart(); renderSimSummary(); renderFullSimSummary(); buildPrint(); makePrompt(); scheduleGitHubAutoSync();
+}
+function setSimTime(key){
+  simActiveTime=key;
+  document.querySelectorAll('#simTimeTabs button,#fsimTimeTabs button').forEach(b=>b.classList.remove('active'));
+  let tab=document.getElementById('tab_'+key); if(tab)tab.classList.add('active');
+  let ftab=document.getElementById('ftab_'+key); if(ftab)ftab.classList.add('active');
+  buildSimControls(); buildFullSimControls();
+  drawSimChart(); drawFullSimChart();
+  renderSimSummary(); renderFullSimSummary();
+}
+function setSimValue(pid,value){
+  initSimData();
+  const p=simParams.find(x=>x.id===pid);
+  const v=(p&&p.step===0.1)?Number(parseFloat(value).toFixed(1)):parseInt(value);
+  simData[simActiveTime][pid]=v;
+  let out=document.getElementById('simv_'+pid); if(out)out.textContent=v;
+  let fsl=document.getElementById('fsim_'+pid), fout=document.getElementById('fsimv_'+pid);
+  if(fsl)fsl.value=v; if(fout)fout.textContent=v;
+  syncSimToTable();
+  drawSimChart(); drawFullSimChart();
+  renderSimSummary(); renderFullSimSummary();
+  buildPrint(); makePrompt(); scheduleGitHubAutoSync();
+}
+function syncSimToTable(){
+  initSimData();
+  const labels=['ECG','CVP',...simParams.map(p=>p.row)];
+  simTimes.forEach(t=>{
+    labels.forEach((label,ri)=>{
+      let input=document.getElementById(`vt_${ri}_${t.key}`);
+      if(!input)return;
+      if(label==='ECG') input.value=simData[t.key].ecg||'Y';
+      else if(label==='CVP') input.value=simData[t.key].cvp||'';
+      else{
+        let p=simParams.find(x=>x.row===label);
+        input.value=simData[t.key][p.id] ?? '';
+      }
+    });
+  });
+}
+function updateSimFromTable(){
+  const labels=['ECG','CVP',...simParams.map(p=>p.row)];
+  simTimes.forEach(t=>{
+    labels.forEach((label,ri)=>{
+      let input=document.getElementById(`vt_${ri}_${t.key}`);
+      if(!input)return;
+      if(label==='ECG') simData[t.key].ecg=input.value;
+      else if(label==='CVP') simData[t.key].cvp=input.value;
+      else{
+        let p=simParams.find(x=>x.row===label);
+        let v=parseFloat(input.value);
+        if(!Number.isNaN(v)) simData[t.key][p.id]=v;
+      }
+    });
+  });
+}
+function yFor(v,p,h=260){ return 20 + (1 - ((v-p.min)/(p.max-p.min))) * h; }
+function valueForY(y,p,h=260){
+  const raw=p.min + (1 - ((y-20)/h))*(p.max-p.min);
+  const clamped=Math.max(p.min,Math.min(p.max,raw));
+  return p.step===0.1?Number(clamped.toFixed(1)):Math.round(clamped);
+}
+function simDataForSave(){updateSimFromTable();return JSON.parse(JSON.stringify(simData));}
+
+function checkedLabel(id,label){let el=document.getElementById(id);return el&&el.checked?label:null}
+function monitorSummary(){
+ const arr=[checkedLabel('monECG','ECG'),checkedLabel('monSpO2','Pulse oximeter'),checkedLabel('monNIBP','NIBP'),checkedLabel('monArt','Intraarterial BP'),checkedLabel('monEtCO2','EtCO2'),checkedLabel('monGas','Gas analyzer'),checkedLabel('monTemp','Temperature'),checkedLabel('monNMT','NMT'),checkedLabel('monBIS','BIS'),checkedLabel('monHumidifier','Airway humidifier'),checkedLabel('monWarmer','Fluid warmer'),checkedLabel('monNG','NG/OG tube'),checkedLabel('monFoley','Foley catheter'),checkedLabel('monCVC','CVC')].filter(Boolean);
+ if(monitors.value)arr.push(monitors.value);
+ return arr.join(', ');
+}
+function vitalTimeData(){
+ updateSimFromTable();
+ const labels=['ECG','CVP',...simParams.map(p=>p.row)];
+ const times=simTimes.map(t=>t.key);
+ return {labels,times,values:labels.map((_,ri)=>times.map(t=>document.getElementById(`vt_${ri}_${t}`)?.value||''))};
+}
+
+function syncCR(){crSuffix.value=crSuffix.value.replace(/\D/g,'').slice(0,9);crFull.value=crSuffix.value?'989262'+crSuffix.value:''}
+function syncFullCR(){crFull.value=crFull.value.replace(/\D/g,'').slice(0,15);if(crFull.value.startsWith('989262'))crSuffix.value=crFull.value.slice(6)}
+function data(){
+  const skip=new Set(['ghOwner','ghRepo','ghBranch','ghPath','ghToken','ghAuto','ghStatus']);
+  let o={};
+  ids().forEach(id=>{
+    if(skip.has(id))return;
+    let el=document.getElementById(id);
+    o[id]=el.type==='checkbox'?el.checked:el.value;
+  });
+  o._simData=simDataForSave();
+  return o;
+}
+function loadData(o){Object.keys(o).forEach(k=>{let el=document.getElementById(k);if(el){if(el.type==='checkbox')el.checked=!!o[k];else el.value=o[k]}});if(o._simData){simData=o._simData;syncSimToTable();drawSimChart();}calc()}
+function saveCase(){let cases=JSON.parse(localStorage.redDoseRecordCases||'[]'),o=data();o.id=state.caseId||Date.now();state.caseId=o.id;let i=cases.findIndex(c=>c.id===o.id);if(i>=0)cases[i]=o;else cases.unshift(o);localStorage.redDoseRecordCases=JSON.stringify(cases.slice(0,60));renderCases();scheduleGitHubAutoSync();alert('Case saved')}
+function renderCases(){let cases=JSON.parse(localStorage.redDoseRecordCases||'[]');caseList.innerHTML=cases.slice(0,8).map(c=>`<div class="caseBtn"><div><b>${esc(c.ptName||'Unnamed')}</b><div class="small">${esc(c.crFull||'')} • ${esc(c.age||'')} ${esc(c.ageUnit||'')}/${esc(c.sex||'')}</div></div><button class="secondary" onclick="openCase(${c.id})">Open</button></div>`).join('')}
+function openCase(id){let c=JSON.parse(localStorage.redDoseRecordCases||'[]').find(x=>x.id===id);if(c){state.caseId=id;loadData(c)}}
+function newCase(){state.caseId=null;ids().forEach(id=>{let el=document.getElementById(id);if(el.tagName==='SELECT')el.selectedIndex=0;else el.value=''});date.value=new Date().toISOString().slice(0,10);age.value=35;height.value=170;tbw.value=70;dept.value='Anaesthesiology and Critical Care';calc()}
+function autoFill(){if(!instructions.value)instructions.value=`Written informed consent. Confirm NPO. Check investigations. Aspiration prophylaxis/antibiotic/VTE/ICU plan as per protocol. Airway: ETT ${ettSize.textContent}, depth ${ettDepth.textContent}.`;['monECG','monSpO2','monNIBP','monEtCO2','monTemp'].forEach(id=>{let el=document.getElementById(id);if(el)el.checked=true});if(!monitors.value)monitors.value='Gas analyzer, NMT as indicated, IV access, fluid warmer as indicated';if(!airwayManagement.value)airwayManagement.value=`${airwayDevice.value}, ${ettType.value}; tube ${ettSize.textContent}; secured at ${ettDepth.textContent}; confirm with EtCO2 and bilateral air entry.`;if(!postPosition.value)postPosition.value='As advised';if(!postAirway.value)postAirway.value='Patent';if(!postSuction.value)postSuction.value='As required';if(!vitalCharting.value)vitalCharting.value='Every 15 min initially, then as per protocol';if(!ioCharting.value)ioCharting.value='As per protocol';if(!postInstructions.value)postInstructions.value='Oxygen as indicated. Monitor vitals. Pain/PONV management. Intake-output charting. Shift as per recovery criteria.';makePrompt();buildPrint()}
+function esc(x){return String(x||'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+function makePrompt(){return}
+function askAI(){return}
+function saveKey(){}function clearKey(){}
+function printDrugTable(){return doseList.map(d=>`<tr><td>${esc(d.name)}</td><td>${esc(d.cat)}</td><td>${esc(d.wt)}</td><td>${esc(doseText(d))}</td><td>${esc(d.conc||'')}</td><td>${esc(d.note)}</td></tr>`).join('')}
+
+function loadGitHubSettings(){
+  try{
+    const s=JSON.parse(localStorage.reddoseGitHub||'{}');
+    ['ghOwner','ghRepo','ghBranch','ghPath','ghAuto'].forEach(id=>{let el=document.getElementById(id); if(el && s[id]!==undefined) el.value=s[id];});
+    if(localStorage.reddoseGitHubToken) ghToken.value=localStorage.reddoseGitHubToken;
+    updateSyncBadge();
+  }catch(e){}
+}
+function saveGitHubSettings(){
+  const s={ghOwner:ghOwner.value.trim(),ghRepo:ghRepo.value.trim(),ghBranch:ghBranch.value.trim()||'main',ghPath:ghPath.value.trim()||'records/reddose-records.json',ghAuto:ghAuto.value};
+  localStorage.reddoseGitHub=JSON.stringify(s);
+  if(ghToken.value.trim()) localStorage.reddoseGitHubToken=ghToken.value.trim();
+  updateSyncBadge();
+  ghStatus.value='GitHub settings saved locally.';
+}
+function clearGitHubSettings(){
+  localStorage.removeItem('reddoseGitHub'); localStorage.removeItem('reddoseGitHubToken');
+  ['ghOwner','ghRepo','ghToken'].forEach(id=>{let el=document.getElementById(id); if(el)el.value='';});
+  if(ghBranch)ghBranch.value='main'; if(ghPath)ghPath.value='records/reddose-records.json'; if(ghAuto)ghAuto.value='off';
+  updateSyncBadge(); ghStatus.value='GitHub settings cleared.';
+}
+function updateSyncBadge(){
+  const enabled = document.getElementById('ghAuto')?.value==='on';
+  if(syncBadge) syncBadge.textContent = enabled ? 'Auto-sync ON' : 'Local only';
+}
+function utf8ToBase64(str){return btoa(unescape(encodeURIComponent(str)));}
+function backupPayload(){
+  const cases=JSON.parse(localStorage.redDoseRecordCases||'[]');
+  return {
+    app:'Anaesthesia Monitoring',
+    version:'anaesthesia-monitoring-smooth-2',
+    saved_at:new Date().toISOString(),
+    current_case:data(),
+    cases:cases
+  };
+}
+function downloadLocalBackup(){
+  const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='reddose-records-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+async function getGitHubFileSha(owner,repo,path,branch,token){
+  const url=`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${path}?ref=${encodeURIComponent(branch)}`;
+  const res=await fetch(url,{headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}});
+  if(res.status===404) return null;
+  const j=await res.json();
+  if(!res.ok) throw new Error(j.message||'Could not read existing GitHub file');
+  return j.sha||null;
+}
+async function syncNow(){
+  const owner=ghOwner.value.trim(), repo=ghRepo.value.trim(), branch=ghBranch.value.trim()||'main', path=ghPath.value.trim()||'records/reddose-records.json', token=ghToken.value.trim()||localStorage.reddoseGitHubToken;
+  if(!owner||!repo||!token){ghStatus.value='Missing owner, repo, or token.';return;}
+  saveGitHubSettings();
+  ghStatus.value='Syncing to GitHub...';
+  try{
+    const payload=JSON.stringify(backupPayload(),null,2);
+    const sha=await getGitHubFileSha(owner,repo,path,branch,token);
+    const body={message:'Auto-sync RedDose anaesthesia records '+new Date().toISOString(),content:utf8ToBase64(payload),branch};
+    if(sha) body.sha=sha;
+    const url=`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${path}`;
+    const res=await fetch(url,{method:'PUT',headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+    const j=await res.json();
+    if(!res.ok) throw new Error(j.message||'GitHub sync failed');
+    ghStatus.value='Synced: '+new Date().toLocaleString();
+    localStorage.reddoseLastGitHubSync=new Date().toISOString();
+  }catch(e){
+    ghStatus.value='Sync error: '+e.message;
+  }
+}
+let ghSyncTimer=null;
+function scheduleGitHubAutoSync(){
+  try{
+    if(document.getElementById('ghAuto')?.value!=='on') return;
+    clearTimeout(ghSyncTimer);
+    ghStatus.value='Auto-sync queued...';
+    ghSyncTimer=setTimeout(()=>syncNow(),5000);
+  }catch(e){}
+}
+
+
+function chosenDrug(selId, otherId){const sel=document.getElementById(selId), oth=document.getElementById(otherId);let v=sel?sel.value:'';if(v==='Other' && oth && oth.value.trim())return oth.value.trim();return (oth&&oth.value.trim()&&v!=='Other')?`${v} (${oth.value.trim()})`:v;}
+function drugEntry(nameId,doseId,timeId,otherId,label){const name=chosenDrug(nameId,otherId), dose=document.getElementById(doseId)?.value||'', time=document.getElementById(timeId)?.value||'';return {label,name,dose,time,total:dose};}
+function structuredDrugEntries(){return [
+ drugEntry('indAgent1','indAgentDose1','indAgentTime1','indAgentOther1','Induction Agent'),
+ drugEntry('indOpioid1','indOpioidDose1','indOpioidTime1','indOpioidOther1','Opioids'),
+ drugEntry('indNMBD1','indNMBDDose1','indNMBDTime1','indNMBDOther1','NMBD (mg)'),
+ drugEntry('intraMaint1','intraMaintDose1','intraMaintTime1','intraMaintOther1','Sevo/Iso/Des/Hal'),
+ drugEntry('intraOpioid1','intraOpioidDose1','intraOpioidTime1','intraOpioidOther1','Opioids'),
+ drugEntry('intraNMBD1','intraNMBDDose1','intraNMBDTime1','intraNMBDOther1','NMBD (mg)'),
+ drugEntry('intraOtherDrug1','intraOtherDose1','intraOtherTime1','intraOtherOther1','Other drugs')
+].filter(x=>x.name||x.dose||x.time);}
+function drugRowForPrint(label, entries){const cells=Array.from({length:9},(_,i)=>{const e=entries[i];return `<td>${e?esc((e.time?e.time+' ':'')+(e.name||'')+(e.dose?' — '+e.dose:'')):''}</td>`}).join('');const total=entries.map(e=>[e.name,e.total].filter(Boolean).join(' ')).filter(Boolean).join('; ');return `<tr><td class="label">${esc(label)}</td>${cells}<td>${esc(total)}</td></tr>`;}
+function inductionIntraDrugPrintRows(){const grouped={}; structuredDrugEntries().forEach(e=>{(grouped[e.label]||(grouped[e.label]=[])).push(e)}); const base=['Oxygen (L/min)','N₂O / Air (L/min)','Sevo/Iso/Des/Hal','Induction Agent','Opioids','NMBD (mg)','Other drugs','Infusions']; return base.map(lbl=>drugRowForPrint(lbl,grouped[lbl]||[])).join('');}
+function checkedTick(id,label){return document.getElementById(id)?.checked?`☑ ${label}`:`☐ ${label}`;}
+function monitorChecklistHTML(){return [checkedTick('monECG','Continuous ECG'),checkedTick('monSpO2','Pulse Oximeter'),checkedTick('monNIBP','Noninvasive BP'),checkedTick('monArt','Intraarterial BP'),checkedTick('monEtCO2','End Tidal CO₂'),checkedTick('monGas','Gas Analyzer'),checkedTick('monTemp','Temperature'),checkedTick('monNMT','NMT'),checkedTick('monBIS','BIS'),checkedTick('monHumidifier','Airway Humidifier'),checkedTick('monWarmer','Fluid warmer'),checkedTick('monNG','NG/OG Tube'),checkedTick('monFoley','Foley Catheter'),checkedTick('monCVC','CVC')].join('<br>');}
+function drugRefNote(){return 'Drug menus include common IV induction agents, opioids and NMBDs; concentrations are common label/market strengths and should be checked against the vial/ampoule used locally.';}
+
+function buildPrint(){
+let d=data(),bmi=r((+tbw.value)/((+height.value/100)**2),1),vtd=vitalTimeData();
+let times=['30 min','60 min','90 min','2 hr','2.5 hr','3 hr','3.5 hr','4 hr','4.5 hr','5 hr','5.5 hr'];
+let monRows=['ECG','SpO₂','EtCO₂','CVP','TEMP'];
+let ventRows=['Urine (ml)','Tidal Volume (ml)','Resp. Rate (/min)','Peak Pr. (cm H₂O)','PEEP (cm H₂O)'];
+let timeHeader='<tr><th>TIME</th>'+times.map(t=>`<th>${t}</th>`).join('')+'</tr>';
+let tableRows=(labels,offset=0)=>labels.map((rw,i)=>`<tr><td class="label">${rw}</td>${times.map((_,ti)=>`<td>${esc(vtd.values[i+offset]?.[ti]||'')}</td>`).join('')}</tr>`).join('');
+let vitalTable=`<table class="miniTable">${timeHeader}${tableRows(monRows,0)}</table><div class="graphGrid"></div><table class="miniTable">${tableRows(ventRows,9)}</table>`;
+let drugRows=inductionIntraDrugPrintRows();
+let doseRows=allDoses().map(dose=>`<tr><td>${esc(dose.name)}</td><td>${esc(dose.cat)}</td><td>${esc(dose.wt)}</td><td>${esc(doseText(dose))}</td><td>${esc(dose.conc||'')}</td><td>${esc(dose.note)}</td></tr>`).join('');
+let fluidTable=`<table class="formTable"><tr><th colspan="2">FLUID/BLOOD INFUSED</th><th colspan="2">FLUID LOSS</th></tr><tr><td class="label">Name of Fluid</td><td class="label">Amount (ml)</td><td class="label">Type of Fluid</td><td class="label">Amount (ml)</td></tr><tr><td>Crystalloid/colloid</td><td>${esc(d.fluidInfused)}</td><td>Blood suction</td><td>${esc(d.bloodSuction)}</td></tr><tr><td>Blood/products</td><td>${esc(d.bloodInfused)}</td><td>Drapes</td><td>${esc(d.drapeLoss)}</td></tr><tr><td></td><td></td><td>GIT - Bowel/NG</td><td>${esc(d.gitLoss)}</td></tr><tr><td></td><td></td><td>Urine</td><td>${esc(d.urineOutput)}</td></tr><tr><td></td><td></td><td>Insensible</td><td>${esc(d.insensibleLoss)}</td></tr><tr><td class="label">Total</td><td></td><td class="label">Total</td><td>${esc(d.totalLoss)}</td></tr></table>`;
+printSheet.innerHTML=`
+<div class="page">
+ <h2>All India Institute of Medical Sciences, Jodhpur</h2><h1>ANAESTHESIA RECORD</h1><h2>PREANAESTHESIA EVALUATION</h2>
+ <table class="formTable"><colgroup><col style="width:25%"><col style="width:25%"><col style="width:25%"><col style="width:25%"></colgroup>
+  <tr><td><span class="label">Name:</span> ${esc(d.ptName)}</td><td><span class="label">Age / Sex:</span> ${esc(d.age)} ${esc(d.ageUnit)} / ${esc((d.sex||"").charAt(0).toUpperCase())}</td><td><span class="label">Date:</span> ${esc(d.date)}</td><td><span class="label">Registration no.:</span> ${esc(d.crFull)}</td></tr>
+  <tr><td colspan="2"><span class="label">Diagnosis:</span> ${esc(d.diagnosis)}</td><td><span class="label">Ward / Bed no.:</span> ${esc(d.wardBed)}</td><td><span class="label">Dept:</span> ${esc(d.dept)}</td></tr>
+  <tr><td colspan="2"><span class="label">Procedure:</span> ${esc(d.procedure)}</td><td><span class="label">ASA Status:</span> 1 2 3 4 5 E &nbsp; <b>${esc(d.asa)}</b></td><td><span class="label">BHT:</span> ${esc(d.bht)}</td></tr>
+  <tr><th colspan="4">MEDICAL HISTORY</th></tr>
+  <tr><td colspan="2" class="bigCell"><span class="label">CNS / Cardiovascular / Respiratory:</span><br>${esc(d.history)}</td><td><span class="label">METS:</span> ${esc(d.mets)}</td><td><span class="label">Preg:</span> ${esc(d.preg)}</td></tr>
+  <tr><td colspan="2" class="bigCell"><span class="label">Endocrine / Renal / GI / Hepatic / MSK / Hemat.:</span><br>${esc(d.history)}</td><td><span class="label">Drugs:</span> ${esc(d.drugsAllergy)}</td><td><span class="label">Tobacco/Smoking/Alcohol:</span> ${esc(d.tobacco)} / ${esc(d.alcoholSmoking)}</td></tr>
+  <tr><td colspan="2"><span class="label">Previous Surgeries:</span> ${esc(d.prevAnaes)}</td><td><span class="label">Anaesthesia Complications:</span> Yes / No</td><td><span class="label">Allergies:</span> ${esc(d.drugsAllergy)}</td></tr>
+  <tr><td colspan="4"><span class="label">Medicines Indices:</span> RCRI / APFEL / STOPBANG &nbsp;&nbsp; <span class="label">Others:</span> Obs(LMP) / Paedia / etc</td></tr>
+  <tr><th colspan="4">GENERAL PHYSICAL EXAMINATION / AIRWAY</th></tr>
+  <tr><td><span class="label">Wt:</span> ${esc(d.tbw)} kg</td><td><span class="label">Ht:</span> ${esc(d.height)} cm</td><td><span class="label">BMI:</span> ${bmi}</td><td><span class="label">SpO₂:</span> ${esc(d.spo2)}%</td></tr>
+  <tr><td colspan="2"><span class="label">Vitals:</span> BP ${esc(d.bp)} PR ${esc(d.pr)} T ${esc(d.temp)} RR ${esc(d.rr)}</td><td><span class="label">Mouth opening:</span> ${esc(d.mouth)}</td><td><span class="label">Neck movement:</span> ${esc(d.neck)}</td></tr>
+  <tr><td><span class="label">MPG:</span> ${esc(d.mpg)}</td><td><span class="label">TM distance / Teeth:</span> ${esc(d.tmdTeeth)}</td><td><span class="label">Spine:</span></td><td><span class="label">Lungs / Heart:</span></td></tr>
+  <tr><th colspan="4">INVESTIGATIONS</th></tr>
+  <tr><td colspan="4" class="xxlCell">${esc(d.invest)}</td></tr>
+  <tr><th colspan="4">PREANAESTHESIA INSTRUCTIONS / REMARKS / REVIEW PAC / PREMEDICATIONS</th></tr>
+  <tr><td colspan="4" class="xxlCell">${esc(d.instructions)}<br><br>• Get written informed consent signed.</td></tr>
+  <tr><td colspan="2">Date: __________</td><td>Name: ___________________________</td><td>Signature: __________________</td></tr>
+ </table>
+</div>
+
+<div class="page">
+ <h1>ANAESTHESIA RECORD</h1><h2>INTRAOPERATIVE NOTES</h2>
+ <table class="formTable"><colgroup><col style="width:18%"><col style="width:32%"><col style="width:25%"><col style="width:25%"></colgroup>
+  <tr><td><span class="label">Date:</span> ${esc(d.date)}</td><td><span class="label">Diagnosis:</span> ${esc(d.diagnosis)}</td><td colspan="2"><span class="label">PAC (Day of surgery)</span> ASA: 1 2 3 4 5 E &nbsp; <b>${esc(d.asa)}</b></td></tr>
+  <tr><td><span class="label">OT No:</span> ${esc(d.otNo)}</td><td><span class="label">Procedure:</span> ${esc(d.procedure)}</td><td><span class="label">NPO Status:</span> ${esc(d.npo)}</td><td><span class="label">Informed Consent:</span> Y / N</td></tr>
+  <tr><td class="label">Time</td><td><span class="label">Anaesthetist(s):</span> ${esc(d.anaesthetists)}</td><td colspan="2"><span class="label">Review History/drug:</span> Y / N</td></tr>
+  <tr><td><span class="label">Enter OT:</span> ${esc(d.enterOT)}</td><td><span class="label">Surgeon(s):</span> ${esc(d.surgeons)}</td><td colspan="2"><span class="label">Heart & Lungs:</span></td></tr>
+  <tr><td><span class="label">Leave OT:</span> ${esc(d.leaveOT)}</td><td><span class="label">Anaesthesia Technique:</span> ${esc(d.technique)}</td><td colspan="2"><span class="label">Post op ICU care:</span> Y / N If yes __________</td></tr>
+  <tr><td><span class="label">Duration:</span></td><td><span class="label">Vitals:</span> BP ${esc(d.otBP||d.bp)} PR ${esc(d.otPR||d.pr)} SpO₂ ${esc(d.otSpo2||d.spo2)} T ${esc(d.otTemp||d.temp)}</td><td colspan="2"><span class="label">Drugs within last 24 hrs:</span></td></tr>
+  <tr><td colspan="4" class="bigCell"><span class="label">Preoperative Remarks (OT-day):</span> ${esc(d.preopRemarksOT||d.instructions)} &nbsp;&nbsp; <span class="label">Handover time:</span> ${esc(d.handoverTime)} &nbsp;&nbsp; <span class="label">Incision time:</span> ${esc(d.incisionTime)}</td></tr>
+  <tr><td colspan="4"><span class="label">Premedications:</span> Glycopyrrolate ${esc(d.premedGlyco)} &nbsp; Midazolam ${esc(d.premedMida)} &nbsp; Dexamethasone ${esc(d.premedDexa)} &nbsp; Lignocaine ${esc(d.premedLigno)}</td></tr>
+  <tr><td colspan="4"><span class="label">Body position:</span> Supine / Prone / Lateral (R/L) / Lithotomy / Sitting / Knee Elbow / Trendelenburg / Other: <b>${esc(d.position)}</b></td></tr>
+ </table>
+ ${vitalTable}
+ <table class="formTable"><tr><td class="xlCell"><span class="label">Intraop. Remark:</span><br>${esc(d.intraRemarks)}</td></tr></table>
+</div>
+
+<div class="page">
+ <h1>ANAESTHESIA RECORD</h1><h2>INTRAOPERATIVE NOTES</h2>
+ <table class="drugPrintTable"><tr><th colspan="10">INDUCTION AND INTRAOPERATIVE DRUGS (DOSAGES AND TIME)</th><th>Total Dose</th></tr>${drugRows}</table><div class="mutedPrint">${drugRefNote()}</div>
+ <div class="threeCol mt4">
+  <table class="formTable"><tr><th>MONITORS & EQUIPMENT</th></tr><tr><td class="xxlCell">${monitorChecklistHTML()}<br>☐ IV(s): ___________________<br>☐ Art line: ________________<br><br>${esc(monitorSummary())}</td></tr></table>
+  <table class="formTable"><tr><th>GENERAL ANAESTHESIA</th></tr><tr><td class="xxlCell">• ${esc(d.inductionType)}<br>• Pre-Oxygenation<br>• Induction - IV / Inhalation / IM / Rectal<br>• Intubation / LMA / Mask<br><br><b>AIRWAY MANAGEMENT</b><br>${esc(d.airwayManagement)}<br>Tube Size: ${ettSize.textContent} Secured at: ${ettDepth.textContent}<br>Blade: ______ Attempts: ______<br>CL Grade: ${esc(d.clAttempts)}</td></tr></table>
+  <table class="formTable"><tr><th>REGIONAL ANAESTHESIA</th></tr><tr><td class="xxlCell">• Spinal / Epidural / Block<br>• Block Type / Position / Site / Technique<br>• Needle / Attempts<br>• Drug(s) with dose<br><br>${esc(d.regionalDetailsIntra||d.regionalDetails)}</td></tr></table>
+ </div>
+ <div class="twoCol mt4"><div>${fluidTable}</div><table class="formTable"><tr><th>Ondansetron</th></tr><tr><td>Time/Dose: ${esc(d.ondansetronDose)}</td></tr><tr><th>Reversal</th></tr><tr><td>Time: ${esc(d.reversalTime)}</td></tr><tr><td>Neostigmine: ${esc(d.neostigmineDose)}</td></tr><tr><td>Glycopyrrolate: ${esc(d.glycoReversalDose)}</td></tr><tr><td>Sugammadex: ${esc(d.sugammadexDose)}</td></tr><tr><th>Extubation</th></tr><tr><td>Time: ${esc(d.extubationTime)}<br>${esc(d.extubationStatus)}</td></tr></table></div>
+ <h3>Calculated dose/rate reference</h3><table class="miniTable"><tr><th>Drug/infusion</th><th>Type</th><th>Weight</th><th>Calculated dose/rate</th><th>Note</th></tr>${doseRows}</table><h3>MABL / Fluid calculation</h3>${fluidPrintSummary()}
+</div>
+
+<div class="page">
+ <h1>ANAESTHESIA RECORD</h1><h2>ANAESTHESIA RECOVERY</h2>
+ <table class="formTable"><tr><td><span class="label">Consciousness:</span> ${esc(d.mental)}</td><td><span class="label">Response to pain / VAS:</span> ${esc(d.vas)}</td></tr><tr><td><span class="label">Airway Reflexes:</span> ${esc(d.airwayReflexes)}</td><td><span class="label">NM Recovery:</span> ${esc(d.nmRecovery)}</td></tr><tr><td><span class="label">Vitals:</span> PR ${esc(d.postPR)} BP ${esc(d.postBP)} SpO₂ ${esc(d.postSpo2)} RR ${esc(d.postRR)}</td><td><span class="label">Respiration:</span> ${esc(d.respiration)} Pattern/TV: ${esc(d.respPattern)}</td></tr></table>
+ <h2>POST OPERATIVE PROGRESS</h2><h3>NOTES IN RECOVERY ROOM</h3>
+ <table class="formTable"><tr><td><span class="label">Arrival Time:</span> ${esc(d.recoveryArrival)}</td><td><span class="label">Condition:</span> ${esc(d.recoveryCondition)}</td></tr><tr><td colspan="2"><span class="label">Mental Status:</span> ${esc(d.mental)}</td></tr><tr><td colspan="2"><span class="label">Vitals:</span> PR ${esc(d.postPR)} BP ${esc(d.postBP)} RR ${esc(d.postRR)} TEMP ______ SpO₂ ${esc(d.postSpo2)}</td></tr><tr><td colspan="2"><span class="label">Oxygen:</span> Not required / Nasal Mask / T piece / CPAP / Vent Setting &nbsp; ${esc(d.postOxygen)}</td></tr><tr><th colspan="2">General instructions</th></tr><tr><td><span class="label">Position:</span> ${esc(d.postPosition)}</td><td><span class="label">Airway:</span> ${esc(d.postAirway)}</td></tr><tr><td><span class="label">Suction:</span> ${esc(d.postSuction)}</td><td><span class="label">Vital charting:</span> ${esc(d.vitalCharting)}</td></tr><tr><td><span class="label">Intake output charting:</span> ${esc(d.ioCharting)}</td><td><span class="label">Oxygen Therapy:</span> ${esc(d.oxygenTherapy)}</td></tr><tr><td colspan="2"><span class="label">Investigations required:</span> ${esc(d.postInvestigations)}</td></tr><tr><td colspan="2"><span class="label">Treatment:</span> ${esc(d.postInstructions)}</td></tr><tr><td><span class="label">I.V. Fluids:</span> ${esc(d.postIVFluids)}</td><td><span class="label">Analgesics:</span> ${esc(d.postAnalgesics)}</td></tr><tr><td colspan="2"><span class="label">Special Measures:</span> ${esc(d.postInstructions)}</td></tr><tr><td>Name: ______________ Signature: __________________</td><td></td></tr></table>
+ <h3>Shifting Notes / NOTES IN WARD/ICU</h3><table class="formTable"><tr><td><span class="label">Discharge Score (Modified Aldrette):</span> ${esc(d.aldreteScore)}</td><td><span class="label">Shifted to:</span> ${esc(d.shiftedTo)}</td></tr><tr><td colspan="2"><span class="label">Condition / receiving notes:</span> ${esc(d.postComplications)}</td></tr><tr><td>Pain control acceptable Yes / No<br>Agitation Yes / No<br>Nausea & Vomiting Yes / No<br>Shivering Yes / No<br>Hypothermia Yes / No</td><td>Respiratory complications: Airway obstruction / hypoventilation / hypoxemia &nbsp; Yes / No<br><br>Circulatory complications: Hypotension / hypertension / arrhythmias &nbsp; Yes / No</td></tr><tr><td colspan="2">Name & Signature: __________________ Date & Time: __________________</td></tr></table>
+</div>`;
+}
+
+function downloadDoc(){
+ buildPrint();
+ const docStyle=`<style>body{font-family:Arial,Helvetica,sans-serif;color:#000}.page{page-break-after:always}.page:last-child{page-break-after:auto}h1,h2{text-align:center;margin:2px 0;font-size:15px;line-height:1.05}h3{margin:6px 0 3px;font-size:12px}.formTable{width:100%;border-collapse:collapse;font-size:10.3px;table-layout:fixed}.formTable td,.formTable th{border:1px solid #000;padding:3px;vertical-align:top;min-height:18px}.formTable th{font-weight:bold;background:#ddd;text-align:center}.label{font-weight:bold}.smallPrint{font-size:9px}.bigCell{height:48px}.xlCell{height:78px}.xxlCell{height:115px}.miniTable{width:100%;border-collapse:collapse;font-size:9px;table-layout:fixed}.miniTable td,.miniTable th{border:1px solid #000;padding:2px;height:17px;vertical-align:top}.graphGrid{height:240px;border:1px solid #000;background-image:linear-gradient(#999 1px,transparent 1px),linear-gradient(90deg,#999 1px,transparent 1px);background-size:100% 12px,24px 100%;position:relative}.twoCol{display:grid;grid-template-columns:1fr 1fr;gap:0}.threeCol{display:grid;grid-template-columns:1fr 1.4fr 1.2fr;gap:0}.mt4{margin-top:4px}
+
+/* Separate app blocks: only one main block visible at a time */
+.app{display:block;max-width:1160px;margin:auto;padding:12px}
+.app > .card{display:none;margin:0 auto 14px;max-width:1160px}
+.app > .card.activePage{display:block;animation:pageIn .18s ease-out}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.nav a.activeNav{color:white;background:rgba(255,48,72,.22);border-color:rgba(255,48,72,.45)}
+.patientContext{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.patientContext .kpi{min-height:72px}
+@media(max-width:700px){.patientContext{grid-template-columns:1fr 1fr}.patientContext .kpi:last-child{grid-column:1/-1}}
+
+</style>`;
+ let blob=new Blob(['<html><head><meta charset="utf-8">'+docStyle+'</head><body>'+printSheet.innerHTML+'</body></html>'],{type:'application/msword'});
+ let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(ptName.value||'anaesthesia_record')+'.doc';a.click();
+}
+
+
+function ebvMlKg(){
+ const cat=(document.getElementById('ebvCategory')?.value)||'auto';
+ const a=ageYears();
+ if(cat==='custom') return +customEbv.value||70;
+ if(cat==='adultMale') return 75;
+ if(cat==='adultFemale') return 65;
+ if(cat==='infant') return 80;
+ if(cat==='termNeonate') return 85;
+ if(cat==='pretermNeonate') return 95;
+ if(a<=28/365) return 85;
+ if(a<1) return 80;
+ return sex.value==='female'?65:75;
+}
+function hollidaySegarRate(w){
+ w=+w||0;
+ if(w<=0) return 0;
+ if(w<=10) return 4*w;
+ if(w<=20) return 40+2*(w-10);
+ return 60+(w-20);
+}
+function calcFluid(){
+ try{
+  const w=+tbw.value||0;
+  const hb0=+initialHb?.value||0;
+  const hbT=+targetHb?.value||0;
+  const ebvkg=ebvMlKg();
+  const ebv=w*ebvkg;
+  const mabl=(w>0&&hb0>0&&hbT>0&&hb0>hbT)?ebv*(hb0-hbT)/hb0:0;
+  const maint=hollidaySegarRate(w);
+  const fast=+fastingHours?.value||0;
+  const deficit=maint*fast;
+  const dur=+caseDurationHr?.value||0;
+  const trauma=(+thirdSpace?.value||0)*w;
+  const bloodLoss=+measuredBloodLoss?.value||0;
+  let repl=0, replText='';
+  if(replacementFluid?.value==='crystalloid3'){repl=bloodLoss*3; replText='3 mL crystalloid per 1 mL blood loss';}
+  else if(replacementFluid?.value==='colloid1'){repl=bloodLoss; replText='1 mL colloid per 1 mL blood loss';}
+  else {repl=0; replText='Use PRBC/FFP/platelets guided by loss, Hb/Hct, coagulation and clinical status';}
+  const firstHr=maint + deficit/2 + trauma + (dur?repl/Math.max(dur,1):0);
+  const secondHr=maint + deficit/4 + trauma + (dur?repl/Math.max(dur,1):0);
+  const laterHr=maint + deficit/4/Math.max(dur-2,1) + trauma + (dur?repl/Math.max(dur,1):0);
+  const total=maint*dur + deficit + trauma*dur + repl;
+  if(ebvOut) ebvOut.textContent=ebv?`${r(ebv,0)} mL (${ebvkg} mL/kg)`: '—';
+  if(mablOut) mablOut.textContent=mabl?`${r(mabl,0)} mL`:'—';
+  if(maintOut) maintOut.textContent=maint?`${r(maint,0)} mL/hr`:'—';
+  if(deficitOut) deficitOut.textContent=deficit?`${r(deficit,0)} mL`:'—';
+  if(fluidPlan) fluidPlan.innerHTML=`<div class="fluidStep"><b>${r(firstHr,0)} mL</b><span>1st hour: maintenance + ½ fasting deficit + third-space + blood-loss replacement/hr</span></div><div class="fluidStep"><b>${r(secondHr,0)} mL</b><span>2nd hour: maintenance + ¼ fasting deficit + ongoing loss</span></div><div class="fluidStep"><b>${r(laterHr,0)} mL/hr</b><span>Subsequent hours: maintenance + remaining deficit/ongoing loss</span></div><div class="fluidStep"><b>${r(total,0)} mL</b><span>Approx total for planned ${r(dur,1)} hr case, excluding boluses</span></div><div class="fluidStep"><b>${r(trauma,0)} mL/hr</b><span>Selected third-space/surgical trauma allowance</span></div><div class="fluidStep"><b>${bloodLoss? r(repl,0)+' mL':'—'}</b><span>Blood loss replacement: ${replText}</span></div>`;
+  if(fluidNote) fluidNote.textContent=`MABL formula: EBV × (initial Hb − target Hb) / initial Hb. Holliday-Segar maintenance: 4 mL/kg/hr for first 10 kg, 2 mL/kg/hr for next 10 kg, 1 mL/kg/hr thereafter. Prefer balanced isotonic crystalloid intraoperatively unless glucose/electrolyte needs differ.`;
+ }catch(e){}
+}
+function fluidPrintSummary(){
+ calcFluid();
+ return `<table class="miniTable"><tr><th>EBV</th><th>MABL</th><th>Maintenance</th><th>Fasting deficit</th><th>Plan</th></tr><tr><td>${esc(ebvOut?.textContent)}</td><td>${esc(mablOut?.textContent)}</td><td>${esc(maintOut?.textContent)}</td><td>${esc(deficitOut?.textContent)}</td><td>${esc((fluidPlan?.innerText||'').replace(/\n+/g,' | '))}</td></tr></table>`;
+}
+
+loadCustomDrugs();
+buildVitalTimeInputs();
+date.value=new Date().toISOString().slice(0,10);document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',()=>{if(['age','ageUnit','sex','height','tbw','ettType','initialHb','targetHb','ebvCategory','customEbv','fastingHours','thirdSpace','caseDurationHr','measuredBloodLoss','replacementFluid'].includes(el.id))calc();else{buildPrint();scheduleGitHubAutoSync()}}));loadGitHubSettings();syncCR();calc();renderCases();showPage((location.hash||'#case').replace('#',''));
+</script>
+<!-- Drug menu reference basis: NCBI/StatPearls classes; FDA/DailyMed/Pfizer labels for common concentrations including propofol 10 mg/mL, etomidate 2 mg/mL, ketamine 10/50/100 mg/mL, rocuronium 10 mg/mL. Verify local ampoule/vial before administration. -->
+</body>
+</html>
