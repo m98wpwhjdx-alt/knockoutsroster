@@ -127,6 +127,12 @@ body.simLocked{overflow:hidden}
 @media(max-width:760px){.drugRow{grid-template-columns:1fr 1fr}.drugRow .wideMobile{grid-column:1/-1}}
 @media print{.drugPrintTable{width:100%;border-collapse:collapse;font-size:9.2px;table-layout:fixed}.drugPrintTable th,.drugPrintTable td{border:1px solid #000;padding:2px;height:16px;vertical-align:top}.drugPrintTable th{background:#ddd;font-weight:bold;text-align:center}.mutedPrint{color:#222;font-size:8.5px}.page h1{letter-spacing:.04em}.page h2{letter-spacing:.03em}.printSheet{font-family:Arial,Helvetica,sans-serif}.tick{font-family:Arial,Helvetica,sans-serif}}
 
+.localEdit{border:1px solid var(--line);background:rgba(255,255,255,.055);border-radius:22px;padding:12px;margin-bottom:12px}
+.localEdit .miniTitle{font-weight:1000;font-size:14px;margin-bottom:8px;color:#ffe5e8}
+.inlineActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.inlineActions button{min-height:38px;border-radius:14px;font-size:12px;padding:8px 10px;box-shadow:none}.inlineActions .secondary{background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.realtimeBadge{font-size:11px;color:#ffe0e3;border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:6px 9px;background:rgba(255,255,255,.055);display:inline-block;margin-top:8px}
+@media(max-width:700px){.inlineActions{display:grid;grid-template-columns:1fr}.localEdit{padding:10px}}
+
 </style>
 </head>
 <body>
@@ -138,9 +144,10 @@ body.simLocked{overflow:hidden}
  <div class="body">
   <div class="row"><div><label>CR last 9 digits</label><input id="crSuffix" maxlength="9" inputmode="numeric" oninput="syncCR()"></div><div><label>Full CR</label><input id="crFull" maxlength="15" inputmode="numeric" oninput="syncFullCR()"></div></div>
   <div class="row"><div><label>Name</label><input id="ptName"></div><div><label>Date</label><input id="date" type="date"></div></div>
-  <div class="row3"><div><label>Age</label><input id="age" type="number" value="35" step="0.01"></div><div><label>Unit</label><select id="ageUnit"><option>years</option><option>months</option><option>days</option></select></div><div><label>Sex</label><select id="sex"><option value="male">M</option><option value="female">F</option></select></div></div>
-  <div class="row"><div><label>Height cm</label><input id="height" type="number" value="170"></div><div><label>Weight kg</label><input id="tbw" type="number" value="70"></div></div>
-  <div class="row"><div><label>Ward / Bed</label><input id="wardBed"></div><div><label>Department</label><input id="dept" value="Anaesthesiology and Critical Care"></div></div>
+  <div class="row3"><div><label>Age</label><input id="age" type="number" step="0.01" placeholder="Age"></div><div><label>Unit</label><select id="ageUnit"><option>years</option><option>months</option><option>days</option></select></div><div><label>Sex</label><select id="sex"><option value="">Select</option><option value="male">M</option><option value="female">F</option></select></div></div>
+  <div class="row"><div><label>Height cm</label><input id="height" type="number" placeholder="cm"></div><div><label>Weight kg</label><input id="tbw" type="number" placeholder="kg"></div></div>
+  <div class="row"><div><label>Patient class</label><select id="patientClassOverride"><option value="auto">Auto by age</option><option value="adult">Adult</option><option value="pediatric">Pediatric</option><option value="neonate">Neonate</option></select></div><div><label>Airway note</label><input id="caseAirwayNote" placeholder="Optional, e.g. difficult airway / shared airway"></div></div>
+  <div class="row"><div><label>Ward / Bed</label><input id="wardBed"></div><div><label>Department / Surgical Unit</label><input id="dept" placeholder="e.g. Surgical Oncology"></div></div>
   <label>Diagnosis</label><textarea id="diagnosis"></textarea>
   <label>Procedure</label><input id="procedure">
   <div class="row"><div><label>ASA</label><select id="asa"><option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option><option>E</option></select></div><div><label>Surgery type</label><select id="surgery"><option value="general">General abdominal</option><option value="lap">Laparoscopy</option><option value="neuro">Neurosurgery</option><option value="cardiac">Cardiac/CTVS</option><option value="thoracic">Thoracic/OLV</option><option value="obstetric">Obstetric</option><option value="pediatric">Pediatric</option><option value="trauma">Trauma/Emergency</option><option value="ent">ENT/Shared airway</option><option value="ortho">Orthopedic</option><option value="urology">Urology/TURP</option></select></div></div>
@@ -204,6 +211,7 @@ body.simLocked{overflow:hidden}
     <div><label>Surgeon(s)</label><input id="surgeons"></div><div><label>Body position</label><select id="position"><option>Supine</option><option>Prone</option><option>Lateral decubitus - Right</option><option>Lateral decubitus - Left</option><option>Lithotomy</option><option>Sitting</option><option>Knee elbow</option><option>Trendelenburg</option><option>Reverse Trendelenburg</option><option>Beach chair</option><option>Other</option></select></div>
     <div><label>Enter OT</label><input id="enterOT" type="time"></div><div><label>Leave OT</label><input id="leaveOT" type="time"></div>
     <div><label>Incision time</label><input id="incisionTime" type="time"></div><div><label>Handover time</label><input id="handoverTime" type="time"></div>
+    <div class="wide"><label>Auto timestamps from in-time</label><textarea id="relativeTimestamps" readonly placeholder="Enter OT time, incision time and handover time to calculate elapsed timestamps."></textarea></div>
     <div class="wide"><label>OT entry baseline vitals (separate from pre-op exam)</label></div>
     <div><label>BP on OT entry</label><input id="otBP" placeholder="120/80"></div><div><label>PR on OT entry</label><input id="otPR"></div>
     <div><label>SpO₂ on OT entry</label><input id="otSpo2"></div><div><label>Temp on OT entry</label><input id="otTemp"></div>
@@ -212,10 +220,17 @@ body.simLocked{overflow:hidden}
 
     <div class="wide">
       <label>Intraoperative monitoring chart</label>
-      <div class="note">Simple printable grid. Enter values at each time point. This replaces the simulator for easier phone use and better black-and-white printing.</div>
+      <div class="row3">
+        <div><label>Timestamp interval</label><select id="timeStepMin"><option value="5">Every 5 min</option><option value="10">Every 10 min</option><option value="15" selected>Every 15 min</option><option value="30">Every 30 min</option></select></div>
+        <div><label>Chart duration min</label><input id="plannedDurationMin" type="number" step="5" placeholder="Auto / e.g. 180"></div>
+        <div><label>Real-time sync</label><select id="realtimeSync"><option value="off">Off</option><option value="on">On</option></select></div>
+      </div>
+      <div class="inlineActions"><button type="button" onclick="addCurrentTimestamp()">Add current timestamp</button><button type="button" class="secondary" onclick="startRealtimeTimestamps()">Start real-time sync</button><button type="button" class="secondary" onclick="stopRealtimeTimestamps()">Stop sync</button></div>
+      <span class="realtimeBadge" id="realtimeStatus">Real-time sync off</span>
+      <div class="note">Printable grid with adjustable 5/10/15/30-minute columns. Enter OT time first; “real-time sync” extends the chart from T0 up to the current clock time.</div>
       <div style="overflow-x:auto;margin-top:8px">
         <table class="timeTable">
-          <thead><tr><th>Parameter</th><th>30 min</th><th>60 min</th><th>90 min</th><th>2 hr</th><th>2.5 hr</th><th>3 hr</th><th>3.5 hr</th><th>4 hr</th><th>4.5 hr</th><th>5 hr</th><th>5.5 hr</th></tr></thead>
+          <thead id="vitalTimeHeader"><tr><th>Parameter</th><th>In time</th><th>30 min</th><th>60 min</th><th>90 min</th><th>2 hr</th><th>2.5 hr</th><th>3 hr</th><th>3.5 hr</th><th>4 hr</th><th>4.5 hr</th><th>5 hr</th><th>5.5 hr</th></tr></thead>
           <tbody id="vitalTimeRows"></tbody>
         </table>
       </div>
@@ -277,12 +292,13 @@ body.simLocked{overflow:hidden}
 <section class="card" id="calc">
  <div class="head"><h2>Airway + Weights</h2><span class="badge" id="ageBadge">Adult</span></div>
  <div class="body">
+  <div class="note">ETT calculator uses age, sex, height, weight and patient class from the Case block. Edit those details only in Case. Oral and nasal tube estimates are shown separately below.</div>
   <div class="patientContext">
-    <div class="kpi"><div class="v" id="ettWeightCtx">—</div><div class="t">Patient weight</div></div>
-    <div class="kpi"><div class="v" id="ettAgeCtx">—</div><div class="t">Patient age</div></div>
-    <div class="kpi"><div class="v" id="ettClassCtx">—</div><div class="t">Adult / pediatric / neonate</div></div>
+    <div class="kpi"><div class="v" id="ettWeightCtx">—</div><div class="t">ETT weight used</div></div>
+    <div class="kpi"><div class="v" id="ettAgeCtx">—</div><div class="t">ETT age used</div></div>
+    <div class="kpi"><div class="v" id="ettClassCtx">—</div><div class="t">Class / route</div></div>
   </div>
-  <div class="kpis"><div class="kpi"><div class="v" id="ettSize">—</div><div class="t">ETT ID</div></div><div class="kpi"><div class="v" id="ettDepth">—</div><div class="t">Depth</div></div><div class="kpi"><div class="v" id="ibwOut">—</div><div class="t">IBW</div></div><div class="kpi"><div class="v" id="lbwOut">—</div><div class="t">LBW</div></div></div>
+  <div class="kpis"><div class="kpi"><div class="v" id="ettSize">—</div><div class="t">Oral ETT ID</div></div><div class="kpi"><div class="v" id="ettDepth">—</div><div class="t">Oral depth</div></div><div class="kpi"><div class="v" id="nasalEttSize">—</div><div class="t">Nasal ETT ID</div></div><div class="kpi"><div class="v" id="nasalEttDepth">—</div><div class="t">Nasal depth</div></div><div class="kpi"><div class="v" id="ibwOut">—</div><div class="t">IBW</div></div><div class="kpi"><div class="v" id="lbwOut">—</div><div class="t">LBW</div></div></div>
   <div class="note" id="airwayNote"></div>
  </div>
 </section>
@@ -290,11 +306,13 @@ body.simLocked{overflow:hidden}
 <section class="card" id="doses">
  <div class="head"><h2>Drug + Infusion Doses</h2><span class="badge" id="doseCount"></span></div>
  <div class="body">
+  <div class="note">Dose calculator uses the shared patient details from the Case block. Edit age, sex, height, weight and patient class only in Case. The mL/hr converter still allows the final drug concentration to be edited locally.</div>
   <div class="patientContext">
-    <div class="kpi"><div class="v" id="doseWeightCtx">—</div><div class="t">Patient weight</div></div>
-    <div class="kpi"><div class="v" id="doseAgeCtx">—</div><div class="t">Patient age</div></div>
-    <div class="kpi"><div class="v" id="doseClassCtx">—</div><div class="t">Adult / pediatric / neonate</div></div>
+    <div class="kpi"><div class="v" id="doseWeightCtx">—</div><div class="t">Case weight</div></div>
+    <div class="kpi"><div class="v" id="doseAgeCtx">—</div><div class="t">Dose age used</div></div>
+    <div class="kpi"><div class="v" id="doseClassCtx">—</div><div class="t">Class</div></div>
   </div>
+  <div class="note" id="doseScalarNote">Propofol induction scalar: normal BMI uses TBW; overweight/obese uses LBW/IBW principle; BMI ≥40 uses LBW. Elderly/debilitated patients may need lower titrated doses.</div>
   <div class="segment doseTabs"><button class="active" onclick="setDoseCat('all',this)">All</button><button onclick="setDoseCat('bolus',this)">Bolus</button><button onclick="setDoseCat('infusion',this)">Infusion</button><button onclick="setDoseCat('vasoactive',this)">Vasoactive</button><button onclick="setDoseCat('relaxant',this)">Relaxants</button><button onclick="setDoseCat('converter',this)">mL/hr Converter</button></div>
   <div id="doseListPanel">
   <input id="doseSearch" placeholder="Search propofol, remifentanil, atracurium, norad..." oninput="renderDoses()">
@@ -393,7 +411,12 @@ body.simLocked{overflow:hidden}
   <div class="row3">
     <div><label>Planned duration hours</label><input id="caseDurationHr" type="number" step="0.5" value="2" oninput="calcFluid()"></div>
     <div><label>Measured blood loss mL</label><input id="measuredBloodLoss" type="number" step="10" placeholder="optional" oninput="calcFluid()"></div>
-    <div><label>Replacement fluid</label><select id="replacementFluid" onchange="calcFluid()"><option value="crystalloid3">Crystalloid 3:1 for blood loss</option><option value="colloid1">Colloid 1:1 for blood loss</option><option value="blood">Blood/product as indicated</option></select></div>
+    <div><label>Urine output mL</label><input id="fluidUrineOutput" type="number" step="10" placeholder="optional" oninput="calcFluid()"></div>
+  </div>
+  <div class="row3">
+    <div><label>Replacement fluid</label><select id="replacementFluid" onchange="calcFluid()"><option value="crystalloid1_5">Crystalloid 1.5:1 for blood loss</option><option value="colloid1">Colloid 1:1 for blood loss</option><option value="blood">Blood/product as indicated</option></select></div>
+    <div><label>Urine target</label><input id="urineTarget" placeholder="e.g. ≥0.5 mL/kg/hr adult" oninput="calcFluid()"></div>
+    <div><label>Fluid remarks</label><input id="fluidRemarks" placeholder="renal/cardiac limits, boluses, GDT" oninput="calcFluid()"></div>
   </div>
   <div class="kpis" style="margin-top:10px">
     <div class="kpi"><div class="v" id="ebvOut">—</div><div class="t">Estimated blood volume</div></div>
@@ -420,7 +443,7 @@ body.simLocked{overflow:hidden}
 let state={section:'pre',doseCat:'all',weights:{},caseId:null};
 let customDoseList=[];
 const doseList=[
-{name:'Propofol induction',cat:'bolus',dose:[1,2.5],unit:'mg/kg',wt:'LBW',conc:'10 mg/mL emulsion',concValue:10,concUnit:'mg/mL',note:'Reduce in elderly/shock.'},
+{name:'Propofol induction',cat:'bolus',dose:[1,2.5],unit:'mg/kg',wt:'PROP_AUTO',conc:'10 mg/mL emulsion',concValue:10,concUnit:'mg/mL',note:'Auto scalar: normal BMI uses TBW; overweight/obese uses LBW/IBW principle; BMI ≥40 uses LBW. Reduce/titrate in elderly, shock or frailty.'},
 {name:'Propofol maintenance infusion',cat:'infusion',dose:[50,150],unit:'mcg/kg/min',wt:'LBW',conc:'10 mg/mL emulsion',concValue:10,concUnit:'mg/mL',note:'TIVA/sedation range; avoid prolonged high dose in children.'},
 {name:'Etomidate',cat:'bolus',dose:[0.2,0.3],unit:'mg/kg',wt:'TBW',conc:'2 mg/mL commonly supplied',concValue:2,concUnit:'mg/mL',note:'Hemodynamic stability.'},
 {name:'Ketamine induction',cat:'bolus',dose:[1,2],unit:'mg/kg IV',wt:'IBW',conc:'50 mg/mL commonly supplied',concValue:50,concUnit:'mg/mL',note:'Shock/bronchospasm context.'},
@@ -470,33 +493,139 @@ function deleteCustomDrug(i){
   if(confirm('Delete this custom drug?')){customDoseList.splice(i,1);saveCustomDrugs();renderDoses();}
 }
 function ids(){return Array.from(document.querySelectorAll('input,select,textarea')).filter(e=>e.id).map(e=>e.id)}
-function ageYears(){let a=+age.value||0,u=ageUnit.value;return u==='months'?a/12:u==='days'?a/365:a}
+function ageYears(){let a=+age.value||0,u=ageUnit.value;return ageYearsFrom(a,u)}
+function ageYearsFrom(a,u){a=+a||0;return u==='months'?a/12:u==='days'?a/365:a}
+function patientClassFromAgeYears(a){if(!validNumber(a)) return '—'; if(a <= 28/365) return 'Neonate'; if(a < 12) return 'Pediatric'; return 'Adult';}
+function localValue(id,fallbackId){const el=document.getElementById(id); const v=el?el.value:''; if(v!=='' && v!==null && v!==undefined) return v; const fb=document.getElementById(fallbackId); return fb?fb.value:'';}
+function localNumber(id,fallbackId){const v=localValue(id,fallbackId); return validNumber(v)?+v:0;}
 function r(x,d=1){return Number.isFinite(x)?+x.toFixed(d):0}
 function ibw(s,h){let inch=h/2.54,over=Math.max(0,inch-60);return(s==='male'?50:45.5)+2.3*over}
 function lbw(s,h,w){let bmi=w/(h/100)**2;return s==='male'?(9270*w)/(6680+216*bmi):(9270*w)/(8780+244*bmi)}
-function wt(type){let w=state.weights;if(type==='fixed')return null;return type==='TBW'?w.tbw:type==='IBW'?w.ibw:type==='LBW'?w.lbw:w.abw}
-function doseText(d){if(d.wt==='fixed'){return d.dose[0]===d.dose[1]?`${d.dose[0]} ${d.unit}`:`${d.dose[0]}–${d.dose[1]} ${d.unit}`}let w=wt(d.wt),lo=d.dose[0]*w,hi=d.dose[1]*w,unit=d.unit.split('/')[0];if(d.cap){lo=Math.min(lo,d.cap);hi=Math.min(hi,d.cap)}let dec=unit.includes('mcg')?0:1;return Math.abs(lo-hi)<.001?`${r(lo,dec)} ${unit}`:`${r(lo,dec)}–${r(hi,dec)} ${unit}`}
-function patientClass(){
-  const a=ageYears();
-  if(a <= 28/365) return 'Neonate';
-  if(a < 12) return 'Pediatric';
-  return 'Adult';
+function validNumber(x){return Number.isFinite(+x) && +x>0}
+function bmiValue(){
+  const w=+tbw.value||0, h=+height.value||0;
+  return (validNumber(w)&&validNumber(h))?w/((h/100)**2):NaN;
 }
+function propofolAutoScalar(){
+  const bmi=bmiValue();
+  if(!validNumber(bmi)) return 'TBW';
+  if(bmi>=40) return 'LBW';
+  if(bmi>=25) return 'LBW'; // IBW is also acceptable in many protocols; LBW used here to avoid overdosing.
+  return 'TBW';
+}
+function resolveWtType(type){
+  return type==='PROP_AUTO'?propofolAutoScalar():type;
+}
+function wt(type){
+  let w=state.doseWeights||state.weights||{};
+  if(type==='fixed')return null;
+  const resolved=resolveWtType(type);
+  let v=resolved==='TBW'?w.tbw:resolved==='IBW'?w.ibw:resolved==='LBW'?w.lbw:w.abw;
+  // Safety fallback: if height is blank/not recorded, IBW/LBW become NaN and drug doses used to show 0.
+  // In that case use TBW so weight-based drugs still calculate.
+  if(!validNumber(v)) v=w.tbw;
+  return validNumber(v)?+v:0;
+}
+function doseText(d){
+  if(d.wt==='fixed'){return d.dose[0]===d.dose[1]?`${d.dose[0]} ${d.unit}`:`${d.dose[0]}–${d.dose[1]} ${d.unit}`}
+  let w=wt(d.wt);
+  if(!validNumber(w)) return 'Enter weight';
+  let lo=d.dose[0]*w,hi=d.dose[1]*w,unit=d.unit.split('/')[0];
+  if(d.cap){lo=Math.min(lo,d.cap);hi=Math.min(hi,d.cap)}
+  let dec=unit.includes('mcg')?0:1;
+  return Math.abs(lo-hi)<.001?`${r(lo,dec)} ${unit}`:`${r(lo,dec)}–${r(hi,dec)} ${unit}`
+}
+function doseCalcWeightLabel(d){
+  if(d.wt==='fixed') return 'fixed dose';
+  const w=wt(d.wt);
+  const resolved=resolveWtType(d.wt);
+  return validNumber(w)?`calc wt ${r(w,1)} kg (${resolved})`:'enter weight';
+}
+function patientClass(){ const o=document.getElementById('patientClassOverride')?.value||'auto'; return o==='auto'?patientClassFromAgeYears(ageYears()):o[0].toUpperCase()+o.slice(1); }
 function patientAgeLabel(){
   const a=+age.value||0;
   const u=ageUnit.value||'years';
-  return `${r(a, u==='years'?1:0)} ${u}`;
+  return a?`${r(a, u==='years'?1:0)} ${u}`:'—';
+}
+function ageLabelFrom(a,u){return validNumber(a)?`${r(+a, u==='years'?1:0)} ${u||'years'}`:'—';}
+function calcWeightSet(w,h,s){
+  w=+w||0; h=+h||0; s=s||'male';
+  let raw=validNumber(h)?ibw(s,h):w;
+  let ex=Math.max(0,w-raw);
+  let l=(validNumber(h)&&validNumber(w))?Math.min(w,lbw(s,h,w)):w;
+  return {tbw:w,ibw:validNumber(raw)?Math.min(w,raw):w,ibwRaw:raw,abw:ex>0?raw+.4*ex:w,lbw:validNumber(l)?l:w};
+}
+function doseInputSummary(){
+  const a=age.value||'', u=ageUnit.value||'years';
+  return {age:a,unit:u,sex:sex.value||'male',height:+height.value||0,weight:+tbw.value||0,classLabel:patientClass()};
+}
+function ettInputSummary(){
+  const a=age.value||'', u=ageUnit.value||'years';
+  return {age:a,unit:u,sex:sex.value||'male',height:+height.value||0,weight:+tbw.value||0,classLabel:patientClass(),cuffed:(ettType?.value||'cuffed')==='cuffed'};
 }
 function updatePatientContext(){
-  const w=+tbw.value||0;
-  const wtText=w?`${r(w,1)} kg`:'—';
-  const ageText=patientAgeLabel();
-  const cls=patientClass();
-  [['ettWeightCtx',wtText],['ettAgeCtx',ageText],['ettClassCtx',cls],['doseWeightCtx',wtText],['doseAgeCtx',ageText],['doseClassCtx',cls],['fluidWeightCtx',wtText],['fluidAgeCtx',ageText],['fluidClassCtx',cls]].forEach(([id,val])=>{const el=document.getElementById(id); if(el)el.textContent=val;});
-  if(typeof ageBadge!=='undefined' && ageBadge)ageBadge.textContent=cls;
+  const fluidW=+tbw.value||0;
+  const fluidWtText=fluidW?`${r(fluidW,1)} kg`:'—';
+  const fluidAgeText=patientAgeLabel();
+  const fluidCls=patientClass();
+  const d=doseInputSummary();
+  state.doseWeights=calcWeightSet(d.weight,d.height,d.sex);
+  const bmi=bmiValue();
+  const propScalar=propofolAutoScalar();
+  const doseScalar=validNumber(bmi)?`${d.classLabel} / BMI ${r(bmi,1)} / propofol ${propScalar}`:`${d.classLabel} / propofol ${propScalar}`;
+  [['doseWeightCtx',d.weight?`${r(d.weight,1)} kg`:'—'],['doseAgeCtx',ageLabelFrom(d.age,d.unit)],['doseClassCtx',doseScalar],['fluidWeightCtx',fluidWtText],['fluidAgeCtx',fluidAgeText],['fluidClassCtx',fluidCls]].forEach(([id,val])=>{const el=document.getElementById(id); if(el)el.textContent=val;});
+  const note=document.getElementById('doseScalarNote');
+  if(note) note.textContent=validNumber(bmi)
+    ? `Dose scalar rule loaded: BMI ${r(bmi,1)}. Propofol induction uses ${propScalar}. Normal BMI: TBW; overweight/obese: LBW/IBW principle; morbid obesity BMI ≥40: LBW. Elderly/debilitated: reduce and titrate clinically.`
+    : 'Dose scalar rule loaded: enter height to classify BMI. Without height, propofol defaults to TBW; normal BMI uses TBW, overweight/obese uses LBW/IBW principle, BMI ≥40 uses LBW.';
 }
-function calc(){let w=+tbw.value||0,h=+height.value||0,raw=ibw(sex.value,h),ex=Math.max(0,w-raw),l=Math.min(w,lbw(sex.value,h,w));state.weights={tbw:w,ibw:Math.min(w,raw),ibwRaw:raw,abw:ex>0?raw+.4*ex:w,lbw:l};ibwOut.textContent=r(raw)+' kg';lbwOut.textContent=r(l)+' kg';updatePatientContext();airway();renderDoses();calcInfusionRate();calcFluid();makePrompt();buildPrint()}
-function airway(){let a=ageYears(),w=state.weights.tbw,s=sex.value,c=ettType.value==='cuffed',sz,dep,n='';if(a<.08){sz='3.0';dep=r(w+6);n='Neonate depth ≈ weight+6 cm.'}else if(a<1){sz=c?'3.0–3.5':'3.5–4.0';dep='10–11'}else if(a<12){let z=(a/4)+(c?3.5:4);z=Math.round(z*2)/2;sz=z.toFixed(1);dep=r(3*z);n='Child: cuffed age/4+3.5; uncuffed age/4+4; depth ≈3×ID.'}else{sz=s==='male'?'7.5–8.5':'7.0–8.0';dep=s==='male'?'21–23':'20–22'}ettSize.textContent=sz+' mm';ettDepth.textContent=dep+' cm';airwayNote.textContent=(n||'Adult typical range.')+' Confirm by waveform capnography, bilateral chest movement, auscultation and cuff pressure.'}
+function calc(){
+  let w=+tbw.value||0,h=+height.value||0,s=sex.value||'male';
+  state.weights=calcWeightSet(w,h,s);
+  updatePatientContext();airway();renderDoses();calcInfusionRate();calcFluid();makePrompt();buildPrint()
+}
+function airway(){
+  const e=ettInputSummary();
+  const a=ageYearsFrom(e.age,e.unit), w=e.weight, s=e.sex||'male', c=e.cuffed;
+  const cls=e.classLabel;
+  const weights=calcWeightSet(w,e.height,s);
+  function estimate(route){
+    let sz='—', dep='—', note='';
+    if(cls==='—'){
+      note='Enter age or choose Adult/Pediatric/Neonate in Case for ETT estimate.';
+    }else if(cls==='Neonate'){
+      sz='3.0'; dep=validNumber(w)?r(w+(route==='nasal'?7:6)):(route==='nasal'?'weight+7':'weight+6');
+      note='Neonate estimate: oral depth ≈ weight+6 cm; nasal depth ≈ weight+7 cm.';
+    }else if(cls==='Pediatric'){
+      if(validNumber(a)){
+        let z=(a/4)+(c?3.5:4); z=Math.round(z*2)/2; sz=z.toFixed(1); dep=r(3*z + (route==='nasal'?2:0));
+        note='Child estimate: cuffed age/4+3.5, uncuffed age/4+4. Oral depth ≈3×ID; nasal ≈3×ID+2 cm.';
+      }else{sz=c?'3.5–6.5':'4.0–7.0'; dep=route==='nasal'?'3×ID+2':'3×ID'; note='Enter age for formula-based pediatric sizing.';}
+    }else{
+      sz=s==='male'?'7.5–8.5':'7.0–8.0';
+      dep=route==='nasal'?(s==='male'?'27–29':'26–28'):(s==='male'?'21–23':'20–22');
+      note='Adult typical oral and nasal intubation ranges.';
+    }
+    return {sz,dep,note};
+  }
+  const oral=estimate('oral'), nasal=estimate('nasal');
+  ettSize.textContent=oral.sz+' mm'; ettDepth.textContent=oral.dep+' cm';
+  const ns=document.getElementById('nasalEttSize'), nd=document.getElementById('nasalEttDepth');
+  if(ns)ns.textContent=nasal.sz+' mm'; if(nd)nd.textContent=nasal.dep+' cm';
+  ibwOut.textContent=validNumber(e.height)?r(weights.ibwRaw)+' kg':'Height needed';
+  lbwOut.textContent=validNumber(e.height)?r(weights.lbw)+' kg':'Using TBW';
+  const wEl=document.getElementById('ettWeightCtx'), aEl=document.getElementById('ettAgeCtx'), cEl=document.getElementById('ettClassCtx');
+  if(wEl)wEl.textContent=validNumber(w)?`${r(w,1)} kg`:'—';
+  if(aEl)aEl.textContent=ageLabelFrom(e.age,e.unit);
+  if(cEl)cEl.textContent=`${cls} / oral + nasal`;
+  if(typeof ageBadge!=='undefined' && ageBadge)ageBadge.textContent=cls;
+  const extra=document.getElementById('caseAirwayNote')?.value;
+  airwayNote.textContent=(oral.note||nasal.note)+' Confirm final size/depth by waveform capnography, bilateral chest movement, auscultation, cuff leak/pressure, and clinical context.'+(extra?' Case airway note: '+extra:'');
+}
+function syncEttFromCase(){calc();}
+function syncDoseFromCase(){calc();}
+function currentDoseWeight(){const d=doseInputSummary(); return d.weight||(+tbw.value||0);}
+function copyDoseWeightToConverter(){const el=document.getElementById('infWeight'); if(el)el.value=currentDoseWeight()||''; calcInfusionRate();}
 function doseMatchesCat(d){return state.doseCat==='all'||d.cat===state.doseCat||(state.doseCat==='relaxant'&&Array.isArray(d.tags)&&d.tags.includes('relaxant'))}
 function renderDoses(){
   const isConverter=state.doseCat==='converter';
@@ -507,7 +636,7 @@ function renderDoses(){
   if(isConverter){doseCount.textContent='converter';renderInfusionDrugOptions();calcInfusionRate();return;}
   let q=doseSearch.value.toLowerCase(),arr=allDoses().filter(d=>doseMatchesCat(d)&&(!q||d.name.toLowerCase().includes(q)||d.note.toLowerCase().includes(q)||(d.conc||'').toLowerCase().includes(q)));
   doseCount.textContent=arr.length+' items';
-  doseCards.innerHTML=arr.map(d=>{const ci=customDoseList.indexOf(d);return `<div class="item"><div class="title">${esc(d.name)}</div><div class="big">${esc(doseText(d))}</div><div class="chips"><span class="chip">${esc(d.cat)}</span>${d.tags?.includes('relaxant')?'<span class="chip">relaxant</span>':''}${d.custom?'<span class="chip">custom</span>':''}<span class="chip">${esc(d.wt)}</span><span class="chip">${d.dose[0]===d.dose[1]?esc(d.dose[0]):esc(d.dose[0])+'–'+esc(d.dose[1])} ${esc(d.unit)}</span></div><div class="small"><b>Market concentration:</b> ${esc(d.conc||'check local brand')}<br>${esc(d.note)}${d.cap?` Cap ${esc(d.cap)} ${esc(d.capUnit)}.`:''}</div>${d.custom?`<div class="actions"><button type="button" class="secondary" onclick="deleteCustomDrug(${ci})">Delete custom drug</button></div>`:''}</div>`}).join('');
+  doseCards.innerHTML=arr.map(d=>{const ci=customDoseList.indexOf(d);return `<div class="item"><div class="title">${esc(d.name)}</div><div class="big">${esc(doseText(d))}</div><div class="chips"><span class="chip">${esc(d.cat)}</span>${d.tags?.includes('relaxant')?'<span class="chip">relaxant</span>':''}${d.custom?'<span class="chip">custom</span>':''}<span class="chip">${esc(d.wt==='PROP_AUTO'?'auto scalar':d.wt)}</span><span class="chip">${esc(doseCalcWeightLabel(d))}</span><span class="chip">${d.dose[0]===d.dose[1]?esc(d.dose[0]):esc(d.dose[0])+'–'+esc(d.dose[1])} ${esc(d.unit)}</span></div><div class="small"><b>Market concentration:</b> ${esc(d.conc||'check local brand')}<br>${esc(d.note)}${d.cap?` Cap ${esc(d.cap)} ${esc(d.capUnit)}.`:''}</div>${d.custom?`<div class="actions"><button type="button" class="secondary" onclick="deleteCustomDrug(${ci})">Delete custom drug</button></div>`:''}</div>`}).join('');
   renderInfusionDrugOptions();
 }
 function setDoseCat(c,e){state.doseCat=c;document.querySelectorAll('#doses .segment button').forEach(b=>b.classList.remove('active'));e.classList.add('active');renderDoses()}
@@ -530,12 +659,12 @@ function loadInfusionDrug(){
   const d=allDoses().find(x=>x.name===infDrug.value); if(!d)return;
   infTarget.value=d.dose[0]; infUnit.value=d.unit;
   if(![...infUnit.options].some(o=>o.value===infUnit.value))infUnit.value='mcg/kg/min';
-  infConc.value=d.concValue||''; infConcUnit.value=d.concUnit||'mg/mL'; infWeight.value=(+tbw.value||70);
+  infConc.value=d.concValue||''; infConcUnit.value=d.concUnit||'mg/mL'; infWeight.value=(currentDoseWeight()||'');
   infCalcNote.textContent=`Market concentration/prep note: ${d.conc||'check local brand'}. Edit final concentration after dilution.`;
   calcInfusionRate();
 }
 function calcInfusionRate(){
-  const target=parseFloat(infTarget?.value)||0, kg=parseFloat(infWeight?.value)||(+tbw.value||0), unit=infUnit?.value, conc=concentrationToBase(infConc?.value,infConcUnit?.value);
+  const target=parseFloat(infTarget?.value)||0, kg=parseFloat(infWeight?.value)||currentDoseWeight(), unit=infUnit?.value, conc=concentrationToBase(infConc?.value,infConcUnit?.value);
   let mlhr=NaN, perHrText='—';
   if(unit==='mcg/kg/min'){let mcgHr=target*kg*60; mlhr=mcgHr/(conc.mcgMl||0); perHrText=`${r(mcgHr/1000,3)} mg/hr`;}
   else if(unit==='mcg/kg/h'){let mcgHr=target*kg; mlhr=mcgHr/(conc.mcgMl||0); perHrText=`${r(mcgHr/1000,3)} mg/hr`;}
@@ -558,7 +687,8 @@ function showPage(pageId){
 function showSection(id,e){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('#form .segment button').forEach(b=>b.classList.remove('active'));e.classList.add('active')}
 
 
-const simTimes=[
+let simTimes=[
+  {key:'0',label:'In time'},
   {key:'30',label:'30 min'},{key:'60',label:'60 min'},{key:'90',label:'90 min'},{key:'120',label:'2 hr'},
   {key:'150',label:'2.5 hr'},{key:'180',label:'3 hr'},{key:'210',label:'3.5 hr'},{key:'240',label:'4 hr'},
   {key:'270',label:'4.5 hr'},{key:'300',label:'5 hr'},{key:'330',label:'5.5 hr'}
@@ -604,6 +734,90 @@ const simGroups={
   vent:['tv','rrv','ppeak','peep','urine']
 };
 
+
+function minutesFromTime(t){
+  if(!t || !/^\d{2}:\d{2}$/.test(t)) return null;
+  const [h,m]=t.split(':').map(Number); return h*60+m;
+}
+function addMinutesToTime(t,mins){
+  const base=minutesFromTime(t); if(base===null)return '';
+  let v=(base+mins)%(24*60); if(v<0)v+=24*60;
+  return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0');
+}
+function elapsedText(from,to){
+  const a=minutesFromTime(from), b=minutesFromTime(to);
+  if(a===null || b===null)return '';
+  let d=b-a; if(d<0)d+=24*60;
+  return `+${d} min`;
+}
+function updateRelativeTimestamps(){
+  const inT=document.getElementById('enterOT')?.value||'';
+  const incision=document.getElementById('incisionTime')?.value||'';
+  const handover=document.getElementById('handoverTime')?.value||'';
+  const leave=document.getElementById('leaveOT')?.value||'';
+  const lines=[];
+  if(inT)lines.push(`In time / Enter OT: ${inT} = T0`);
+  if(handover)lines.push(`Handover: ${handover}${inT?' ('+elapsedText(inT,handover)+')':''}`);
+  if(incision)lines.push(`Incision: ${incision}${inT?' ('+elapsedText(inT,incision)+')':''}`);
+  if(leave)lines.push(`Leave OT: ${leave}${inT?' ('+elapsedText(inT,leave)+')':''}`);
+  const el=document.getElementById('relativeTimestamps'); if(el)el.value=lines.join('\n');
+}
+let realtimeTimer=null;
+function nowHHMM(){const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function elapsedFromEnterToNow(){const inT=document.getElementById('enterOT')?.value||''; const a=minutesFromTime(inT), b=minutesFromTime(nowHHMM()); if(a===null||b===null)return 0; let d=b-a; if(d<0)d+=24*60; return d;}
+function realtimeMaxMinutes(){
+  const step=+(document.getElementById('timeStepMin')?.value||15);
+  const planned=+(document.getElementById('plannedDurationMin')?.value||0);
+  let maxMin=planned||0;
+  const inT=document.getElementById('enterOT')?.value||'';
+  const possibleEnds=['leaveOT','handoverTime','incisionTime'].map(id=>document.getElementById(id)?.value||'').filter(Boolean);
+  if(inT && possibleEnds.length){
+    const a=minutesFromTime(inT);
+    const diffs=possibleEnds.map(t=>{const b=minutesFromTime(t); if(a===null||b===null)return 0; let d=b-a; if(d<0)d+=24*60; return d;});
+    maxMin=Math.max(maxMin, ...diffs);
+  }
+  if(document.getElementById('realtimeSync')?.value==='on' && inT) maxMin=Math.max(maxMin, elapsedFromEnterToNow());
+  if(!maxMin) maxMin=180;
+  return Math.max(step,Math.min(720,Math.ceil(maxMin/step)*step));
+}
+function rebuildSimTimesFromOT(){
+  const inT=document.getElementById('enterOT')?.value||'';
+  const step=+(document.getElementById('timeStepMin')?.value||15);
+  const maxMin=realtimeMaxMinutes();
+  const arr=[];
+  for(let m=0;m<=maxMin;m+=step){
+    const clock=inT?addMinutesToTime(inT,m):'';
+    let label=m===0?'In time':(m<60?`${m} min`:(m%60===0?`${m/60} hr`:`${Math.floor(m/60)}h ${m%60}m`));
+    if(clock) label = `${clock}
+${m===0?'T0':'+'+m+' min'}`;
+    arr.push({key:String(m),label});
+  }
+  simTimes=arr;
+  updateRelativeTimestamps();
+}
+function addCurrentTimestamp(){
+  const inEl=document.getElementById('enterOT');
+  if(inEl && !inEl.value)inEl.value=nowHHMM();
+  const step=+(document.getElementById('timeStepMin')?.value||15);
+  const elapsed=elapsedFromEnterToNow();
+  const planned=document.getElementById('plannedDurationMin');
+  if(planned)planned.value=Math.max(+(planned.value||0), Math.ceil(elapsed/step)*step || step);
+  buildVitalTimeInputs();buildPrint();scheduleGitHubAutoSync();
+}
+function startRealtimeTimestamps(){
+  const sel=document.getElementById('realtimeSync'); if(sel)sel.value='on';
+  if(!document.getElementById('enterOT')?.value){const e=document.getElementById('enterOT'); if(e)e.value=nowHHMM();}
+  if(realtimeTimer)clearInterval(realtimeTimer);
+  realtimeTimer=setInterval(()=>{buildVitalTimeInputs();buildPrint();},60000);
+  const st=document.getElementById('realtimeStatus'); if(st)st.textContent='Real-time sync on — chart extends to current time';
+  buildVitalTimeInputs();buildPrint();scheduleGitHubAutoSync();
+}
+function stopRealtimeTimestamps(){
+  const sel=document.getElementById('realtimeSync'); if(sel)sel.value='off';
+  if(realtimeTimer){clearInterval(realtimeTimer);realtimeTimer=null;}
+  const st=document.getElementById('realtimeStatus'); if(st)st.textContent='Real-time sync off';
+  buildVitalTimeInputs();buildPrint();scheduleGitHubAutoSync();
+}
 function initSimData(){
   simTimes.forEach(t=>{
     if(!simData[t.key]) simData[t.key]={};
@@ -615,13 +829,17 @@ function initSimData(){
   });
 }
 function buildVitalTimeInputs(){
+  try{updateSimFromTable();}catch(e){}
+  rebuildSimTimesFromOT();
   initSimData();
   const manualRows=['ECG','CVP'];
   const labels=[...manualRows,...simParams.map(p=>p.row)];
+  let head=document.getElementById('vitalTimeHeader');
+  if(head) head.innerHTML=`<tr><th>Parameter</th>${simTimes.map(t=>`<th>${esc(t.label).replace(/\n/g,'<br>')}</th>`).join('')}</tr>`;
   let el=document.getElementById('vitalTimeRows'); if(!el)return;
-  el.innerHTML=labels.map((p,ri)=>`<tr><th>${p}</th>${simTimes.map(t=>`<td><input id="vt_${ri}_${t.key}" placeholder=""></td>`).join('')}</tr>`).join('');
-  let st=document.getElementById('simTimeTabs'); if(st)st.innerHTML=simTimes.map(t=>`<button type="button" id="tab_${t.key}" onclick="setSimTime('${t.key}')">${t.label}</button>`).join('');
-  let ft=document.getElementById('fsimTimeTabs'); if(ft)ft.innerHTML=simTimes.map(t=>`<button type="button" id="ftab_${t.key}" onclick="setSimTime('${t.key}')">${t.label}</button>`).join('');
+  el.innerHTML=labels.map((p,ri)=>`<tr><th>${p}</th>${simTimes.map(t=>`<td><input id="vt_${ri}_${t.key}" placeholder="" onchange="updateSimFromTable();buildPrint();scheduleGitHubAutoSync()"></td>`).join('')}</tr>`).join('');
+  let st=document.getElementById('simTimeTabs'); if(st)st.innerHTML=simTimes.map(t=>`<button type="button" id="tab_${t.key}" onclick="setSimTime('${t.key}')">${esc(t.label).replace(/\n/g,'<br>')}</button>`).join('');
+  let ft=document.getElementById('fsimTimeTabs'); if(ft)ft.innerHTML=simTimes.map(t=>`<button type="button" id="ftab_${t.key}" onclick="setSimTime('${t.key}')">${esc(t.label).replace(/\n/g,'<br>')}</button>`).join('');
   buildSimControls(); buildFullSimControls();
   syncSimToTable();
   drawSimChart(); drawFullSimChart();
@@ -741,12 +959,12 @@ function data(){
   o._simData=simDataForSave();
   return o;
 }
-function loadData(o){Object.keys(o).forEach(k=>{let el=document.getElementById(k);if(el){if(el.type==='checkbox')el.checked=!!o[k];else el.value=o[k]}});if(o._simData){simData=o._simData;syncSimToTable();drawSimChart();}calc()}
+function loadData(o){Object.keys(o).forEach(k=>{let el=document.getElementById(k);if(el){if(el.type==='checkbox')el.checked=!!o[k];else el.value=o[k]}});if(o._simData){simData=o._simData;}buildVitalTimeInputs();syncSimToTable();drawSimChart();updateRelativeTimestamps();calc()}
 function saveCase(){let cases=JSON.parse(localStorage.redDoseRecordCases||'[]'),o=data();o.id=state.caseId||Date.now();state.caseId=o.id;let i=cases.findIndex(c=>c.id===o.id);if(i>=0)cases[i]=o;else cases.unshift(o);localStorage.redDoseRecordCases=JSON.stringify(cases.slice(0,60));renderCases();scheduleGitHubAutoSync();alert('Case saved')}
 function renderCases(){let cases=JSON.parse(localStorage.redDoseRecordCases||'[]');caseList.innerHTML=cases.slice(0,8).map(c=>`<div class="caseBtn"><div><b>${esc(c.ptName||'Unnamed')}</b><div class="small">${esc(c.crFull||'')} • ${esc(c.age||'')} ${esc(c.ageUnit||'')}/${esc(c.sex||'')}</div></div><button class="secondary" onclick="openCase(${c.id})">Open</button></div>`).join('')}
 function openCase(id){let c=JSON.parse(localStorage.redDoseRecordCases||'[]').find(x=>x.id===id);if(c){state.caseId=id;loadData(c)}}
-function newCase(){state.caseId=null;ids().forEach(id=>{let el=document.getElementById(id);if(el.tagName==='SELECT')el.selectedIndex=0;else el.value=''});date.value=new Date().toISOString().slice(0,10);age.value=35;height.value=170;tbw.value=70;dept.value='Anaesthesiology and Critical Care';calc()}
-function autoFill(){if(!instructions.value)instructions.value=`Written informed consent. Confirm NPO. Check investigations. Aspiration prophylaxis/antibiotic/VTE/ICU plan as per protocol. Airway: ETT ${ettSize.textContent}, depth ${ettDepth.textContent}.`;['monECG','monSpO2','monNIBP','monEtCO2','monTemp'].forEach(id=>{let el=document.getElementById(id);if(el)el.checked=true});if(!monitors.value)monitors.value='Gas analyzer, NMT as indicated, IV access, fluid warmer as indicated';if(!airwayManagement.value)airwayManagement.value=`${airwayDevice.value}, ${ettType.value}; tube ${ettSize.textContent}; secured at ${ettDepth.textContent}; confirm with EtCO2 and bilateral air entry.`;if(!postPosition.value)postPosition.value='As advised';if(!postAirway.value)postAirway.value='Patent';if(!postSuction.value)postSuction.value='As required';if(!vitalCharting.value)vitalCharting.value='Every 15 min initially, then as per protocol';if(!ioCharting.value)ioCharting.value='As per protocol';if(!postInstructions.value)postInstructions.value='Oxygen as indicated. Monitor vitals. Pain/PONV management. Intake-output charting. Shift as per recovery criteria.';makePrompt();buildPrint()}
+function newCase(){state.caseId=null;const keep=new Set(['ghOwner','ghRepo','ghBranch','ghPath','ghToken','ghAuto','ghStatus','newDrugName','newDrugCat','newDrugRelaxant','newDrugDoseLow','newDrugDoseHigh','newDrugUnit','newDrugWt','newDrugConc','newDrugConcValue','newDrugConcUnit','newDrugNote']);ids().forEach(id=>{if(keep.has(id))return;let el=document.getElementById(id);if(el.tagName==='SELECT')el.selectedIndex=0;else if(el.type==='checkbox')el.checked=false;else el.value=''});date.value=new Date().toISOString().slice(0,10);if(document.getElementById('timeStepMin'))timeStepMin.value='15';if(document.getElementById('replacementFluid'))replacementFluid.value='crystalloid1_5';simData={};stopRealtimeTimestamps();buildVitalTimeInputs();calc()}
+function autoFill(){if(!instructions.value)instructions.value=`Written informed consent. Confirm NPO. Check investigations. Aspiration prophylaxis/antibiotic/VTE/ICU plan as per protocol. Airway: ETT ${ettSize.textContent}, depth ${ettDepth.textContent}.`;['monECG','monSpO2','monNIBP','monEtCO2','monTemp'].forEach(id=>{let el=document.getElementById(id);if(el)el.checked=true});if(!monitors.value)monitors.value='Gas analyzer, NMT as indicated, IV access, fluid warmer as indicated';if(!airwayManagement.value){airwayManagement.value=`Oral/Nasal ${airwayDevice.value}, ${ettType.value}; oral tube ${ettSize.textContent} at ${ettDepth.textContent}; nasal tube ${document.getElementById('nasalEttSize')?.textContent||'—'} at ${document.getElementById('nasalEttDepth')?.textContent||'—'}; confirm with EtCO2 and bilateral air entry.`;}if(!postPosition.value)postPosition.value='As advised';if(!postAirway.value)postAirway.value='Patent';if(!postSuction.value)postSuction.value='As required';if(!vitalCharting.value)vitalCharting.value='Every 15 min initially, then as per protocol';if(!ioCharting.value)ioCharting.value='As per protocol';if(!postInstructions.value)postInstructions.value='Oxygen as indicated. Monitor vitals. Pain/PONV management. Intake-output charting. Shift as per recovery criteria.';makePrompt();buildPrint()}
 function esc(x){return String(x||'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
 function makePrompt(){return}
 function askAI(){return}
@@ -853,7 +1071,7 @@ function drugRefNote(){return 'Drug menus include common IV induction agents, op
 
 function buildPrint(){
 let d=data(),bmi=r((+tbw.value)/((+height.value/100)**2),1),vtd=vitalTimeData();
-let times=['30 min','60 min','90 min','2 hr','2.5 hr','3 hr','3.5 hr','4 hr','4.5 hr','5 hr','5.5 hr'];
+let times=simTimes.map(t=>String(t.label||t.key).replace(/\n/g,' '));
 let monRows=['ECG','SpO₂','EtCO₂','CVP','TEMP'];
 let ventRows=['Urine (ml)','Tidal Volume (ml)','Resp. Rate (/min)','Peak Pr. (cm H₂O)','PEEP (cm H₂O)'];
 let timeHeader='<tr><th>TIME</th>'+times.map(t=>`<th>${t}</th>`).join('')+'</tr>';
@@ -978,8 +1196,9 @@ function calcFluid(){
   const dur=+caseDurationHr?.value||0;
   const trauma=(+thirdSpace?.value||0)*w;
   const bloodLoss=+measuredBloodLoss?.value||0;
+  const urine=+document.getElementById('fluidUrineOutput')?.value||0;
   let repl=0, replText='';
-  if(replacementFluid?.value==='crystalloid3'){repl=bloodLoss*3; replText='3 mL crystalloid per 1 mL blood loss';}
+  if(replacementFluid?.value==='crystalloid1_5' || replacementFluid?.value==='crystalloid3'){repl=bloodLoss*1.5; replText='1.5 mL crystalloid per 1 mL blood loss';}
   else if(replacementFluid?.value==='colloid1'){repl=bloodLoss; replText='1 mL colloid per 1 mL blood loss';}
   else {repl=0; replText='Use PRBC/FFP/platelets guided by loss, Hb/Hct, coagulation and clinical status';}
   const firstHr=maint + deficit/2 + trauma + (dur?repl/Math.max(dur,1):0);
@@ -991,7 +1210,7 @@ function calcFluid(){
   if(maintOut) maintOut.textContent=maint?`${r(maint,0)} mL/hr`:'—';
   if(deficitOut) deficitOut.textContent=deficit?`${r(deficit,0)} mL`:'—';
   if(fluidPlan) fluidPlan.innerHTML=`<div class="fluidStep"><b>${r(firstHr,0)} mL</b><span>1st hour: maintenance + ½ fasting deficit + third-space + blood-loss replacement/hr</span></div><div class="fluidStep"><b>${r(secondHr,0)} mL</b><span>2nd hour: maintenance + ¼ fasting deficit + ongoing loss</span></div><div class="fluidStep"><b>${r(laterHr,0)} mL/hr</b><span>Subsequent hours: maintenance + remaining deficit/ongoing loss</span></div><div class="fluidStep"><b>${r(total,0)} mL</b><span>Approx total for planned ${r(dur,1)} hr case, excluding boluses</span></div><div class="fluidStep"><b>${r(trauma,0)} mL/hr</b><span>Selected third-space/surgical trauma allowance</span></div><div class="fluidStep"><b>${bloodLoss? r(repl,0)+' mL':'—'}</b><span>Blood loss replacement: ${replText}</span></div>`;
-  if(fluidNote) fluidNote.textContent=`MABL formula: EBV × (initial Hb − target Hb) / initial Hb. Holliday-Segar maintenance: 4 mL/kg/hr for first 10 kg, 2 mL/kg/hr for next 10 kg, 1 mL/kg/hr thereafter. Prefer balanced isotonic crystalloid intraoperatively unless glucose/electrolyte needs differ.`;
+  if(fluidNote) fluidNote.textContent=`MABL formula: EBV × (initial Hb − target Hb) / initial Hb. Holliday-Segar maintenance: 4/2/1 mL/kg/hr. Blood-loss crystalloid replacement uses your institute setting: 1.5:1. Recorded urine output: ${urine?urine+' mL':'not entered'}${urineTarget?.value?' | target: '+urineTarget.value:''}${fluidRemarks?.value?' | remarks: '+fluidRemarks.value:''}. Prefer balanced isotonic crystalloid intraoperatively unless glucose/electrolyte needs differ.`;
  }catch(e){}
 }
 function fluidPrintSummary(){
@@ -1001,8 +1220,15 @@ function fluidPrintSummary(){
 
 loadCustomDrugs();
 buildVitalTimeInputs();
-date.value=new Date().toISOString().slice(0,10);document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',()=>{if(['age','ageUnit','sex','height','tbw','ettType','initialHb','targetHb','ebvCategory','customEbv','fastingHours','thirdSpace','caseDurationHr','measuredBloodLoss','replacementFluid'].includes(el.id))calc();else{buildPrint();scheduleGitHubAutoSync()}}));loadGitHubSettings();syncCR();calc();renderCases();showPage((location.hash||'#case').replace('#',''));
+date.value=new Date().toISOString().slice(0,10);
+document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',()=>{
+  if(['enterOT','handoverTime','incisionTime','leaveOT','timeStepMin','plannedDurationMin','realtimeSync'].includes(el.id)){buildVitalTimeInputs();buildPrint();scheduleGitHubAutoSync();return;}
+  if(['age','ageUnit','sex','height','tbw','patientClassOverride','caseAirwayNote','ettType','initialHb','targetHb','ebvCategory','customEbv','fastingHours','thirdSpace','caseDurationHr','measuredBloodLoss','fluidUrineOutput','urineTarget','fluidRemarks','replacementFluid'].includes(el.id))calc();
+  else{buildPrint();scheduleGitHubAutoSync()}
+}));
+loadGitHubSettings();syncCR();calc();renderCases();showPage((location.hash||'#case').replace('#',''));
 </script>
 <!-- Drug menu reference basis: NCBI/StatPearls classes; FDA/DailyMed/Pfizer labels for common concentrations including propofol 10 mg/mL, etomidate 2 mg/mL, ketamine 10/50/100 mg/mL, rocuronium 10 mg/mL. Verify local ampoule/vial before administration. -->
+
 </body>
 </html>
