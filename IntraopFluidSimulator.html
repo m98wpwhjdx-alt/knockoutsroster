@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>IntraOp Fluid Simulator — AIIMS Jodhpur</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#06090f;--surface:#0d1420;--card:#111927;--border:rgba(99,179,255,.12);
+  --text:#e8f4ff;--muted:#5b7a99;--accent:#3b9eff;--accent2:#00e5c3;
+  --warn:#ffb347;--danger:#ff4d6d;--ok:#4ade80;
+  --glass:rgba(15,28,50,.72);--glow:rgba(59,158,255,.18);
+  --font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-head);min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% -10%,rgba(59,158,255,.13),transparent),
+    radial-gradient(ellipse 60% 40% at 90% 110%,rgba(0,229,195,.09),transparent);
+  padding-bottom:80px;
+}
+
+/* ──────── HEADER ──────── */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(6,9,15,.88);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;
+}
+.hinner{max-width:1300px;margin:auto;display:flex;align-items:center;gap:14px;height:58px;}
+.logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:grid;place-items:center;font-size:18px;flex-shrink:0;
+}
+.htitle{font-size:15px;font-weight:800;letter-spacing:-.02em;line-height:1.1;}
+.htitle span{display:block;font-size:10px;font-weight:400;color:var(--muted);font-family:var(--font-mono);letter-spacing:.05em;}
+.hclock{
+  margin-left:auto;font-family:var(--font-mono);font-size:13px;color:var(--accent2);
+  background:rgba(0,229,195,.08);border:1px solid rgba(0,229,195,.2);
+  border-radius:8px;padding:5px 11px;letter-spacing:.06em;
+}
+.hstatus{
+  font-size:11px;font-family:var(--font-mono);
+  background:rgba(59,158,255,.09);border:1px solid var(--border);
+  border-radius:8px;padding:5px 11px;color:var(--accent);white-space:nowrap;
+}
+
+/* ──────── LAYOUT ──────── */
+.wrap{max-width:1300px;margin:0 auto;padding:20px 16px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr;}.grid4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:500px){.grid4{grid-template-columns:1fr 1fr;}}
+.span2{grid-column:1/-1;}
+
+/* ──────── CARDS ──────── */
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;
+  transition:border-color .2s;
+}
+.card:hover{border-color:rgba(59,158,255,.24);}
+.cardhead{
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.cardhead h2{font-size:14px;font-weight:700;letter-spacing:-.01em;}
+.cardhead .icon{font-size:16px;}
+.cardbody{padding:16px 18px;}
+
+/* ──────── INPUTS ──────── */
+label{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;margin-top:12px;}
+label:first-child{margin-top:0;}
+input,select{
+  width:100%;height:40px;border:1px solid var(--border);border-radius:10px;
+  background:rgba(255,255,255,.04);color:var(--text);padding:0 12px;
+  font-family:var(--font-head);font-size:14px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
+select option{background:#0d1420;}
+.rowInline{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rowInline3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+
+/* ──────── BUTTONS ──────── */
+btn,.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border:0;border-radius:10px;height:40px;padding:0 16px;
+  font-family:var(--font-head);font-size:13px;font-weight:700;cursor:pointer;
+  transition:all .18s;
+}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#1a7ce0);color:#fff;box-shadow:0 6px 20px rgba(59,158,255,.3);}
+.btn-primary:hover{box-shadow:0 8px 28px rgba(59,158,255,.5);transform:translateY(-1px);}
+.btn-teal{background:linear-gradient(135deg,var(--accent2),#00b89e);color:#06090f;box-shadow:0 6px 20px rgba(0,229,195,.25);}
+.btn-ghost{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);}
+.btn-ghost:hover{background:rgba(255,255,255,.11);}
+.btn-danger{background:rgba(255,77,109,.15);border:1px solid rgba(255,77,109,.3);color:#ff8099;}
+.btn-warn{background:rgba(255,179,71,.12);border:1px solid rgba(255,179,71,.3);color:var(--warn);}
+.btn-sm{height:32px;padding:0 12px;font-size:12px;border-radius:8px;}
+.btn-full{width:100%;}
+
+/* ──────── KPI CHIPS ──────── */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr);}}
+.kpi{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:16px;padding:13px;position:relative;overflow:hidden;
+}
+.kpi::before{content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(135deg,var(--accent-c,rgba(59,158,255,.07)),transparent);pointer-events:none;}
+.kpi .kv{font-size:22px;font-weight:800;letter-spacing:-.04em;font-family:var(--font-head);}
+.kpi .kt{font-size:10px;color:var(--muted);margin-top:3px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+.kpi .ksub{font-size:10px;color:var(--accent);margin-top:4px;font-family:var(--font-mono);}
+.kpi.ok{--accent-c:rgba(74,222,128,.08);border-color:rgba(74,222,128,.18);}
+.kpi.warn{--accent-c:rgba(255,179,71,.08);border-color:rgba(255,179,71,.18);}
+.kpi.danger{--accent-c:rgba(255,77,109,.1);border-color:rgba(255,77,109,.25);}
+.kpi.teal{--accent-c:rgba(0,229,195,.07);border-color:rgba(0,229,195,.18);}
+
+/* ──────── TIMELINE / HOURLY TABLE ──────── */
+.tbl-wrap{overflow-x:auto;border-radius:12px;}
+table.htbl{width:100%;border-collapse:collapse;min-width:700px;font-size:12px;}
+table.htbl th{
+  background:rgba(59,158,255,.08);border:1px solid var(--border);
+  padding:8px 10px;text-align:center;font-size:10px;letter-spacing:.07em;
+  font-weight:700;text-transform:uppercase;color:var(--muted);white-space:nowrap;
+}
+table.htbl td{
+  border:1px solid var(--border);padding:0;
+  vertical-align:middle;text-align:center;
+}
+table.htbl td input{
+  border:0;background:transparent;height:36px;
+  text-align:center;font-family:var(--font-mono);font-size:12px;
+  border-radius:0;width:100%;min-width:64px;
+}
+table.htbl td input:focus{background:rgba(59,158,255,.1);box-shadow:inset 0 0 0 2px var(--accent);}
+table.htbl tr.rowhour td:first-child{
+  font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--accent2);
+  background:rgba(0,229,195,.04);padding:6px 10px;white-space:nowrap;
+}
+table.htbl tr.rowhour.totrow td{background:rgba(59,158,255,.07);font-weight:700;}
+table.htbl .cellval{font-family:var(--font-mono);font-size:12px;color:var(--text);padding:6px 8px;}
+table.htbl .cellok{color:var(--ok);}
+table.htbl .cellwarn{color:var(--warn);}
+table.htbl .celldanger{color:var(--danger);}
+
+/* ──────── DRUG LOG ──────── */
+.druglog{display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;padding-right:4px;}
+.druglog::-webkit-scrollbar{width:4px;}
+.druglog::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.dentry{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;
+  animation:fadeUp .25s ease;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.dentry .dts{font-family:var(--font-mono);font-size:11px;color:var(--accent);
+  background:rgba(59,158,255,.1);border:1px solid rgba(59,158,255,.2);border-radius:6px;padding:3px 7px;white-space:nowrap;flex-shrink:0;}
+.dentry .dname{font-weight:700;font-size:13px;}
+.dentry .ddose{font-size:12px;color:var(--muted);font-family:var(--font-mono);}
+.dentry .dcat{font-size:10px;color:var(--accent2);margin-left:auto;white-space:nowrap;}
+.dentry .ddel{cursor:pointer;color:var(--danger);font-size:14px;opacity:.5;transition:opacity .15s;flex-shrink:0;}
+.dentry .ddel:hover{opacity:1;}
+.drugcat{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.drugcat button{
+  border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);
+  border-radius:8px;height:30px;padding:0 10px;font-size:11px;font-weight:700;
+  cursor:pointer;transition:all .15s;font-family:var(--font-head);
+}
+.drugcat button.active{background:rgba(59,158,255,.15);border-color:rgba(59,158,255,.4);color:var(--accent);}
+.drugpresets{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
+@media(max-width:600px){.drugpresets{grid-template-columns:repeat(2,1fr);}}
+.dpbtn{
+  border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);
+  border-radius:8px;padding:7px 8px;font-size:11px;font-family:var(--font-head);
+  cursor:pointer;transition:all .15s;text-align:left;line-height:1.3;
+}
+.dpbtn:hover{background:rgba(59,158,255,.1);border-color:rgba(59,158,255,.35);}
+.dpbtn b{display:block;font-size:12px;}
+.dpbtn span{color:var(--muted);font-size:10px;font-family:var(--font-mono);}
+
+/* ──────── BALANCE BAR ──────── */
+.balbar{height:18px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--border);overflow:hidden;position:relative;margin-top:6px;}
+.balbar .fill{height:100%;border-radius:99px;transition:width .5s ease;max-width:100%;}
+.balbar .fill.pos{background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.balbar .fill.neg{background:linear-gradient(90deg,var(--danger),#ff8c00);}
+.baltxt{display:flex;justify-content:space-between;font-size:11px;font-family:var(--font-mono);color:var(--muted);margin-top:4px;}
+
+/* ──────── FLUID PLAN TABLE ──────── */
+.fplan{display:flex;flex-direction:column;gap:6px;}
+.frow{
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:10px;padding:9px 14px;
+}
+.frow .flabel{font-size:12px;color:var(--muted);}
+.frow .fval{font-size:14px;font-weight:800;font-family:var(--font-mono);}
+.frow.highlight{background:rgba(59,158,255,.08);border-color:rgba(59,158,255,.25);}
+.frow.highlight .fval{color:var(--accent);}
+
+/* ──────── ALERTS ──────── */
+.alert{border-radius:12px;padding:10px 14px;font-size:12px;line-height:1.5;margin-top:8px;}
+.alert.info{background:rgba(59,158,255,.08);border:1px solid rgba(59,158,255,.2);color:#a8d4ff;}
+.alert.warn{background:rgba(255,179,71,.08);border:1px solid rgba(255,179,71,.25);color:#ffd49a;}
+.alert.danger{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.28);color:#ffb3c1;}
+.alert.ok{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);color:#a7f3c7;}
+
+/* ──────── PROGRESS RING ──────── */
+.ringewrap{display:flex;align-items:center;gap:14px;}
+.ringsvg{flex-shrink:0;}
+
+/* ──────── TABS ──────── */
+.tabs{display:flex;gap:4px;background:rgba(0,0,0,.3);border-radius:12px;padding:4px;margin-bottom:14px;}
+.tab{flex:1;height:34px;border:0;border-radius:9px;background:transparent;
+  color:var(--muted);font-family:var(--font-head);font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .18s;}
+.tab.active{background:rgba(59,158,255,.18);color:var(--accent);border:1px solid rgba(59,158,255,.3);}
+
+/* ──────── SECTION DIVIDER ──────── */
+.sec-title{
+  font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:8px;
+}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ──────── MISC ──────── */
+.mono{font-family:var(--font-mono);}
+.badge{display:inline-block;font-size:10px;font-weight:700;border-radius:6px;padding:2px 7px;font-family:var(--font-mono);}
+.badge.blue{background:rgba(59,158,255,.15);color:var(--accent);border:1px solid rgba(59,158,255,.25);}
+.badge.teal{background:rgba(0,229,195,.1);color:var(--accent2);border:1px solid rgba(0,229,195,.2);}
+.badge.orange{background:rgba(255,179,71,.12);color:var(--warn);border:1px solid rgba(255,179,71,.25);}
+.badge.red{background:rgba(255,77,109,.12);color:var(--danger);border:1px solid rgba(255,77,109,.25);}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;
+  border-radius:6px;padding:3px 8px;font-family:var(--font-mono);
+  background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);}
+.chip-active{background:rgba(0,229,195,.1)!important;border-color:rgba(0,229,195,.3)!important;color:var(--accent2)!important;}
+.notice{font-size:11px;color:var(--muted);line-height:1.6;}
+hr.div{border:0;border-top:1px solid var(--border);margin:14px 0;}
+
+
+/* ──────── BLACK INTERACTIVE UI + NAVIGATION UPGRADE ──────── */
+:root{
+  --bg:#000000;--surface:#070707;--card:#0d0d0f;--border:rgba(255,255,255,.13);
+  --text:#f8fafc;--muted:#a1a1aa;--accent:#ffffff;--accent2:#22d3ee;
+  --glass:rgba(0,0,0,.72);--glow:rgba(255,255,255,.16);
+}
+body{
+  background:
+    radial-gradient(circle at 20% -10%,rgba(255,255,255,.12),transparent 34rem),
+    radial-gradient(circle at 90% 10%,rgba(34,211,238,.08),transparent 26rem),
+    #000;
+}
+header{background:rgba(0,0,0,.86);box-shadow:0 14px 40px rgba(0,0,0,.32)}
+.logo{background:linear-gradient(135deg,#fff,#71717a);color:#000;box-shadow:0 0 28px rgba(255,255,255,.14)}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.028));box-shadow:0 16px 46px rgba(0,0,0,.34)}
+.card:hover{border-color:rgba(255,255,255,.30);transform:translateY(-1px)}
+input,select{background:rgba(0,0,0,.48);border-color:rgba(255,255,255,.16)}
+input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.12)}
+.btn-primary{background:linear-gradient(135deg,#fff,#9ca3af);color:#000;box-shadow:0 8px 28px rgba(255,255,255,.16)}
+.btn-teal{background:linear-gradient(135deg,#22d3ee,#06b6d4);color:#001015}.btn-ghost:hover{border-color:rgba(255,255,255,.3)}
+.nav-toggle{display:none;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);border-radius:10px;height:36px;width:40px;cursor:pointer;font-size:18px}
+.app-shell{max-width:1460px;margin:0 auto;display:grid;grid-template-columns:230px minmax(0,1300px);gap:16px;padding:0 16px;align-items:start}
+.wrap{padding-left:0;padding-right:0;width:100%;}
+.sideNav{position:sticky;top:74px;max-height:calc(100vh - 90px);overflow:auto;background:rgba(5,5,5,.72);border:1px solid var(--border);border-radius:22px;padding:12px;backdrop-filter:blur(16px);box-shadow:0 18px 54px rgba(0,0,0,.38)}
+.sideNav h3{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#d4d4d8;margin:8px 8px 10px;font-family:var(--font-mono)}
+.sideNav a{display:flex;align-items:center;gap:10px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-radius:14px;padding:10px 11px;font-size:13px;font-weight:800;transition:all .16s}
+.sideNav a:hover,.sideNav a.active{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#fff;transform:translateX(2px)}
+.sideNav a b{width:25px;height:25px;display:grid;place-items:center;border-radius:9px;background:rgba(255,255,255,.08);font-size:13px}.sideNav .navHint{font-size:10.5px;color:var(--muted);line-height:1.45;margin:12px 8px 6px}
+.searchGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.resultPanel{max-height:420px;overflow:auto;display:grid;gap:9px;padding-right:2px}.resultPanel::-webkit-scrollbar{width:5px}.resultPanel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:999px}
+.refResult,.infPreset{border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.045);padding:12px;transition:all .16s}.refResult:hover,.infPreset:hover{border-color:rgba(255,255,255,.26);background:rgba(255,255,255,.075)}
+.refName{font-size:15px;font-weight:900;color:#fff;text-transform:capitalize}.refMeta{font-size:11px;color:var(--accent2);font-family:var(--font-mono);margin:4px 0 6px}.refText{font-size:12px;color:#d4d4d8;line-height:1.5}.refActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.microBtn{height:30px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:#fff;font-size:11px;font-weight:800;padding:0 10px;cursor:pointer}.microBtn:hover{background:#fff;color:#000}
+.convOut{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}.convKpi{border:1px solid var(--border);background:rgba(255,255,255,.055);border-radius:16px;padding:12px}.convKpi b{display:block;font-size:22px;letter-spacing:-.04em}.convKpi span{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}.hintLine{font-size:11px;color:var(--muted);line-height:1.45;margin-top:9px}.quickFill{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+@media(max-width:1050px){.nav-toggle{display:grid;place-items:center}.app-shell{display:block;padding:0 12px}.sideNav{position:fixed;z-index:250;top:66px;left:10px;bottom:10px;width:min(280px,88vw);transform:translateX(-115%);transition:transform .22s ease}.sideNav.open{transform:translateX(0)}.sideNavBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:220}.sideNavBackdrop.active{display:block}.searchGrid{grid-template-columns:1fr}.convOut{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hinner">
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation">☰</button>
+    <div class="logo">🫀</div>
+    <div class="htitle">IntraOp Fluid Simulator
+      <span>AIIMS Jodhpur · Anaesthesia Dept</span>
+    </div>
+    <div class="hstatus" id="caseStatus">⬤ SETUP</div>
+    <div class="hclock" id="liveClock">--:--:--</div>
+  </div>
+</header>
+
+
+<div class="sideNavBackdrop" id="sideNavBackdrop" onclick="toggleNav(false)"></div>
+<div class="app-shell">
+  <aside class="sideNav" id="sideNav" aria-label="Intraoperative simulator navigation">
+    <h3>Navigation</h3>
+    <a href="#patientSetup"><b>👤</b>Patient setup</a>
+    <a href="#calcParams"><b>🧮</b>Calculated parameters</a>
+    <a href="#ioMonitor"><b>💧</b>Hourly I/O</a>
+    <a href="#drugLogSec"><b>💊</b>Drug log</a>
+    <a href="#infusionConverterSec"><b>⚙</b>Infusion converter</a>
+    <a href="#drugSearchSec"><b>🔎</b>Drug search</a>
+    <a href="#decisionSupport"><b>⚠</b>Decision support</a>
+    <div class="navHint">Black interface, sticky navigation, live calculators and separate Stoelting-derived drug reference search.</div>
+  </aside>
+
+<div class="wrap">
+
+<!-- ══ PATIENT SETUP ══ -->
+<div class="sec-title" id="patientSetup">Patient & Case Setup</div>
+<div class="grid2">
+
+  <div class="card">
+    <div class="cardhead"><span class="icon">👤</span><h2>Patient Demographics</h2></div>
+    <div class="cardbody">
+      <div class="rowInline">
+        <div><label>Name / ID</label><input id="ptName" placeholder="Patient name"></div>
+        <div><label>Age</label>
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;">
+            <input id="ptAge" type="number" placeholder="Age" min="0">
+            <select id="ptAgeUnit"><option value="years">yr</option><option value="months">mo</option><option value="days">days</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="rowInline">
+        <div><label>Sex</label>
+          <select id="ptSex"><option value="male">Male</option><option value="female">Female</option></select>
+        </div>
+        <div><label>Weight (kg)</label><input id="ptWt" type="number" placeholder="e.g. 65" min="0.5" step="0.1"></div>
+      </div>
+      <div class="rowInline">
+        <div><label>Initial Hb (g/dL)</label><input id="initHb" type="number" placeholder="e.g. 12.5" step="0.1"></div>
+        <div><label>Target Hb (g/dL)</label><input id="targetHb" type="number" placeholder="e.g. 8.0" step="0.1"></div>
+      </div>
+      <div class="rowInline">
+        <div><label>ASA Status</label>
+          <select id="asa"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>E</option></select>
+        </div>
+        <div><label>NPO (fasting hrs)</label><input id="npoHrs" type="number" placeholder="e.g. 8" min="0" step="0.5"></div>
+      </div>
+      <div><label>Diagnosis / Procedure</label><input id="diagProc" placeholder="e.g. Lap cholecystectomy"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span class="icon">⏱</span><h2>Case Timing</h2></div>
+    <div class="cardbody">
+      <div class="rowInline">
+        <div><label>Enter OT Time</label><input type="time" id="enterOT" value="08:00"></div>
+        <div><label>Handover Time</label><input type="time" id="handoverTime" value="08:15"></div>
+      </div>
+      <div class="rowInline">
+        <div><label>Incision Time</label><input type="time" id="incisionTime" value="08:30"></div>
+        <div><label>Leave OT / End Time</label><input type="time" id="leaveOT" value="10:30"></div>
+      </div>
+      <div class="rowInline">
+        <div><label>Surgical Stress</label>
+          <select id="surgStress">
+            <option value="1">Minimal (1 mL/kg/hr)</option>
+            <option value="4" selected>Moderate (4 mL/kg/hr)</option>
+            <option value="8">Major (8 mL/kg/hr)</option>
+          </select>
+        </div>
+        <div><label>Replacement Fluid</label>
+          <select id="replFluid">
+            <option value="1.5">Crystalloid 1.5:1</option>
+            <option value="1.0">Colloid 1:1</option>
+            <option value="blood">Blood products</option>
+          </select>
+        </div>
+      </div>
+      <div class="rowInline">
+        <div><label>EBV Category</label>
+          <select id="ebvCat">
+            <option value="auto">Auto (by age/sex)</option>
+            <option value="adultMale">Adult Male (75 mL/kg)</option>
+            <option value="adultFemale">Adult Female (65 mL/kg)</option>
+            <option value="child">Child (80 mL/kg)</option>
+            <option value="infant">Infant (85 mL/kg)</option>
+            <option value="neonate">Neonate (90 mL/kg)</option>
+          </select>
+        </div>
+        <div><label>Anaesthesia Type</label>
+          <select id="anaType">
+            <option>General Anaesthesia</option>
+            <option>Regional (Spinal/Epidural)</option>
+            <option>Combined GA + Regional</option>
+            <option>IV Sedation / MAC</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <button class="btn btn-primary btn-full" onclick="initCase()">▶ Start / Recalculate Case</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid2 -->
+
+<!-- ══ KPI STRIP ══ -->
+<div class="sec-title" id="calcParams">Calculated Parameters</div>
+<div class="kpis" id="kpiStrip">
+  <div class="kpi teal"><div class="kv" id="kEBV">—</div><div class="kt">EBV (mL)</div><div class="ksub" id="kEBVsub">—</div></div>
+  <div class="kpi warn"><div class="kv" id="kMABL">—</div><div class="kt">MABL (mL)</div><div class="ksub" id="kMABLsub">—</div></div>
+  <div class="kpi"><div class="kv" id="kMaint">—</div><div class="kt">Maintenance (mL/hr)</div><div class="ksub" id="kMaintSub">Holliday-Segar 4/2/1</div></div>
+  <div class="kpi"><div class="kv" id="kDeficit">—</div><div class="kt">NPO Deficit (mL)</div><div class="ksub" id="kDeficitSub">—</div></div>
+</div>
+<div class="kpis">
+  <div class="kpi"><div class="kv" id="kThirdSp">—</div><div class="kt">3rd Space Loss (mL/hr)</div><div class="ksub">Surgical stress</div></div>
+  <div class="kpi ok"><div class="kv" id="kHr1">—</div><div class="kt">Hour 1 Target (mL)</div><div class="ksub">Maint + ½ deficit + 3rd space</div></div>
+  <div class="kpi"><div class="kv" id="kHr2">—</div><div class="kt">Hour 2 Target (mL)</div><div class="ksub">Maint + ¼ deficit + 3rd space</div></div>
+  <div class="kpi"><div class="kv" id="kHrRest">—</div><div class="kt">Subsequent Hrs (mL/hr)</div><div class="ksub">Maint + 3rd space</div></div>
+</div>
+
+<!-- ══ FLUID PLAN ══ -->
+<div class="grid2" style="margin-top:0;">
+  <div class="card">
+    <div class="cardhead"><span class="icon">💧</span><h2>Hourly Fluid Plan</h2><span class="badge blue" id="caseHrs">—</span></div>
+    <div class="cardbody">
+      <div id="fluidPlanRows" class="fplan">
+        <div class="notice">Enter patient data and press Start to generate the hourly plan.</div>
+      </div>
+      <div class="alert info" style="margin-top:12px;" id="planNote">Balanced crystalloid (e.g. PlasmaLyte, RL) preferred. Colloid/blood products as guided by MABL and clinical status.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span class="icon">📊</span><h2>Running Balance</h2></div>
+    <div class="cardbody">
+      <div id="balSummary" class="fplan">
+        <div class="notice">Balance updates as you fill the hourly monitoring table.</div>
+      </div>
+      <div class="sec-title" style="margin-top:14px;">Cumulative Balance</div>
+      <div id="balBar" class="balbar"><div class="fill pos" id="balFill" style="width:0%"></div></div>
+      <div class="baltxt"><span id="balTxtL">Input: —</span><span id="balTxtR">Output: —</span></div>
+      <div style="margin-top:6px;text-align:center;">
+        <span style="font-family:var(--font-mono);font-size:20px;font-weight:800;" id="balNet">—</span>
+        <span style="font-size:11px;color:var(--muted);margin-left:6px;">Net Balance</span>
+      </div>
+      <div id="balAlert" class="alert info" style="margin-top:10px;">Enter I/O data in the monitoring table below.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HOURLY MONITORING TABLE ══ -->
+<div class="sec-title" id="ioMonitor">Hourly Input / Output Monitoring</div>
+<div class="card">
+  <div class="cardhead">
+    <span class="icon">🗂</span><h2>Intraoperative I/O Chart</h2>
+    <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-ghost btn-sm" onclick="addHour()">+ Add Hour</button>
+      <button class="btn btn-teal btn-sm" onclick="calcBalance()">⟳ Recalculate</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportTable()">⤓ Export CSV</button>
+    </div>
+  </div>
+  <div class="cardbody">
+    <div class="tbl-wrap">
+      <table class="htbl" id="ioTable">
+        <thead>
+          <tr>
+            <th style="min-width:90px;">Time</th>
+            <th>Crystalloid<br>(mL)</th>
+            <th>Colloid<br>(mL)</th>
+            <th>Blood/PRBC<br>(mL)</th>
+            <th>FFP/PLT<br>(mL)</th>
+            <th style="background:rgba(255,77,109,.06)">EBL<br>(mL)</th>
+            <th style="background:rgba(255,77,109,.06)">Urine<br>(mL)</th>
+            <th style="background:rgba(255,77,109,.06)">NGT<br>(mL)</th>
+            <th style="background:rgba(255,77,109,.06)">Drain<br>(mL)</th>
+            <th>SpO₂ (%)</th>
+            <th>HR (bpm)</th>
+            <th>BP (syst)</th>
+            <th style="min-width:80px;">Net<br>Balance</th>
+          </tr>
+        </thead>
+        <tbody id="ioBody">
+        </tbody>
+        <tfoot>
+          <tr class="rowhour totrow">
+            <td style="font-weight:800;padding:6px 10px;">TOTALS</td>
+            <td class="cellval" id="totCryst">—</td>
+            <td class="cellval" id="totColl">—</td>
+            <td class="cellval" id="totBlood">—</td>
+            <td class="cellval" id="totFFP">—</td>
+            <td class="cellval" id="totEBL">—</td>
+            <td class="cellval" id="totUrine">—</td>
+            <td class="cellval" id="totNGT">—</td>
+            <td class="cellval" id="totDrain">—</td>
+            <td class="cellval">—</td>
+            <td class="cellval">—</td>
+            <td class="cellval">—</td>
+            <td class="cellval" id="totNet" style="font-weight:800;">—</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DRUG LOG ══ -->
+<div class="sec-title" id="drugLogSec">Drug Administration Log</div>
+<div class="grid2">
+
+  <div class="card">
+    <div class="cardhead"><span class="icon">💊</span><h2>Add Drug</h2></div>
+    <div class="cardbody">
+      <div class="drugcat" id="drugCatTabs">
+        <button class="active" onclick="setDrugCat('Induction',this)">Induction</button>
+        <button onclick="setDrugCat('Opioid',this)">Opioids</button>
+        <button onclick="setDrugCat('NMBD',this)">NMBD</button>
+        <button onclick="setDrugCat('Vasoactive',this)">Vasoactive</button>
+        <button onclick="setDrugCat('Antiemetic',this)">Antiemetics</button>
+        <button onclick="setDrugCat('Analgesic',this)">Analgesics</button>
+        <button onclick="setDrugCat('Other',this)">Other</button>
+      </div>
+      <div class="drugpresets" id="drugPresets"></div>
+      <hr class="div">
+      <div class="rowInline">
+        <div><label>Drug Name</label><input id="drugName" placeholder="Drug name"></div>
+        <div><label>Category</label>
+          <select id="drugCatSel">
+            <option>Induction</option><option>Opioid</option><option>NMBD</option>
+            <option>Vasoactive</option><option>Antiemetic</option><option>Analgesic</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="rowInline3">
+        <div><label>Dose</label><input id="drugDose" placeholder="e.g. 200"></div>
+        <div><label>Unit</label>
+          <select id="drugUnit"><option>mg</option><option>mcg</option><option>mL</option><option>units</option><option>mg/kg</option><option>mcg/kg</option></select>
+        </div>
+        <div><label>Route</label>
+          <select id="drugRoute"><option>IV bolus</option><option>IV infusion</option><option>IM</option><option>IT</option><option>Epidural</option><option>Inhalation</option></select>
+        </div>
+      </div>
+      <div class="rowInline">
+        <div><label>Time</label><input type="time" id="drugTime"></div>
+        <div><label>Notes</label><input id="drugNotes" placeholder="Optional notes"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="addDrug()">+ Log Drug</button>
+        <button class="btn btn-ghost btn-sm" onclick="stampNow('drugTime')">Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span class="icon">📋</span><h2>Drug Timeline</h2>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="clearDrugs()">Clear All</button>
+    </div>
+    <div class="cardbody">
+      <div class="druglog" id="drugLog">
+        <div class="notice">No drugs logged yet. Add a drug using the form.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- ══ INFUSION CONVERTER + STOELTING DRUG SEARCH ══ -->
+<div class="sec-title" id="infusionConverterSec">Infusion mL/hr Converter</div>
+<div class="grid2">
+  <div class="card">
+    <div class="cardhead"><span class="icon">⚙️</span><h2>Weight-Based Infusion → Pump Rate</h2></div>
+    <div class="cardbody">
+      <div class="rowInline">
+        <div><label>Drug preset</label><select id="infDrug" onchange="loadInfusionPreset()"></select></div>
+        <div><label>Target dose/rate</label><input id="infTarget" type="number" step="0.001" value="0.05" oninput="calcInfusionRate()"></div>
+      </div>
+      <div class="rowInline3">
+        <div><label>Weight kg</label><input id="infWeight" type="number" step="0.1" placeholder="Auto from case" oninput="calcInfusionRate()"></div>
+        <div><label>Unit</label><select id="infUnit" onchange="calcInfusionRate()"><option>mcg/kg/min</option><option>mcg/kg/h</option><option>mg/kg/h</option><option>mg/kg/min</option><option>units/min</option><option>units/kg/h</option></select></div>
+        <div><label>Concentration</label><input id="infConc" type="number" step="0.001" oninput="calcInfusionRate()"></div>
+      </div>
+      <div class="rowInline">
+        <div><label>Concentration unit</label><select id="infConcUnit" onchange="calcInfusionRate()"><option>mg/mL</option><option>mcg/mL</option><option>units/mL</option></select></div>
+        <div><label>Manual drug name</label><input id="infManualName" placeholder="Optional local preparation"></div>
+      </div>
+      <div class="quickFill">
+        <button class="microBtn" onclick="copyCaseWeightToConverter()">Use case weight</button>
+        <button class="microBtn" onclick="fillInfusionFromDrugLog()">Use selected/logged drug</button>
+        <button class="microBtn" onclick="calcInfusionRate()">Recalculate</button>
+      </div>
+      <div class="convOut">
+        <div class="convKpi"><b id="infMlHr">—</b><span>Pump rate mL/hr</span></div>
+        <div class="convKpi"><b id="infPerHr">—</b><span>Drug delivery per hour</span></div>
+      </div>
+      <div class="hintLine" id="infCalcNote">Choose an infusion preset. Final concentration is editable to match local dilution.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="cardhead"><span class="icon">⚡</span><h2>Quick Infusion Presets</h2></div>
+    <div class="cardbody">
+      <div class="resultPanel" id="infusionPresetCards"></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-title" id="drugSearchSec">Stoelting Drug Search</div>
+<div class="card">
+  <div class="cardhead"><span class="icon">🔎</span><h2>Separate Drug Reference Search</h2>
+    <a class="btn btn-ghost btn-sm" style="margin-left:auto;text-decoration:none" href="stoelting.html" target="_blank" rel="noopener">Open Stoelting reference</a>
+  </div>
+  <div class="cardbody searchGrid">
+    <div>
+      <label>Search by drug, class, dose or clinical note</label>
+      <input id="stoeltingDrugSearch" placeholder="e.g. propofol, rocuronium, norepinephrine, LAST, PONV" oninput="searchStoeltingDrugs()">
+      <div class="hintLine">Reference data is embedded from the uploaded Stoelting HTML drug database. Use for review; verify against local policy before administration.</div>
+    </div>
+    <div class="resultPanel" id="stoeltingDrugResults"><div class="notice">Start typing to search the separate drug reference.</div></div>
+  </div>
+</div>
+
+<!-- ══ CLINICAL DECISION SUPPORT ══ -->
+<div class="sec-title" id="decisionSupport">Clinical Decision Support</div>
+<div class="grid3">
+
+  <div class="card">
+    <div class="cardhead"><span class="icon">🩸</span><h2>Transfusion Trigger</h2></div>
+    <div class="cardbody">
+      <div id="transfusionBox" class="fplan">
+        <div class="notice">Start case to see transfusion guidance.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span class="icon">🚿</span><h2>Urine Output Monitor</h2></div>
+    <div class="cardbody">
+      <div class="frow"><span class="flabel">Total Urine</span><span class="fval" id="urineTotal">—</span></div>
+      <div class="frow"><span class="flabel">UO Rate</span><span class="fval" id="urineRate">—</span></div>
+      <div id="urineAlert" class="alert info" style="margin-top:8px;">UO target: 0.5–1 mL/kg/hr intraop.</div>
+      <hr class="div">
+      <label>Measured Blood Loss (mL)</label>
+      <input type="number" id="measuredEBL" placeholder="Cumulative EBL from suction + swabs" oninput="calcBalance()">
+      <label style="margin-top:8px;">EBL Replacement Ratio</label>
+      <select id="eblRatio" onchange="calcBalance()">
+        <option value="1.5">Crystalloid 1.5:1</option>
+        <option value="1.0">Colloid 1:1</option>
+        <option value="1.0">PRBC 1:1</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span class="icon">⚠️</span><h2>Alerts & Reminders</h2></div>
+    <div class="cardbody">
+      <div id="alertBox" style="display:flex;flex-direction:column;gap:8px;">
+        <div class="alert info">Case not started. Enter patient data above.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER NOTE ══ -->
+<div class="alert info" style="margin-top:20px;font-size:11px;">
+  <strong>Reference:</strong> Holliday-Segar 4/2/1 mL/kg/hr maintenance. MABL = EBV × (Hb₀ − HbT) / Hb₀. EBV per age/sex from Miller's Anaesthesia (9th ed). Fasting deficit = maintenance × NPO hours. Third-space: minimal 1, moderate 4, major 8 mL/kg/hr. This simulator is a decision-support tool only; clinical judgment supersedes all calculations.
+</div>
+
+</div><!-- /wrap -->
+</div><!-- /app-shell -->
+
+<script>
+/* ═══════════════════════════════
+   DRUG PRESETS DATABASE
+═══════════════════════════════ */
+const DRUGS = {
+  Induction:[
+    {name:'Propofol',dose:'1.5–2.5',unit:'mg/kg',route:'IV bolus'},
+    {name:'Thiopentone',dose:'3–5',unit:'mg/kg',route:'IV bolus'},
+    {name:'Etomidate',dose:'0.2–0.3',unit:'mg/kg',route:'IV bolus'},
+    {name:'Ketamine',dose:'1–2',unit:'mg/kg',route:'IV bolus'},
+    {name:'Midazolam',dose:'0.02–0.05',unit:'mg/kg',route:'IV bolus'},
+    {name:'Dexmedetomidine',dose:'0.5–1',unit:'mcg/kg',route:'IV infusion'},
+  ],
+  Opioid:[
+    {name:'Fentanyl',dose:'1–3',unit:'mcg/kg',route:'IV bolus'},
+    {name:'Morphine',dose:'0.05–0.1',unit:'mg/kg',route:'IV bolus'},
+    {name:'Tramadol',dose:'1–2',unit:'mg/kg',route:'IV bolus'},
+    {name:'Remifentanil',dose:'0.1–0.5',unit:'mcg/kg/min',route:'IV infusion'},
+    {name:'Buprenorphine',dose:'0.3',unit:'mg',route:'IV bolus'},
+    {name:'Pentazocine',dose:'0.5',unit:'mg/kg',route:'IV bolus'},
+  ],
+  NMBD:[
+    {name:'Succinylcholine',dose:'1.5',unit:'mg/kg',route:'IV bolus'},
+    {name:'Rocuronium',dose:'0.6–1.2',unit:'mg/kg',route:'IV bolus'},
+    {name:'Vecuronium',dose:'0.08–0.1',unit:'mg/kg',route:'IV bolus'},
+    {name:'Atracurium',dose:'0.5',unit:'mg/kg',route:'IV bolus'},
+    {name:'Cisatracurium',dose:'0.15',unit:'mg/kg',route:'IV bolus'},
+    {name:'Sugammadex',dose:'2–16',unit:'mg/kg',route:'IV bolus'},
+  ],
+  Vasoactive:[
+    {name:'Ephedrine',dose:'5–10',unit:'mg',route:'IV bolus'},
+    {name:'Phenylephrine',dose:'50–100',unit:'mcg',route:'IV bolus'},
+    {name:'Atropine',dose:'0.01–0.02',unit:'mg/kg',route:'IV bolus'},
+    {name:'Adrenaline',dose:'1',unit:'mg',route:'IV bolus'},
+    {name:'Noradrenaline',dose:'0.05–0.5',unit:'mcg/kg/min',route:'IV infusion'},
+    {name:'Vasopressin',dose:'0.04',unit:'units/min',route:'IV infusion'},
+  ],
+  Antiemetic:[
+    {name:'Ondansetron',dose:'4–8',unit:'mg',route:'IV bolus'},
+    {name:'Dexamethasone',dose:'4–8',unit:'mg',route:'IV bolus'},
+    {name:'Metoclopramide',dose:'10',unit:'mg',route:'IV bolus'},
+    {name:'Granisetron',dose:'1–3',unit:'mg',route:'IV bolus'},
+    {name:'Promethazine',dose:'12.5–25',unit:'mg',route:'IV bolus'},
+    {name:'Droperidol',dose:'0.625–1.25',unit:'mg',route:'IV bolus'},
+  ],
+  Analgesic:[
+    {name:'Paracetamol',dose:'1000',unit:'mg',route:'IV infusion'},
+    {name:'Diclofenac',dose:'75',unit:'mg',route:'IV infusion'},
+    {name:'Ketorolac',dose:'15–30',unit:'mg',route:'IV bolus'},
+    {name:'Lignocaine',dose:'1.5',unit:'mg/kg',route:'IV bolus'},
+    {name:'Bupivacaine 0.5%',dose:'0.25–0.5',unit:'mg/kg',route:'IT'},
+    {name:'Neostigmine',dose:'0.05',unit:'mg/kg',route:'IV bolus'},
+  ],
+  Other:[
+    {name:'Glycopyrrolate',dose:'0.2',unit:'mg',route:'IV bolus'},
+    {name:'Furosemide',dose:'0.5–1',unit:'mg/kg',route:'IV bolus'},
+    {name:'Mannitol 20%',dose:'0.25–1',unit:'g/kg',route:'IV infusion'},
+    {name:'Hydrocortisone',dose:'100',unit:'mg',route:'IV bolus'},
+    {name:'Tranexamic acid',dose:'10–15',unit:'mg/kg',route:'IV infusion'},
+    {name:'Calcium gluconate',dose:'10',unit:'mL',route:'IV bolus'},
+  ]
+};
+
+let drugLog = [];
+let hourRows = [];
+let caseParams = {};
+let activeDrugCat = 'Induction';
+
+/* ── Clock ── */
+function tick(){
+  const n = new Date();
+  document.getElementById('liveClock').textContent =
+    n.toLocaleTimeString('en-IN',{hour12:false});
+}
+setInterval(tick,1000); tick();
+
+/* ── Drug category buttons ── */
+function setDrugCat(cat, btn){
+  activeDrugCat = cat;
+  document.querySelectorAll('#drugCatTabs button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('drugCatSel').value = cat;
+  renderDrugPresets(cat);
+}
+function renderDrugPresets(cat){
+  const wrap = document.getElementById('drugPresets');
+  const list = DRUGS[cat]||[];
+  wrap.innerHTML = list.map(d=>`
+    <button class="dpbtn" onclick='prefillDrug(${JSON.stringify(d)})'>
+      <b>${d.name}</b>
+      <span>${d.dose} ${d.unit} · ${d.route}</span>
+    </button>`).join('');
+}
+function prefillDrug(d){
+  document.getElementById('drugName').value = d.name;
+  document.getElementById('drugDose').value = d.dose.split('–')[0];
+  document.getElementById('drugUnit').value = d.unit;
+  document.getElementById('drugRoute').value = d.route;
+  stampNow('drugTime');
+}
+renderDrugPresets('Induction');
+
+/* ── Stamp current time ── */
+function stampNow(id){
+  const n=new Date();
+  document.getElementById(id).value =
+    String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+}
+
+/* ── Add drug ── */
+function addDrug(){
+  const name = document.getElementById('drugName').value.trim();
+  if(!name){alert('Enter drug name.');return;}
+  const entry = {
+    id: Date.now(),
+    time: document.getElementById('drugTime').value || '--:--',
+    name,
+    dose: document.getElementById('drugDose').value,
+    unit: document.getElementById('drugUnit').value,
+    route: document.getElementById('drugRoute').value,
+    cat: document.getElementById('drugCatSel').value,
+    notes: document.getElementById('drugNotes').value,
+  };
+  drugLog.push(entry);
+  renderDrugLog();
+  document.getElementById('drugName').value='';
+  document.getElementById('drugDose').value='';
+  document.getElementById('drugNotes').value='';
+}
+function deleteDrug(id){
+  drugLog = drugLog.filter(d=>d.id!==id);
+  renderDrugLog();
+}
+function clearDrugs(){if(confirm('Clear all drug entries?')){drugLog=[];renderDrugLog();}}
+function renderDrugLog(){
+  const box = document.getElementById('drugLog');
+  if(!drugLog.length){box.innerHTML='<div class="notice">No drugs logged yet.</div>';return;}
+  const sorted = [...drugLog].sort((a,b)=>a.time.localeCompare(b.time));
+  box.innerHTML = sorted.map(d=>`
+    <div class="dentry">
+      <span class="dts">${d.time}</span>
+      <div>
+        <div class="dname">${d.name}</div>
+        <div class="ddose">${d.dose} ${d.unit} · ${d.route}${d.notes?' · '+d.notes:''}</div>
+      </div>
+      <span class="dcat">${d.cat}</span>
+      <span class="ddel" onclick="deleteDrug(${d.id})">✕</span>
+    </div>`).join('');
+}
+
+/* ══════════════════════════════════
+   CALCULATIONS
+══════════════════════════════════ */
+function r(v,dp=0){return isNaN(v)?'—':Number(v).toFixed(dp);}
+
+function hollidaySegar(w){
+  if(w<=0) return 0;
+  if(w<=10) return 4*w;
+  if(w<=20) return 40+2*(w-10);
+  return 60+(w-20);
+}
+
+function ebvMlKg(){
+  const cat = document.getElementById('ebvCat').value;
+  const age = parseFloat(document.getElementById('ptAge').value)||0;
+  const unit = document.getElementById('ptAgeUnit').value;
+  const sex = document.getElementById('ptSex').value;
+  const ageYrs = unit==='years'?age:(unit==='months'?age/12:age/365);
+  if(cat==='adultMale') return 75;
+  if(cat==='adultFemale') return 65;
+  if(cat==='child') return 80;
+  if(cat==='infant') return 85;
+  if(cat==='neonate') return 90;
+  // auto
+  if(ageYrs<0.08) return 90;
+  if(ageYrs<1) return 85;
+  if(ageYrs<12) return 80;
+  return sex==='female'?65:75;
+}
+
+function timeDiff(t1,t2){
+  // returns difference in hours (t2-t1), both "HH:MM"
+  const toMin=t=>{ const [h,m]=t.split(':').map(Number); return h*60+m; };
+  return (toMin(t2)-toMin(t1))/60;
+}
+
+function initCase(){
+  const wt = parseFloat(document.getElementById('ptWt').value)||0;
+  if(!wt){alert('Enter patient weight.');return;}
+  const hb0 = parseFloat(document.getElementById('initHb').value)||0;
+  const hbT = parseFloat(document.getElementById('targetHb').value)||0;
+  const npo = parseFloat(document.getElementById('npoHrs').value)||0;
+  const stress = parseFloat(document.getElementById('surgStress').value)||4;
+  const enterOT = document.getElementById('enterOT').value||'08:00';
+  const leaveOT = document.getElementById('leaveOT').value||'10:00';
+  const incision = document.getElementById('incisionTime').value||'08:30';
+  const handover = document.getElementById('handoverTime').value||'08:15';
+
+  const caseHrs = Math.max(timeDiff(enterOT,leaveOT),0);
+  const surgHrs = Math.max(timeDiff(incision,leaveOT),0);
+  const ebvKg = ebvMlKg();
+  const ebv = wt * ebvKg;
+  const mabl = (hb0>0&&hbT>0&&hb0>hbT) ? ebv*(hb0-hbT)/hb0 : 0;
+  const maint = hollidaySegar(wt);
+  const deficit = maint * npo;
+  const thirdSp = stress * wt;
+
+  const hr1 = maint + deficit/2 + thirdSp;
+  const hr2 = maint + deficit/4 + thirdSp;
+  const hrRest = maint + thirdSp;
+
+  caseParams = {wt,hb0,hbT,npo,stress,ebv,ebvKg,mabl,maint,deficit,thirdSp,hr1,hr2,hrRest,caseHrs,surgHrs,enterOT,leaveOT,incision,handover};
+
+  // Update KPIs
+  document.getElementById('kEBV').textContent = r(ebv,0)+' mL';
+  document.getElementById('kEBVsub').textContent = ebvKg+' mL/kg';
+  document.getElementById('kMABL').textContent = mabl?r(mabl,0)+' mL':'N/A';
+  document.getElementById('kMABLsub').textContent = hb0&&hbT?`Hb ${hb0} → ${hbT} g/dL`:'Enter Hb values';
+  document.getElementById('kMaint').textContent = r(maint,0)+' mL/hr';
+  document.getElementById('kMaintSub').textContent = `Wt ${wt}kg · 4/2/1 rule`;
+  document.getElementById('kDeficit').textContent = r(deficit,0)+' mL';
+  document.getElementById('kDeficitSub').textContent = `${npo} hrs NPO × ${r(maint,0)} mL/hr`;
+  document.getElementById('kThirdSp').textContent = r(thirdSp,0)+' mL/hr';
+  document.getElementById('kHr1').textContent = r(hr1,0)+' mL';
+  document.getElementById('kHr2').textContent = r(hr2,0)+' mL';
+  document.getElementById('kHrRest').textContent = r(hrRest,0)+' mL/hr';
+  document.getElementById('caseHrs').textContent = r(caseHrs,1)+' hrs';
+
+  buildFluidPlan(caseHrs,hr1,hr2,hrRest,wt,maint,deficit,thirdSp);
+  buildHourTable(enterOT,leaveOT);
+  buildTransfusionBox();
+  buildAlerts();
+
+  document.getElementById('caseStatus').textContent='⬤ ACTIVE';
+  document.getElementById('caseStatus').style.color='var(--ok)';
+}
+
+function buildFluidPlan(caseHrs,hr1,hr2,hrRest,wt,maint,deficit,thirdSp){
+  const rows = [];
+  const totalHrs = Math.ceil(caseHrs)||1;
+  let total = 0;
+  for(let i=1;i<=totalHrs;i++){
+    let vol = i===1?hr1:(i===2?hr2:hrRest);
+    total+=vol;
+    rows.push({hr:i,vol:Math.round(vol)});
+  }
+  const html = rows.map((r,i)=>`
+    <div class="frow${i===0?' highlight':''}">
+      <span class="flabel">Hour ${r.hr}${i===0?' <span class="badge orange">Priority</span>':''}</span>
+      <span class="fval">${r.vol} mL</span>
+    </div>`).join('')+`
+    <div class="frow highlight">
+      <span class="flabel">Total Planned</span>
+      <span class="fval">${Math.round(total)} mL</span>
+    </div>`;
+  document.getElementById('fluidPlanRows').innerHTML = html;
+  document.getElementById('planNote').textContent =
+    `Maintenance: ${Math.round(maint)} mL/hr | Deficit (½ in hr 1, ¼ in hr 2, ¼ in hr 3): ${Math.round(deficit)} mL | 3rd space: ${Math.round(thirdSp)} mL/hr. Adjust for blood loss beyond MABL.`;
+}
+
+function buildHourTable(enterOT, leaveOT){
+  const body = document.getElementById('ioBody');
+  const toMin = t=>{ const [h,m]=t.split(':').map(Number); return h*60+m; };
+  const totMin = Math.max(toMin(leaveOT)-toMin(enterOT),60);
+  const hrs = Math.ceil(totMin/60);
+
+  body.innerHTML='';
+  hourRows=[];
+
+  for(let i=0;i<hrs;i++){
+    const startMin = toMin(enterOT)+i*60;
+    const endMin = Math.min(startMin+60, toMin(leaveOT));
+    const fmt = m=>`${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+    const label = `${fmt(startMin)}–${fmt(endMin)}`;
+    const id = `hr${i}`;
+    hourRows.push({id,label});
+
+    const tr = document.createElement('tr');
+    tr.className='rowhour';
+    tr.setAttribute('data-row',i);
+    tr.innerHTML=`
+      <td style="padding:6px 10px;white-space:nowrap;">${label}</td>
+      <td><input type="number" min="0" id="${id}_cryst" placeholder="0" oninput="calcBalance()"></td>
+      <td><input type="number" min="0" id="${id}_coll" placeholder="0" oninput="calcBalance()"></td>
+      <td><input type="number" min="0" id="${id}_blood" placeholder="0" oninput="calcBalance()"></td>
+      <td><input type="number" min="0" id="${id}_ffp" placeholder="0" oninput="calcBalance()"></td>
+      <td><input type="number" min="0" id="${id}_ebl" placeholder="0" oninput="calcBalance()" style="background:rgba(255,77,109,.04)"></td>
+      <td><input type="number" min="0" id="${id}_urine" placeholder="0" oninput="calcBalance()" style="background:rgba(255,77,109,.04)"></td>
+      <td><input type="number" min="0" id="${id}_ngt" placeholder="0" oninput="calcBalance()" style="background:rgba(255,77,109,.04)"></td>
+      <td><input type="number" min="0" id="${id}_drain" placeholder="0" oninput="calcBalance()" style="background:rgba(255,77,109,.04)"></td>
+      <td><input type="number" min="0" max="100" id="${id}_spo2" placeholder="—"></td>
+      <td><input type="number" min="20" max="300" id="${id}_hr" placeholder="—"></td>
+      <td><input type="number" min="30" max="300" id="${id}_bp" placeholder="—"></td>
+      <td class="cellval" id="${id}_net" style="font-weight:700;">—</td>`;
+    body.appendChild(tr);
+  }
+}
+
+function addHour(){
+  const body=document.getElementById('ioBody');
+  const i=hourRows.length;
+  const id=`hr${i}`;
+  const label=`Hour ${i+1}`;
+  hourRows.push({id,label});
+  const tr=document.createElement('tr');tr.className='rowhour';
+  tr.innerHTML=`
+    <td style="padding:6px 10px;">${label}</td>
+    <td><input type="number" min="0" id="${id}_cryst" placeholder="0" oninput="calcBalance()"></td>
+    <td><input type="number" min="0" id="${id}_coll" placeholder="0" oninput="calcBalance()"></td>
+    <td><input type="number" min="0" id="${id}_blood" placeholder="0" oninput="calcBalance()"></td>
+    <td><input type="number" min="0" id="${id}_ffp" placeholder="0" oninput="calcBalance()"></td>
+    <td><input type="number" min="0" id="${id}_ebl" placeholder="0" oninput="calcBalance()" style="background:rgba(255,77,109,.04)"></td>
+    <td><input type="number" min="0" id="${id}_urine" placeholder="0" oninput="calcBalance()" style="background:rgba(255,77,109,.04)"></td>
+    <td><input type="number" min="0" id="${id}_ngt" placeholder="0" oninput="calcBalance()" style="background:rgba(255,77,109,.04)"></td>
+    <td><input type="number" min="0" id="${id}_drain" placeholder="0" oninput="calcBalance()" style="background:rgba(255,77,109,.04)"></td>
+    <td><input type="number" min="0" max="100" id="${id}_spo2" placeholder="—"></td>
+    <td><input type="number" min="20" max="300" id="${id}_hr" placeholder="—"></td>
+    <td><input type="number" min="30" max="300" id="${id}_bp" placeholder="—"></td>
+    <td class="cellval" id="${id}_net">—</td>`;
+  body.appendChild(tr);
+}
+
+function g(id){return parseFloat(document.getElementById(id)?.value)||0;}
+
+function calcBalance(){
+  let totC=0,totCo=0,totB=0,totF=0,totE=0,totU=0,totN=0,totD=0,netTotal=0;
+  hourRows.forEach(({id})=>{
+    const c=g(`${id}_cryst`),co=g(`${id}_coll`),b=g(`${id}_blood`),f=g(`${id}_ffp`);
+    const e=g(`${id}_ebl`),u=g(`${id}_urine`),n=g(`${id}_ngt`),d=g(`${id}_drain`);
+    const inp=c+co+b+f, out=e+u+n+d, net=inp-out;
+    totC+=c;totCo+=co;totB+=b;totF+=f;totE+=e;totU+=u;totN+=n;totD+=d;netTotal+=net;
+    const el=document.getElementById(`${id}_net`);
+    if(el){
+      el.textContent=(net>=0?'+':'')+Math.round(net)+' mL';
+      el.className='cellval '+(net>500?'cellwarn':net<-500?'celldanger':'cellok');
+    }
+  });
+
+  // Totals row
+  const setT=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v?Math.round(v)+' mL':'—';};
+  setT('totCryst',totC);setT('totColl',totCo);setT('totBlood',totB);setT('totFFP',totF);
+  setT('totEBL',totE);setT('totUrine',totU);setT('totNGT',totN);setT('totDrain',totD);
+  const totNet=document.getElementById('totNet');
+  if(totNet){totNet.textContent=(netTotal>=0?'+':'')+Math.round(netTotal)+' mL';
+    totNet.className='cellval '+(netTotal>1000?'cellwarn':netTotal<-500?'celldanger':'cellok');}
+
+  const totalIn=totC+totCo+totB+totF;
+  const totalOut=totE+totU+totN+totD;
+  const net=totalIn-totalOut;
+
+  // Balance bar
+  const pct=totalIn+totalOut>0?Math.round(totalIn/(totalIn+totalOut)*100):50;
+  const fill=document.getElementById('balFill');
+  fill.style.width=pct+'%';
+  fill.className='fill '+(net>=0?'pos':'neg');
+  document.getElementById('balTxtL').textContent=`Input: ${Math.round(totalIn)} mL`;
+  document.getElementById('balTxtR').textContent=`Output: ${Math.round(totalOut)} mL`;
+  document.getElementById('balNet').textContent=(net>=0?'+':'')+Math.round(net)+' mL';
+  document.getElementById('balNet').style.color=net>1000?'var(--warn)':net<-500?'var(--danger)':'var(--ok)';
+
+  // Balance summary
+  const bsummary=document.getElementById('balSummary');
+  bsummary.innerHTML=`
+    <div class="frow"><span class="flabel">Total Input</span><span class="fval">${Math.round(totalIn)} mL</span></div>
+    <div class="frow"><span class="flabel">EBL</span><span class="fval">${Math.round(totE)} mL</span></div>
+    <div class="frow"><span class="flabel">Urine Output</span><span class="fval">${Math.round(totU)} mL</span></div>
+    <div class="frow"><span class="flabel">NGT + Drain</span><span class="fval">${Math.round(totN+totD)} mL</span></div>
+    <div class="frow highlight"><span class="flabel">Net Balance</span><span class="fval" style="color:${net>=0?'var(--ok)':'var(--danger)'}">${net>=0?'+':''}${Math.round(net)} mL</span></div>`;
+
+  // Urine monitoring
+  const wt=caseParams.wt||0;
+  const hrs=caseParams.caseHrs||1;
+  document.getElementById('urineTotal').textContent=Math.round(totU)+' mL';
+  if(wt&&hrs){
+    const rate=(totU/(wt*hrs)).toFixed(2);
+    document.getElementById('urineRate').textContent=rate+' mL/kg/hr';
+    const uAlert=document.getElementById('urineAlert');
+    if(rate<0.5){uAlert.className='alert danger';uAlert.textContent='⚠ Oliguria! UO <0.5 mL/kg/hr — assess fluid status, check catheter.';}
+    else if(rate>2){uAlert.className='alert warn';uAlert.textContent='⚠ High UO >2 mL/kg/hr — check diabetes insipidus, mannitol, diuretics.';}
+    else{uAlert.className='alert ok';uAlert.textContent=`✓ UO adequate (${rate} mL/kg/hr). Target: 0.5–1 mL/kg/hr.`;}
+  }
+
+  // EBL vs MABL
+  const eblMeas=g('measuredEBL')||totE;
+  if(caseParams.mabl&&eblMeas){
+    const pctMABL=eblMeas/caseParams.mabl*100;
+    const balAlert=document.getElementById('balAlert');
+    if(pctMABL>=100){balAlert.className='alert danger';balAlert.textContent=`⛔ EBL (${Math.round(eblMeas)} mL) has exceeded MABL (${Math.round(caseParams.mabl)} mL). Consider transfusion!`;}
+    else if(pctMABL>=75){balAlert.className='alert warn';balAlert.textContent=`⚠ EBL ${Math.round(pctMABL)}% of MABL. Approach transfusion trigger.`;}
+    else{balAlert.className='alert ok';balAlert.textContent=`EBL ${Math.round(pctMABL)}% of MABL (${Math.round(caseParams.mabl)} mL). Currently within safe limits.`;}
+  }
+
+  buildAlerts(totU,totE,netTotal);
+}
+
+function buildTransfusionBox(){
+  const p=caseParams;
+  const box=document.getElementById('transfusionBox');
+  if(!p.ebv){box.innerHTML='<div class="notice">Start case first.</div>';return;}
+  const rows=[
+    {label:'EBV',val:`${Math.round(p.ebv)} mL (${p.ebvKg} mL/kg)`},
+    {label:'MABL',val:p.mabl?`${Math.round(p.mabl)} mL`:'Not set (enter Hb)'},
+    {label:'Transfuse if Hb <',val:p.hbT?`${p.hbT} g/dL`:'8 g/dL (default)'},
+    {label:'Transfuse PRBC if EBL >',val:p.mabl?`${Math.round(p.mabl)} mL`:'—'},
+    {label:'Each unit PRBC ≈',val:'250 mL → raises Hb ~1 g/dL'},
+    {label:'FFP: PLT: PRBC ratio',val:'1:1:1 (massive haemorrhage)'},
+  ];
+  box.innerHTML=rows.map(r=>`<div class="frow"><span class="flabel">${r.label}</span><span class="fval" style="font-size:12px;">${r.val}</span></div>`).join('');
+}
+
+function buildAlerts(urine=0,ebl=0,net=0){
+  const p=caseParams;
+  const alerts=[];
+  if(p.mabl&&ebl>=p.mabl) alerts.push({cls:'danger',txt:`🩸 EBL (${Math.round(ebl)} mL) ≥ MABL (${Math.round(p.mabl)} mL). Transfusion likely required.`});
+  if(urine>0&&p.wt&&p.caseHrs&&(urine/(p.wt*p.caseHrs))<0.5) alerts.push({cls:'danger',txt:'🚨 Oliguria: UO < 0.5 mL/kg/hr.'});
+  if(net>2000) alerts.push({cls:'warn',txt:`⚠ Large positive balance (+${Math.round(net)} mL). Avoid fluid overload.`});
+  if(net<-500) alerts.push({cls:'warn',txt:`⚠ Negative balance (${Math.round(net)} mL). Reassess fluid replacement.`});
+  if(!alerts.length) alerts.push({cls:'ok',txt:'✓ No active alerts. Continue monitoring.'});
+  document.getElementById('alertBox').innerHTML=alerts.map(a=>`<div class="alert ${a.cls}">${a.txt}</div>`).join('');
+}
+
+/* ── Export CSV ── */
+function exportTable(){
+  const headers=['Time','Crystalloid','Colloid','Blood','FFP','EBL','Urine','NGT','Drain','SpO2','HR','BP','Net'];
+  const rows=[headers.join(',')];
+  hourRows.forEach(({id,label})=>{
+    const vals=[label,
+      g(`${id}_cryst`),g(`${id}_coll`),g(`${id}_blood`),g(`${id}_ffp`),
+      g(`${id}_ebl`),g(`${id}_urine`),g(`${id}_ngt`),g(`${id}_drain`),
+      g(`${id}_spo2`),g(`${id}_hr`),g(`${id}_bp`),
+      document.getElementById(`${id}_net`)?.textContent||''];
+    rows.push(vals.join(','));
+  });
+  const csv=rows.join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='IntraopFluid_'+(document.getElementById('ptName').value||'case')+'.csv';
+  a.click();
+}
+
+
+
+/* ═══════════════════════════════
+   MERGED COMPANION INFUSION CONVERTER + STOELTING SEARCH
+═══════════════════════════════ */
+const COMPANION_DOSE_LIST=[
+{name:'Propofol induction',cat:'bolus',dose:[1,2.5],unit:'mg/kg',wt:'PROP_AUTO',conc:'10 mg/mL emulsion',concValue:10,concUnit:'mg/mL',note:'Auto scalar: normal BMI uses TBW; overweight/obese uses LBW/IBW principle; BMI ≥40 uses LBW. Reduce/titrate in elderly, shock or frailty.'},
+{name:'Propofol maintenance infusion',cat:'infusion',dose:[50,150],unit:'mcg/kg/min',wt:'LBW',conc:'10 mg/mL emulsion',concValue:10,concUnit:'mg/mL',note:'TIVA/sedation range; avoid prolonged high dose in children.'},
+{name:'Etomidate',cat:'bolus',dose:[0.2,0.3],unit:'mg/kg',wt:'TBW',conc:'2 mg/mL commonly supplied',concValue:2,concUnit:'mg/mL',note:'Hemodynamic stability.'},
+{name:'Ketamine induction',cat:'bolus',dose:[1,2],unit:'mg/kg IV',wt:'IBW',conc:'50 mg/mL commonly supplied',concValue:50,concUnit:'mg/mL',note:'Shock/bronchospasm context.'},
+{name:'Ketamine analgesic infusion',cat:'infusion',dose:[0.05,0.3],unit:'mg/kg/h',wt:'IBW',conc:'50 mg/mL vial; dilute for infusion',concValue:1,concUnit:'mg/mL',note:'Analgesic adjunct; psychomimetic/sympathetic effects.'},
+{name:'Dexmedetomidine infusion',cat:'infusion',dose:[0.2,0.7],unit:'mcg/kg/h',wt:'IBW',conc:'100 mcg/mL concentrate commonly supplied; dilute for infusion',concValue:4,concUnit:'mcg/mL',note:'Bradycardia/hypotension; loading often avoided.'},
+{name:'Midazolam infusion',cat:'infusion',dose:[0.02,0.1],unit:'mg/kg/h',wt:'IBW',conc:'1 mg/mL or 5 mg/mL amp/vial; dilute as needed',concValue:1,concUnit:'mg/mL',note:'Sedation; accumulation possible.'},
+{name:'Fentanyl bolus',cat:'bolus',dose:[1,2],unit:'mcg/kg',wt:'LBW',conc:'50 mcg/mL ampoule',concValue:50,concUnit:'mcg/mL',note:'Titrate to ventilation/hemodynamics.'},
+{name:'Fentanyl infusion',cat:'infusion',dose:[0.5,2],unit:'mcg/kg/h',wt:'LBW',conc:'50 mcg/mL ampoule; dilute for infusion',concValue:10,concUnit:'mcg/mL',note:'Postop/ICU style infusion; titrate.'},
+{name:'Remifentanil infusion',cat:'infusion',dose:[0.05,0.2],unit:'mcg/kg/min',wt:'IBW',conc:'1 mg or 2 mg vial; reconstitute/dilute, e.g. 20–50 mcg/mL',concValue:50,concUnit:'mcg/mL',note:'Rapid offset; pump essential.'},
+{name:'Suxamethonium',cat:'bolus',dose:[1,1.5],unit:'mg/kg',wt:'TBW',tags:['relaxant'],conc:'50 mg/mL commonly supplied',concValue:50,concUnit:'mg/mL',note:'Depolarising relaxant; contraindications apply.'},
+{name:'Rocuronium',cat:'bolus',dose:[0.6,1.2],unit:'mg/kg',wt:'IBW',tags:['relaxant'],conc:'10 mg/mL vial',concValue:10,concUnit:'mg/mL',note:'Nondepolarising relaxant; TOF/reversal plan.'},
+{name:'Atracurium bolus',cat:'bolus',dose:[0.4,0.5],unit:'mg/kg',wt:'IBW',tags:['relaxant'],conc:'10 mg/mL vial/ampoule',concValue:10,concUnit:'mg/mL',note:'Hofmann elimination; histamine-related effects possible.'},
+{name:'Atracurium infusion',cat:'infusion',dose:[5,10],unit:'mcg/kg/min',wt:'IBW',tags:['relaxant'],conc:'10 mg/mL vial/ampoule; dilute for infusion',concValue:10,concUnit:'mg/mL',note:'Use NMT monitoring.'},
+{name:'Vecuronium bolus',cat:'bolus',dose:[0.08,0.1],unit:'mg/kg',wt:'IBW',tags:['relaxant'],conc:'10 mg lyophilized vial; concentration after dilution varies',concValue:1,concUnit:'mg/mL',note:'Nondepolarising relaxant; hepatic/renal prolongation possible.'},
+{name:'Vecuronium infusion',cat:'infusion',dose:[0.8,1.2],unit:'mcg/kg/min',wt:'IBW',tags:['relaxant'],conc:'10 mg lyophilized vial; dilute for infusion',concValue:1,concUnit:'mg/mL',note:'Use NMT monitoring; accumulation possible.'},
+{name:'Cisatracurium infusion',cat:'infusion',dose:[1,3],unit:'mcg/kg/min',wt:'IBW',tags:['relaxant'],conc:'2 mg/mL commonly supplied',concValue:2,concUnit:'mg/mL',note:'Use NMT monitoring.'},
+{name:'Noradrenaline infusion',cat:'vasoactive',dose:[0.02,0.5],unit:'mcg/kg/min',wt:'TBW',conc:'1 mg/mL base equivalent; often 4 mg/4 mL ampoule',concValue:16,concUnit:'mcg/mL',note:'Central line preferred for prolonged/high dose. Converter default assumes 4 mg in 250 mL = 16 mcg/mL.'},
+{name:'Adrenaline infusion',cat:'vasoactive',dose:[0.02,0.3],unit:'mcg/kg/min',wt:'TBW',conc:'1 mg/mL ampoule commonly supplied; dilute for infusion',concValue:4,concUnit:'mcg/mL',note:'Shock/anaphylaxis/cardiac support; titrate. Converter default assumes 1 mg in 250 mL = 4 mcg/mL.'},
+{name:'Dopamine infusion',cat:'vasoactive',dose:[2,10],unit:'mcg/kg/min',wt:'TBW',conc:'40 mg/mL ampoule/vial commonly supplied; dilute for infusion',concValue:1600,concUnit:'mcg/mL',note:'Arrhythmia risk; local practice varies. Default assumes 400 mg in 250 mL.'},
+{name:'Dobutamine infusion',cat:'vasoactive',dose:[2,10],unit:'mcg/kg/min',wt:'TBW',conc:'12.5 mg/mL commonly supplied; dilute for infusion',concValue:1000,concUnit:'mcg/mL',note:'Inotrope; monitor tachyarrhythmia. Default assumes 250 mg in 250 mL.'},
+{name:'Nitroglycerin infusion',cat:'vasoactive',dose:[0.5,5],unit:'mcg/kg/min',wt:'TBW',conc:'5 mg/mL ampoule commonly supplied; dilute for infusion',concValue:200,concUnit:'mcg/mL',note:'Titrate for BP/ischemia. Default assumes 50 mg in 250 mL.'},
+{name:'Phenylephrine infusion',cat:'vasoactive',dose:[0.2,1],unit:'mcg/kg/min',wt:'IBW',conc:'10 mg/mL vial commonly supplied; dilute for infusion',concValue:100,concUnit:'mcg/mL',note:'Vasoconstrictor; reflex bradycardia.'},
+{name:'Vasopressin infusion',cat:'vasoactive',dose:[0.01,0.04],unit:'units/min',wt:'fixed',conc:'20 units/mL vial/ampoule; dilute for infusion',concValue:1,concUnit:'units/mL',note:'Non-weight based infusion; common vasodilatory shock adjunct. Converter default assumes 20 units in 20 mL = 1 unit/mL.'},
+{name:'Ondansetron',cat:'bolus',dose:[0.1,0.15],unit:'mg/kg',wt:'TBW',cap:4,capUnit:'mg',conc:'2 mg/mL commonly supplied',concValue:2,concUnit:'mg/mL',note:'PONV.'},
+{name:'Lignocaine max plain',cat:'bolus',dose:[4.5,4.5],unit:'mg/kg',wt:'IBW',cap:300,capUnit:'mg',conc:'1% = 10 mg/mL; 2% = 20 mg/mL',concValue:10,concUnit:'mg/mL',note:'LAST precautions.'},
+{name:'Bupivacaine max',cat:'bolus',dose:[2,2.5],unit:'mg/kg',wt:'IBW',cap:175,capUnit:'mg',conc:'0.5% = 5 mg/mL commonly supplied',concValue:5,concUnit:'mg/mL',note:'Cardiotoxicity risk.'},
+{name:'Thiopentone induction',cat:'bolus',dose:[3,5],unit:'mg/kg',wt:'TBW',conc:'Powder vial commonly reconstituted to 25 mg/mL',concValue:25,concUnit:'mg/mL',note:'Alternative IV induction agent; reduce in frailty/shock.'},
+{name:'Cisatracurium bolus',cat:'bolus',dose:[0.1,0.2],unit:'mg/kg',wt:'IBW',tags:['relaxant'],conc:'2 mg/mL or 5 mg/mL amp/vial',concValue:2,concUnit:'mg/mL',note:'Organ-independent Hofmann elimination; titrate with NMT.'},
+];
+
+const STOELTING_DRUGS = {
+  'propofol': {class: 'Sedative-Hypnotic (GABA-A)', dose: 'Induction 1.5–2.5 mg/kg IV; Maintenance 100–200 µg/kg/min; Sedation 25–75 µg/kg/min', notes: 'Cardiac depression, vasodilation; pain on injection; antiemetic; PRIS with prolonged high-dose'},
+  'ketamine': {class: 'NMDA antagonist', dose: 'Induction 1–2 mg/kg IV (4–6 mg/kg IM); Analgesia 0.2–0.5 mg/kg IV; Subanesthetic 0.1–0.3 mg/kg/hr', notes: 'Sympathomimetic, bronchodilator; preserved airway reflexes; emergence reactions'},
+  'etomidate': {class: 'Sedative-Hypnotic (GABA-A)', dose: 'Induction 0.2–0.3 mg/kg IV', notes: 'Hemodynamic stability; adrenocortical suppression; myoclonus; pain on injection'},
+  'midazolam': {class: 'Benzodiazepine', dose: 'Premedication 1–2 mg IV; Procedural 0.05–0.15 mg/kg; ICU 0.1–0.3 mg/kg/hr', notes: 'Anxiolysis, amnesia; reverse with flumazenil; CYP3A4'},
+  'dexmedetomidine': {class: 'α₂-agonist', dose: 'Loading 1 µg/kg over 10 min; Maintenance 0.2–0.7 µg/kg/hr', notes: 'Cooperative sedation; no respiratory depression; bradycardia, hypotension'},
+  'fentanyl': {class: 'Opioid (μ)', dose: 'Analgesia 1–2 µg/kg; Balanced anesthesia 2–10 µg/kg; Cardiac 50–150 µg/kg', notes: '75–125× morphine; CSHT prolonged after long infusion; chest wall rigidity'},
+  'remifentanil': {class: 'Opioid (μ)', dose: 'Infusion 0.05–0.5 µg/kg/min', notes: 'Plasma esterase metabolism; CSHT 3 min regardless of duration; acute hyperalgesia'},
+  'morphine': {class: 'Opioid (μ)', dose: 'IV 0.05–0.2 mg/kg; PCA 1 mg q6–8 min; Epidural 2–5 mg; Intrathecal 100–300 µg', notes: 'Histamine release; M6G accumulates in renal failure'},
+  'rocuronium': {class: 'NMBA (aminosteroid, non-depolarizing)', dose: 'Intubation 0.6–1.2 mg/kg; Maintenance 0.1 mg/kg', notes: 'Onset 60s at 1.2 mg/kg (RSI alternative); reversed by sugammadex 2–16 mg/kg'},
+  'succinylcholine': {class: 'NMBA (depolarizing)', dose: '1–1.5 mg/kg IV; 4 mg/kg IM', notes: 'Onset 60s; duration 5–10 min; MH trigger; hyperkalemia in burns/denervation'},
+  'cisatracurium': {class: 'NMBA (benzylisoquinolinium)', dose: 'Intubation 0.15–0.2 mg/kg; Infusion 1–3 µg/kg/min', notes: 'Hofmann elimination — ideal for organ failure; no histamine release'},
+  'sugammadex': {class: 'NMBA reversal (cyclodextrin)', dose: '2 mg/kg (TOF≥2); 4 mg/kg (PTC≥1); 16 mg/kg (immediate reversal)', notes: 'Reverses rocuronium/vecuronium only; anaphylaxis 1:2,500; binds OCPs × 7d'},
+  'neostigmine': {class: 'Cholinesterase inhibitor', dose: '0.04–0.07 mg/kg with glycopyrrolate 0.2 mg per 1 mg neo', notes: 'Reversal of non-depolarizing NMBA; ceiling effect; muscarinic effects'},
+  'lidocaine': {class: 'Local anesthetic (amide)', dose: 'Max 4.5 mg/kg plain, 7 mg/kg with epi; Antiarrhythmic 1–1.5 mg/kg IV', notes: 'Fast onset; intermediate duration; LAST risk; methylene blue for methemoglobinemia'},
+  'bupivacaine': {class: 'Local anesthetic (amide)', dose: 'Max 2.5 mg/kg plain, 3 mg/kg with epi', notes: 'Long-acting, dense block; cardiotoxicity risk; avoid 0.75% in obstetrics; lipid rescue'},
+  'ropivacaine': {class: 'Local anesthetic (amide)', dose: 'Max 3 mg/kg', notes: 'Less cardiotoxic than bupivacaine; sensory > motor block at low concentrations'},
+  'epinephrine': {class: 'α/β agonist', dose: 'Arrest 1 mg IV q3–5 min; Anaphylaxis 0.3–0.5 mg IM or 10–100 µg IV titrated; Infusion 0.01–1 µg/kg/min', notes: 'First-line in arrest, anaphylaxis, refractory shock'},
+  'norepinephrine': {class: 'α₁ > β₁ agonist', dose: 'Infusion 0.05–1 µg/kg/min', notes: 'First-line vasopressor in septic shock; central line preferred'},
+  'phenylephrine': {class: 'Pure α₁ agonist', dose: 'Bolus 50–200 µg; Infusion 0.15–0.75 µg/kg/min', notes: 'Pure vasoconstrictor; reflex bradycardia; ideal in tachycardia'},
+  'ephedrine': {class: 'α/β indirect agonist', dose: '5–10 mg IV', notes: 'Releases NE; tachyphylaxis; preferred over phenylephrine when HR low'},
+  'vasopressin': {class: 'V1/V2 agonist', dose: 'Septic shock 0.01–0.04 U/min; Vasoplegia 1–2 U IV bolus', notes: 'Adjunct to norepinephrine in septic shock; coronary vasoconstriction'},
+  'dobutamine': {class: 'β₁ > β₂ agonist', dose: 'Infusion 2.5–20 µg/kg/min', notes: 'Inotrope; tachycardia, ↓SVR; cardiogenic shock'},
+  'milrinone': {class: 'PDE3 inhibitor', dose: 'Infusion 0.25–0.75 µg/kg/min ± loading 50 µg/kg', notes: 'Inodilator; useful in pulmonary hypertension, heart failure; renal elimination'},
+  'esmolol': {class: 'β₁-selective', dose: 'Bolus 10–80 mg; Infusion 50–300 µg/kg/min', notes: 'Half-life 9 min (RBC esterase); ideal acute control'},
+  'metoprolol': {class: 'β₁-selective', dose: 'IV 1–5 mg q5 min; PO 25–200 mg/day', notes: 'Continue chronic perioperatively'},
+  'labetalol': {class: 'α₁/β blocker', dose: 'IV 5–20 mg increments', notes: 'Useful in pheochromocytoma (after α-block), severe HTN, pregnancy'},
+  'nitroglycerin': {class: 'NO donor', dose: 'Infusion 25–200 µg/min', notes: 'Venodilation > arterial; tolerance >24 hr; methemoglobinemia at very high doses'},
+  'nicardipine': {class: 'DHP CCB', dose: 'Infusion 5–15 mg/hr', notes: 'Smooth BP control; useful in neurosurgery'},
+  'hydralazine': {class: 'Direct arterial vasodilator', dose: 'IV 5–20 mg', notes: 'Reflex tachycardia; useful in pregnancy'},
+  'ondansetron': {class: '5-HT₃ antagonist', dose: '4 mg IV at end of surgery', notes: 'PONV prophylaxis; QT prolongation; headache'},
+  'dexamethasone': {class: 'Corticosteroid', dose: 'PONV 4–8 mg IV at induction', notes: 'PONV prophylaxis; hyperglycemia transient'},
+  'aprepitant': {class: 'NK-1 antagonist', dose: '40 mg PO 1–3 hr preop', notes: 'Effective for delayed PONV; CYP3A4 inhibitor'},
+  'naloxone': {class: 'Opioid antagonist', dose: '0.04–0.4 mg IV titrated', notes: 'Short half-life — re-narcotization possible; severe pain on full reversal'},
+  'flumazenil': {class: 'Benzodiazepine antagonist', dose: '0.2 mg IV q1 min (max 1 mg)', notes: 'Risk of seizure in dependent patients or mixed overdose'},
+  'protamine': {class: 'Heparin antagonist', dose: '1 mg per 100 U heparin (max 50 mg)', notes: 'Hypotension, anaphylaxis (NPH-treated diabetics)'},
+  'tranexamic acid': {class: 'Antifibrinolytic', dose: '1 g IV bolus (trauma, PPH, cardiac surgery)', notes: 'Reduces mortality in trauma <3 hr; PPH; cardiac/orthopedic surgery'},
+  'heparin': {class: 'Anticoagulant (ATIII potentiator)', dose: 'DVT 5,000 U SC q8h; treatment 80 U/kg + 18 U/kg/hr; CPB 300 U/kg', notes: 'Monitored by aPTT or ACT; reversed by protamine; HIT risk'},
+  'enoxaparin': {class: 'LMWH (anti-Xa)', dose: 'DVT 40 mg SC daily; treatment 1 mg/kg q12h', notes: 'Predictable; partial protamine reversal; reduce in renal impairment'},
+  'warfarin': {class: 'Vitamin K antagonist', dose: 'Initial 5 mg PO; titrate to INR', notes: 'Reverse with PCC + vitamin K; teratogenic; many interactions'},
+  'apixaban': {class: 'Direct factor Xa inhibitor', dose: '5 mg PO BID (2.5 BID if old/small/Cr↑)', notes: 'Hold 24–48 hr preop; reverse with andexanet or 4F-PCC'},
+  'dabigatran': {class: 'Direct thrombin inhibitor', dose: '110–150 mg PO BID', notes: 'Renal elimination; reverse with idarucizumab; dialyzable'},
+  'mannitol': {class: 'Osmotic diuretic', dose: '0.25–1 g/kg IV', notes: 'Reduces ICP; risk of hypotension, electrolyte derangement'},
+  'furosemide': {class: 'Loop diuretic', dose: 'IV 10–40 mg; Infusion 5–40 mg/hr', notes: 'Hypokalemia, hypovolemia; acute pulmonary edema'},
+  'magnesium': {class: 'Electrolyte', dose: 'Torsades 2 g IV; Preeclampsia 4–6 g load + 1–2 g/hr', notes: 'Toxicity: loss of DTRs, respiratory depression; antidote calcium'},
+  'calcium chloride': {class: 'Electrolyte', dose: '1 g IV (3× more elemental Ca than gluconate)', notes: 'Hyperkalemia, hypocalcemia, CCB OD; central line preferred'},
+  'atropine': {class: 'Antimuscarinic', dose: '0.5 mg IV (max 3 mg); Pre-NMBA 0.4 mg per 1 mg neo', notes: 'Crosses BBB — central anticholinergic effects; tachycardia'},
+  'glycopyrrolate': {class: 'Antimuscarinic', dose: '0.2 mg per 1 mg neostigmine', notes: 'Quaternary, no CNS effects — preferred in elderly'},
+  'dantrolene': {class: 'Skeletal muscle relaxant (RyR)', dose: '2.5 mg/kg IV bolus, repeat to total 10 mg/kg', notes: 'Malignant hyperthermia first-line; mix in sterile water'}
+};
+
+function escHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function toggleNav(force){
+  const nav=document.getElementById('sideNav'), bd=document.getElementById('sideNavBackdrop');
+  if(!nav||!bd) return;
+  const open = typeof force==='boolean' ? force : !nav.classList.contains('open');
+  nav.classList.toggle('open', open); bd.classList.toggle('active', open);
+}
+document.querySelectorAll('.sideNav a').forEach(a=>a.addEventListener('click',()=>toggleNav(false)));
+const navObserver = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(!entry.isIntersecting) return;
+    document.querySelectorAll('.sideNav a').forEach(a=>a.classList.toggle('active', a.getAttribute('href') === '#'+entry.target.id));
+  });
+},{rootMargin:'-25% 0px -65% 0px',threshold:0.01});
+['patientSetup','calcParams','ioMonitor','drugLogSec','infusionConverterSec','drugSearchSec','decisionSupport'].forEach(id=>{const el=document.getElementById(id);if(el)navObserver.observe(el);});
+
+function infusionDoseDrugs(){
+  const seen=new Set();
+  return COMPANION_DOSE_LIST.filter(d=>['infusion','vasoactive'].includes(d.cat)||(d.tags||[]).includes('relaxant'))
+    .filter(d=>{const k=d.name.toLowerCase(); if(seen.has(k)) return false; seen.add(k); return true;});
+}
+function converterWeight(){return parseFloat(document.getElementById('infWeight')?.value)||parseFloat(document.getElementById('ptWt')?.value)||0;}
+function renderInfusionPresets(){
+  const box=document.getElementById('infusionPresetCards'); if(!box) return;
+  box.innerHTML=infusionDoseDrugs().slice(0,12).map((d,i)=>`<button class="infPreset" onclick="selectInfusionPreset(${i})" style="text-align:left;color:var(--text);cursor:pointer">
+    <div class="refName">${escHtml(d.name)}</div><div class="refMeta">${escHtml(d.dose[0]+'–'+d.dose[1]+' '+d.unit)} · ${escHtml(d.conc||'local concentration')}</div>
+    <div class="refText">${escHtml(d.note||'Verify preparation and titrate clinically.')}</div></button>`).join('');
+}
+function populateInfusionSelect(){
+  const sel=document.getElementById('infDrug'); if(!sel) return;
+  const arr=infusionDoseDrugs();
+  sel.innerHTML=arr.map((d,i)=>`<option value="${i}">${escHtml(d.name)}</option>`).join('');
+  renderInfusionPresets(); loadInfusionPreset();
+}
+function selectInfusionPreset(i){const sel=document.getElementById('infDrug'); if(sel){sel.value=String(i);loadInfusionPreset(); document.getElementById('infusionConverterSec')?.scrollIntoView({behavior:'smooth',block:'start'});}}
+function loadInfusionPreset(){
+  const arr=infusionDoseDrugs(); const sel=document.getElementById('infDrug'); if(!sel||!arr.length) return;
+  const d=arr[parseInt(sel.value)||0]||arr[0];
+  document.getElementById('infTarget').value=d.dose[0];
+  document.getElementById('infUnit').value=d.unit;
+  document.getElementById('infConc').value=d.concValue||'';
+  document.getElementById('infConcUnit').value=d.concUnit||'mcg/mL';
+  document.getElementById('infManualName').value=d.name;
+  if(!document.getElementById('infWeight').value) copyCaseWeightToConverter(false);
+  calcInfusionRate();
+}
+function copyCaseWeightToConverter(recalc=true){const w=parseFloat(document.getElementById('ptWt')?.value)||0; if(w) document.getElementById('infWeight').value=w; if(recalc) calcInfusionRate();}
+function fillInfusionFromDrugLog(){
+  const last=[...drugLog].reverse().find(d=>String(d.route||'').toLowerCase().includes('infusion'));
+  if(!last){alert('No infusion drug has been logged yet.');return;}
+  document.getElementById('infManualName').value=last.name;
+  const q=last.name.toLowerCase();
+  const i=infusionDoseDrugs().findIndex(d=>d.name.toLowerCase().includes(q)||q.includes(d.name.toLowerCase().split(' ')[0]));
+  if(i>=0) selectInfusionPreset(i); else calcInfusionRate();
+}
+function calcInfusionRate(){
+  const target=parseFloat(document.getElementById('infTarget')?.value);
+  const wt=converterWeight();
+  const unit=document.getElementById('infUnit')?.value||'mcg/kg/min';
+  const conc=parseFloat(document.getElementById('infConc')?.value);
+  const concUnit=document.getElementById('infConcUnit')?.value||'mcg/mL';
+  const mlhrEl=document.getElementById('infMlHr'), perEl=document.getElementById('infPerHr'), note=document.getElementById('infCalcNote');
+  if(!Number.isFinite(target)||target<=0||!Number.isFinite(conc)||conc<=0){ if(mlhrEl)mlhrEl.textContent='—'; if(perEl)perEl.textContent='—'; if(note)note.textContent='Enter target dose and final concentration.'; return; }
+  let amountPerHr=NaN, amountUnit=concUnit.replace('/mL','');
+  if(unit==='mcg/kg/min') amountPerHr=target*wt*60;
+  else if(unit==='mcg/kg/h') amountPerHr=target*wt;
+  else if(unit==='mg/kg/h') amountPerHr=target*wt;
+  else if(unit==='mg/kg/min') amountPerHr=target*wt*60;
+  else if(unit==='units/min') amountPerHr=target*60;
+  else if(unit==='units/kg/h') amountPerHr=target*wt;
+  let deliveryForConc=amountPerHr;
+  if(unit.startsWith('mcg') && concUnit==='mg/mL') deliveryForConc=amountPerHr/1000;
+  if(unit.startsWith('mg') && concUnit==='mcg/mL') deliveryForConc=amountPerHr*1000;
+  const mlhr=deliveryForConc/conc;
+  const labelUnit=unit.startsWith('mg')?'mg':(unit.startsWith('units')?'units':'mcg');
+  if(mlhrEl) mlhrEl.textContent=Number.isFinite(mlhr)?`${mlhr.toFixed(2)} mL/hr`:'—';
+  if(perEl) perEl.textContent=Number.isFinite(amountPerHr)?`${amountPerHr.toFixed(labelUnit==='units'?2:1)} ${labelUnit}/hr`:'—';
+  if(note) note.textContent=`Formula: target ${target} ${unit} ${unit.includes('/kg')?'× weight '+(wt||'—')+' kg ':''}→ hourly dose ÷ final concentration ${conc} ${concUnit}.`;
+}
+function searchStoeltingDrugs(){
+  const q=(document.getElementById('stoeltingDrugSearch')?.value||'').toLowerCase().trim();
+  const box=document.getElementById('stoeltingDrugResults'); if(!box) return;
+  if(!q){box.innerHTML='<div class="notice">Start typing to search the separate drug reference.</div>';return;}
+  const matches=Object.entries(STOELTING_DRUGS).filter(([name,d])=>[name,d.class,d.dose,d.notes].join(' ').toLowerCase().includes(q)).slice(0,30);
+  if(!matches.length){box.innerHTML='<div class="notice">No matching Stoelting drug entry. Try a class, alternative name, or open the linked reference.</div>';return;}
+  box.innerHTML=matches.map(([name,d])=>`<div class="refResult">
+    <div class="refName">${escHtml(name)}</div><div class="refMeta">${escHtml(d.class)}</div>
+    <div class="refText"><b>Dose:</b> ${escHtml(d.dose)}<br><b>Notes:</b> ${escHtml(d.notes)}</div>
+    <div class="refActions"><button class="microBtn" onclick="copyStoeltingToDrugLog('${escHtml(name).replace(/'/g,'&#39;')}')">Copy to drug log</button><button class="microBtn" onclick="copyStoeltingToConverter('${escHtml(name).replace(/'/g,'&#39;')}')">Try converter</button></div>
+  </div>`).join('');
+}
+function copyStoeltingToDrugLog(name){
+  const d=STOELTING_DRUGS[name]; if(!d) return;
+  document.getElementById('drugName').value=name.charAt(0).toUpperCase()+name.slice(1);
+  document.getElementById('drugNotes').value=d.class+' · '+d.notes;
+  stampNow('drugTime'); document.getElementById('drugLogSec')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function copyStoeltingToConverter(name){
+  const n=String(name||'').toLowerCase();
+  const i=infusionDoseDrugs().findIndex(d=>d.name.toLowerCase().includes(n)||n.includes(d.name.toLowerCase().split(' ')[0]));
+  if(i>=0) selectInfusionPreset(i);
+  document.getElementById('infManualName').value=name;
+  document.getElementById('infusionConverterSec')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+populateInfusionSelect();
+
+/* ── Stamp time on drug time field to now ── */
+document.getElementById('drugTime').value = new Date().toTimeString().slice(0,5);
+</script>
+</body>
+</html>
