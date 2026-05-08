@@ -303,7 +303,7 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
     <a href="#infusionConverterSec"><b>⚙</b>Infusion converter</a>
     <a href="#drugSearchSec"><b>🔎</b>Drug search</a>
     <a href="#decisionSupport"><b>⚠</b>Decision support</a>
-    <div class="navHint">Black interface, sticky navigation, live calculators and separate Stoelting-derived drug reference search.</div>
+    <div class="navHint">Black interface, sticky navigation, live calculators and separate drug search.</div>
   </aside>
 
 <div class="wrap">
@@ -561,7 +561,7 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
 
 
 
-<!-- ══ INFUSION CONVERTER + STOELTING DRUG SEARCH ══ -->
+<!-- ══ INFUSION CONVERTER + DRUG SEARCH ══ -->
 <div class="sec-title" id="infusionConverterSec">Infusion mL/hr Converter</div>
 <div class="grid2">
   <div class="card">
@@ -600,16 +600,14 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
   </div>
 </div>
 
-<div class="sec-title" id="drugSearchSec">Stoelting Drug Search</div>
+<div class="sec-title" id="drugSearchSec">Drug Search</div>
 <div class="card">
-  <div class="cardhead"><span class="icon">🔎</span><h2>Separate Drug Reference Search</h2>
-    <a class="btn btn-ghost btn-sm" style="margin-left:auto;text-decoration:none" href="stoelting.html" target="_blank" rel="noopener">Open Stoelting reference</a>
-  </div>
+  <div class="cardhead"><span class="icon">🔎</span><h2>Separate Drug Search</h2></div>
   <div class="cardbody searchGrid">
     <div>
       <label>Search by drug, class, dose or clinical note</label>
       <input id="stoeltingDrugSearch" placeholder="e.g. propofol, rocuronium, norepinephrine, LAST, PONV" oninput="searchStoeltingDrugs()">
-      <div class="hintLine">Reference data is embedded from the uploaded Stoelting HTML drug database. Use for review; verify against local policy before administration.</div>
+      <div class="hintLine">Drug information is embedded for review; verify against local policy before administration.</div>
     </div>
     <div class="resultPanel" id="stoeltingDrugResults"><div class="notice">Start typing to search the separate drug reference.</div></div>
   </div>
@@ -1108,7 +1106,7 @@ function exportTable(){
 
 
 /* ═══════════════════════════════
-   MERGED COMPANION INFUSION CONVERTER + STOELTING SEARCH
+   MERGED COMPANION INFUSION CONVERTER + DRUG SEARCH
 ═══════════════════════════════ */
 const COMPANION_DOSE_LIST=[
 {name:'Propofol induction',cat:'bolus',dose:[1,2.5],unit:'mg/kg',wt:'PROP_AUTO',conc:'10 mg/mL emulsion',concValue:10,concUnit:'mg/mL',note:'Auto scalar: normal BMI uses TBW; overweight/obese uses LBW/IBW principle; BMI ≥40 uses LBW. Reduce/titrate in elderly, shock or frailty.'},
@@ -1277,7 +1275,7 @@ function searchStoeltingDrugs(){
   const box=document.getElementById('stoeltingDrugResults'); if(!box) return;
   if(!q){box.innerHTML='<div class="notice">Start typing to search the separate drug reference.</div>';return;}
   const matches=Object.entries(STOELTING_DRUGS).filter(([name,d])=>[name,d.class,d.dose,d.notes].join(' ').toLowerCase().includes(q)).slice(0,30);
-  if(!matches.length){box.innerHTML='<div class="notice">No matching Stoelting drug entry. Try a class, alternative name, or open the linked reference.</div>';return;}
+  if(!matches.length){box.innerHTML='<div class="notice">No matching drug entry. Try a class or alternative name.</div>';return;}
   box.innerHTML=matches.map(([name,d])=>`<div class="refResult">
     <div class="refName">${escHtml(name)}</div><div class="refMeta">${escHtml(d.class)}</div>
     <div class="refText"><b>Dose:</b> ${escHtml(d.dose)}<br><b>Notes:</b> ${escHtml(d.notes)}</div>
