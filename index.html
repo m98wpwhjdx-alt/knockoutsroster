@@ -79,6 +79,26 @@
       letter-spacing: .02em;
     }
 
+
+    .beta-logo {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      padding: 4px 8px;
+      border: 1px solid rgba(255,209,102,.58);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255,209,102,.28), rgba(255,255,255,.08));
+      color: #ffe7a3;
+      font-size: .38em;
+      font-weight: 950;
+      letter-spacing: .08em;
+      vertical-align: middle;
+      box-shadow: 0 0 24px rgba(255,209,102,.16);
+    }
+
     h1 {
       margin: 0;
       font-size: clamp(38px, 7vw, 82px);
@@ -98,7 +118,7 @@
     .tabs {
       width: min(780px, 100%);
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 18px;
       margin: 0 auto;
     }
@@ -219,10 +239,19 @@
       <a class="tab" href="Anaesthesia%20companion.html" style="--glow: rgba(100,244,172,.20)">
         <div>
           <div class="icon">✚</div>
-          <h2>Anaesthesia Companion</h2>
+          <h2><span class="beta-logo" aria-label="Beta">BETA</span>Anaesthesia Companion</h2>
           <p>Open the anaesthesia monitoring, record, dosing and companion app.</p>
         </div>
         <span class="open">Open companion →</span>
+      </a>
+
+      <a class="tab" href="IntraopFluidSimulator.html" style="--glow: rgba(255,209,102,.22)">
+        <div>
+          <div class="icon">💧</div>
+          <h2><span class="beta-logo" aria-label="Beta">BETA</span>Intraop Fluid Simulator</h2>
+          <p>Open the intraoperative fluid planning and simulation tool.</p>
+        </div>
+        <span class="open">Open simulator →</span>
       </a>
     </nav>
 
