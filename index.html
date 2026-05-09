@@ -6,16 +6,17 @@
   <title>Anaesthesia Workspace</title>
   <style>
     :root {
-      --bg: #030406;
       --text: #f8fafc;
-      --muted: #b8c2d6;
-      --line: rgba(255,255,255,.18);
-      --panel: rgba(8, 13, 20, .62);
-      --panel2: rgba(255,255,255,.08);
-      --cyan: #39d7ff;
-      --green: #64f4ac;
+      --muted: #afbdd0;
+      --soft: rgba(255, 255, 255, .10);
+      --softer: rgba(255, 255, 255, .055);
+      --line: rgba(255, 255, 255, .16);
+      --cyan: #38d6ff;
+      --violet: #9b8cff;
+      --green: #65f5b0;
       --amber: #ffd166;
-      --shadow: 0 24px 90px rgba(0,0,0,.58);
+      --rose: #ff7ab6;
+      --shadow: 0 28px 90px rgba(0,0,0,.56);
     }
 
     * { box-sizing: border-box; }
@@ -28,8 +29,10 @@
       color: var(--text);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       background:
-        linear-gradient(90deg, rgba(0,0,0,.76), rgba(0,0,0,.28) 46%, rgba(0,0,0,.72)),
-        linear-gradient(180deg, rgba(0,0,0,.24), rgba(0,0,0,.88)),
+        radial-gradient(circle at 18% 12%, rgba(56,214,255,.28), transparent 28%),
+        radial-gradient(circle at 88% 18%, rgba(155,140,255,.22), transparent 30%),
+        radial-gradient(circle at 62% 86%, rgba(101,245,176,.16), transparent 32%),
+        linear-gradient(120deg, rgba(2,6,23,.94), rgba(4,9,18,.74) 52%, rgba(2,6,23,.96)),
         url("anaesthesia.jpg") center center / cover no-repeat fixed;
       overflow-x: hidden;
     }
@@ -39,93 +42,178 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      background:
-        radial-gradient(circle at 18% 18%, rgba(57,215,255,.18), transparent 32%),
-        radial-gradient(circle at 82% 72%, rgba(100,244,172,.10), transparent 34%);
+      background-image:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.72), transparent 82%);
       z-index: -1;
     }
 
+    .orb {
+      position: fixed;
+      width: 310px;
+      height: 310px;
+      border-radius: 999px;
+      filter: blur(54px);
+      opacity: .26;
+      pointer-events: none;
+      animation: drift 10s ease-in-out infinite alternate;
+      z-index: -1;
+    }
+
+    .orb.one { left: -90px; top: 16%; background: var(--cyan); }
+    .orb.two { right: -80px; bottom: 8%; background: var(--violet); animation-delay: -3s; }
+
+    @keyframes drift {
+      from { transform: translate3d(0,0,0) scale(1); }
+      to { transform: translate3d(34px,-24px,0) scale(1.08); }
+    }
+
     .shell {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1180px, calc(100% - 34px));
       min-height: 100vh;
       margin: 0 auto;
+      padding: 34px 0 42px;
       display: grid;
       align-content: center;
-      padding: 44px 0;
+      gap: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.045));
+      box-shadow: 0 16px 50px rgba(0,0,0,.28);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: .02em;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(56,214,255,.95), rgba(101,245,176,.88));
+      color: #02111b;
+      box-shadow: 0 0 32px rgba(56,214,255,.28);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 12px;
+      border: 1px solid rgba(101,245,176,.28);
+      border-radius: 999px;
+      color: #d9ffee;
+      background: rgba(101,245,176,.09);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 7px rgba(101,245,176,.12);
     }
 
     .hero {
-      max-width: 780px;
-      padding: 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 22px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      border: 1px solid rgba(56,214,255,.28);
+      border-radius: 999px;
+      background: rgba(56,214,255,.09);
+      color: #c8f6ff;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .11em;
+    }
+
+    h1 {
+      max-width: 850px;
+      margin: 0;
+      font-size: clamp(42px, 8vw, 92px);
+      line-height: .88;
+      letter-spacing: -.075em;
+      text-wrap: balance;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #ffffff 0%, #aaf0ff 42%, #b8ffe0 78%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      max-width: 680px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.65;
+    }
+
+    .mini-panel {
+      width: 230px;
+      padding: 16px;
       border: 1px solid var(--line);
-      border-radius: 34px;
-      background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.045));
+      border-radius: 28px;
+      background: linear-gradient(150deg, rgba(255,255,255,.14), rgba(255,255,255,.045));
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      margin-bottom: 18px;
-      padding: 8px 12px;
-      border: 1px solid rgba(57,215,255,.38);
-      border-radius: 999px;
-      background: rgba(57,215,255,.12);
-      color: #c8f6ff;
-      font-weight: 800;
-      font-size: 13px;
-      letter-spacing: .02em;
+    .mini-panel strong {
+      display: block;
+      font-size: 30px;
+      letter-spacing: -.04em;
     }
 
-
-    .beta-logo {
-      position: relative;
-      z-index: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 10px;
-      padding: 4px 8px;
-      border: 1px solid rgba(255,209,102,.58);
-      border-radius: 999px;
-      background: linear-gradient(135deg, rgba(255,209,102,.28), rgba(255,255,255,.08));
-      color: #ffe7a3;
-      font-size: .38em;
-      font-weight: 950;
-      letter-spacing: .08em;
-      vertical-align: middle;
-      box-shadow: 0 0 24px rgba(255,209,102,.16);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(38px, 7vw, 82px);
-      line-height: .92;
-      letter-spacing: -.065em;
-      text-wrap: balance;
-    }
-
-    .subtitle {
-      max-width: 650px;
-      margin: 18px 0 0;
+    .mini-panel span {
+      display: block;
+      margin-top: 5px;
       color: var(--muted);
-      font-size: clamp(15px, 2.2vw, 18px);
-      line-height: 1.65;
+      font-size: 13px;
+      line-height: 1.45;
     }
 
     .tabs {
-      width: min(1040px, 100%);
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
-      margin: 0 auto;
+      gap: 16px;
     }
 
     .tab {
       position: relative;
-      min-height: 190px;
+      min-height: 252px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -133,137 +221,225 @@
       color: var(--text);
       text-decoration: none;
       border: 1px solid var(--line);
-      border-radius: 30px;
-      background: linear-gradient(150deg, rgba(255,255,255,.14), rgba(255,255,255,.045));
-      box-shadow: 0 20px 60px rgba(0,0,0,.36);
-      backdrop-filter: blur(18px);
+      border-radius: 32px;
+      background:
+        linear-gradient(150deg, rgba(255,255,255,.15), rgba(255,255,255,.045)),
+        radial-gradient(circle at 78% 18%, var(--glow), transparent 42%);
+      box-shadow: 0 22px 62px rgba(0,0,0,.36);
+      backdrop-filter: blur(20px);
       overflow: hidden;
-      transition: transform .22s ease, border-color .22s ease, background .22s ease;
+      isolation: isolate;
+      transition: transform .24s ease, border-color .24s ease, background .24s ease, box-shadow .24s ease;
     }
 
-    .tab::after {
+    .tab::before {
       content: "";
       position: absolute;
-      right: -44px;
-      top: -44px;
-      width: 140px;
-      height: 140px;
-      border-radius: 999px;
-      background: var(--glow, rgba(57,215,255,.24));
-      filter: blur(2px);
-      opacity: .6;
+      inset: 1px;
+      border-radius: 31px;
+      background: linear-gradient(135deg, rgba(255,255,255,.11), transparent 38%);
+      opacity: .85;
+      z-index: -1;
     }
 
     .tab:hover,
     .tab:focus-visible {
-      transform: translateY(-5px);
-      border-color: rgba(57,215,255,.62);
-      background: linear-gradient(150deg, rgba(255,255,255,.18), rgba(255,255,255,.065));
+      transform: translateY(-7px) scale(1.01);
+      border-color: rgba(255,255,255,.34);
+      box-shadow: 0 30px 82px rgba(0,0,0,.52);
       outline: none;
     }
 
-    .tab .icon {
-      width: 54px;
-      height: 54px;
+    .meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .number {
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
       border: 1px solid rgba(255,255,255,.18);
-      border-radius: 20px;
-      background: rgba(0,0,0,.28);
-      font-size: 27px;
-      z-index: 1;
+      border-radius: 15px;
+      background: rgba(2,6,23,.38);
+      color: #ecfeff;
+      font-weight: 950;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      font-size: 25px;
+    }
+
+    .beta-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 0 12px;
+      width: fit-content;
+      padding: 5px 9px;
+      border: 1px solid rgba(255,209,102,.48);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255,209,102,.22), rgba(255,255,255,.07));
+      color: #ffe7a3;
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: .09em;
+      box-shadow: 0 0 26px rgba(255,209,102,.13);
     }
 
     .tab h2 {
-      position: relative;
-      z-index: 1;
-      margin: 22px 0 8px;
-      font-size: clamp(23px, 3vw, 34px);
-      line-height: 1;
-      letter-spacing: -.04em;
+      margin: 18px 0 10px;
+      font-size: clamp(24px, 2.7vw, 36px);
+      line-height: .94;
+      letter-spacing: -.055em;
     }
 
     .tab p {
-      position: relative;
-      z-index: 1;
       margin: 0;
       color: var(--muted);
-      line-height: 1.55;
       font-size: 14px;
+      line-height: 1.55;
     }
 
     .open {
-      position: relative;
-      z-index: 1;
-      margin-top: 18px;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-weight: 900;
-      color: #e8fbff;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 22px;
+      padding: 12px 13px 12px 15px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      background: rgba(255,255,255,.09);
+      color: #effcff;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .arrow {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,.14);
     }
 
     .footer {
-      margin-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
       padding: 14px 18px;
       border: 1px solid rgba(255,255,255,.12);
-      border-radius: 20px;
-      background: rgba(0,0,0,.28);
+      border-radius: 22px;
+      background: rgba(2,6,23,.36);
       color: rgba(248,250,252,.76);
       font-size: 13px;
       line-height: 1.5;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .mini-panel { width: 100%; }
+      .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 620px) {
       body { background-attachment: scroll; }
-      .shell { width: min(100% - 22px, 1120px); padding: 24px 0; }
-      .hero { padding: 20px; border-radius: 26px; }
+      .shell { width: min(100% - 22px, 1180px); padding: 18px 0 28px; }
+      .topbar { border-radius: 24px; align-items: flex-start; flex-direction: column; }
       .tabs { grid-template-columns: 1fr; gap: 14px; }
-      .tab { min-height: 168px; border-radius: 24px; padding: 18px; }
+      .tab { min-height: 218px; border-radius: 26px; padding: 18px; }
+      .tab::before { border-radius: 25px; }
+      .footer { flex-direction: column; }
     }
   </style>
 </head>
 <body>
+  <div class="orb one"></div>
+  <div class="orb two"></div>
+
   <main class="shell">
+    <section class="hero" aria-label="Workspace introduction">
+      <div>
+        <div class="eyebrow">Operating theatre dashboard</div>
+        <h1>Fast access for <span class="gradient-text">intraoperative workflow.</span></h1>
+        <p class="subtitle">Choose a module below. The simulator is now second, and the intra-op anaesthesia record is third for quicker theatre documentation.</p>
+      </div>
+      <aside class="mini-panel" aria-label="Module count">
+        <strong>04</strong>
+        <span>linked workspace modules for roster, fluids, records and companion support.</span>
+      </aside>
+    </section>
+
     <nav class="tabs" aria-label="Main app links">
-      <a class="tab" href="Roster.html" style="--glow: rgba(57,215,255,.24)">
+      <a class="tab" href="Roster.html" style="--glow: rgba(56,214,255,.20)">
         <div>
-          <div class="icon">📋</div>
+          <div class="meta">
+            <span class="number">01</span>
+            <span class="icon">📋</span>
+          </div>
           <h2>Roster</h2>
           <p>Open the duty roster and workload dashboard.</p>
         </div>
-        <span class="open">Open roster →</span>
-      </a>
-
-      <a class="tab" href="Anaesthesia%20companion.html" style="--glow: rgba(100,244,172,.20)">
-        <div>
-          <div class="icon">✚</div>
-          <h2><span class="beta-logo" aria-label="Beta">BETA</span>Anaesthesia Companion</h2>
-          <p>Open the anaesthesia monitoring, record, dosing and companion app.</p>
-        </div>
-        <span class="open">Open companion →</span>
+        <span class="open">Open roster <span class="arrow">→</span></span>
       </a>
 
       <a class="tab" href="IntraopFluidSimulator.html" style="--glow: rgba(255,209,102,.22)">
         <div>
-          <div class="icon">💧</div>
-          <h2><span class="beta-logo" aria-label="Beta">BETA</span>Intraop Fluid Simulator</h2>
+          <div class="meta">
+            <span class="number">02</span>
+            <span class="icon">💧</span>
+          </div>
+          <span class="beta-logo" aria-label="Beta">BETA</span>
+          <h2>IntraOp Fluid Simulator</h2>
           <p>Open the intraoperative fluid planning and simulation tool.</p>
         </div>
-        <span class="open">Open simulator →</span>
+        <span class="open">Open simulator <span class="arrow">→</span></span>
       </a>
 
-      <a class="tab" href="IntraOP%20PAC.html" style="--glow: rgba(255,209,102,.22)">
+      <a class="tab" href="IntraOP%20PAC.html" style="--glow: rgba(255,122,182,.20)">
         <div>
-          <div class="icon">📝</div>
-          <h2>IntraOp Aaesthesia Record</h2>
+          <div class="meta">
+            <span class="number">03</span>
+            <span class="icon">📝</span>
+          </div>
+          <h2>Intra OP Anaesthesia Record</h2>
           <p>Open the intraoperative anaesthesia record form.</p>
         </div>
-        <span class="open">Open record →</span>
+        <span class="open">Open record <span class="arrow">→</span></span>
+      </a>
+
+      <a class="tab" href="Anaesthesia%20companion.html" style="--glow: rgba(101,245,176,.18)">
+        <div>
+          <div class="meta">
+            <span class="number">04</span>
+            <span class="icon">✚</span>
+          </div>
+          <span class="beta-logo" aria-label="Beta">BETA</span>
+          <h2>Anaesthesia Companion</h2>
+          <p>Open the anaesthesia monitoring, record, dosing and companion app.</p>
+        </div>
+        <span class="open">Open companion <span class="arrow">→</span></span>
       </a>
     </nav>
 
+    <footer class="footer">
+      <span>Optimized order: Roster → Fluid Simulator → Anaesthesia Record → Companion.</span>
+      <span>Local links preserved for offline use.</span>
+    </footer>
   </main>
 </body>
 </html>
