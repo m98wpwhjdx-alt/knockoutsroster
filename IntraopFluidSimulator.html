@@ -297,11 +297,13 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
   <aside class="sideNav" id="sideNav" aria-label="Intraoperative simulator navigation">
     <h3>Navigation</h3>
     <a href="#patientSetup"><b>👤</b>Patient setup</a>
+    <a href="#aiImportSec"><b>🤖</b>AI import</a>
     <a href="#calcParams"><b>🧮</b>Calculated parameters</a>
     <a href="#ioMonitor"><b>💧</b>Hourly I/O</a>
     <a href="#drugLogSec"><b>💊</b>Drug log</a>
     <a href="#infusionConverterSec"><b>⚙</b>Infusion converter</a>
     <a href="#drugSearchSec"><b>🔎</b>Drug search</a>
+    <a href="#bicarbCalcSec"><b>🧂</b>Sodium bicarbonate</a>
     <a href="#decisionSupport"><b>⚠</b>Decision support</a>
     <div class="navHint">Black interface, sticky navigation, live calculators and separate drug search.</div>
   </aside>
@@ -332,13 +334,13 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
       </div>
       <div class="rowInline">
         <div><label>Initial Hb (g/dL)</label><input id="initHb" type="number" placeholder="e.g. 12.5" step="0.1"></div>
-        <div><label>Target Hb (g/dL)</label><input id="targetHb" type="number" placeholder="e.g. 8.0" step="0.1"></div>
+        <div><label>Target Hb (g/dL)</label><input id="targetHb" type="number" value="8" placeholder="Default 8.0" step="0.1"></div>
       </div>
       <div class="rowInline">
         <div><label>ASA Status</label>
           <select id="asa"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>E</option></select>
         </div>
-        <div><label>NPO (fasting hrs)</label><input id="npoHrs" type="number" placeholder="e.g. 8" min="0" step="0.5"></div>
+        <div><label>NPO (fasting hrs)</label><input id="npoHrs" type="number" value="10" placeholder="Default 10" min="0" step="0.5"></div>
       </div>
       <div><label>Diagnosis / Procedure</label><input id="diagProc" placeholder="e.g. Lap cholecystectomy"></div>
     </div>
@@ -353,7 +355,7 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
       </div>
       <div class="rowInline">
         <div><label>Incision Time</label><input type="time" id="incisionTime" value="08:30"></div>
-        <div><label>Leave OT / End Time</label><input type="time" id="leaveOT" value="10:30"></div>
+        <div><label>Leave OT / End Time</label><input type="time" id="leaveOT" value="11:00"></div>
       </div>
       <div class="rowInline">
         <div><label>Surgical Stress</label>
@@ -397,7 +399,31 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
     </div>
   </div>
 
+
 </div><!-- /grid2 -->
+
+<!-- ══ AI PATIENT IMPORT ══ -->
+<div class="sec-title" id="aiImportSec">AI Patient Detail Import</div>
+<div class="card">
+  <div class="cardhead"><span class="icon">🤖</span><h2>Paste JSON from Custom GPT</h2><span class="badge teal">NPO 10h · Target Hb 8</span></div>
+  <div class="cardbody">
+    <div class="grid2">
+      <div>
+        <label>GPT Extracted JSON</label>
+        <textarea id="aiJsonInput" spellcheck="false" placeholder='Paste JSON here, for example: {"name":"12345","age":45,"ageUnit":"years","sex":"male","weightKg":65,"initialHb":12.2,"targetHb":8,"npoHours":10,"diagnosisProcedure":"Lap cholecystectomy","asa":"2","surgicalStress":"4"}' style="width:100%;min-height:150px;border:1px solid var(--border);border-radius:12px;background:rgba(0,0,0,.48);color:var(--text);padding:12px;font-family:var(--font-mono);font-size:12px;outline:none;"></textarea>
+      </div>
+      <div>
+        <label>Import Controls</label>
+        <div class="fplan">
+          <button class="btn btn-primary btn-full" onclick="applyAIJsonAndCalculate()">Import → Fill Form → Calculate 3-Hour Plan</button>
+          <button class="btn btn-ghost btn-full" onclick="loadSampleAIJson()">Load Sample JSON</button>
+          <button class="btn btn-teal btn-full" onclick="copyFluidSummary()">Copy Fluid Summary</button>
+        </div>
+        <div id="aiImportStatus" class="alert info" style="margin-top:10px;">Default assumptions if absent from image: NPO 10 hours, lower Hb/target Hb for MABL 8 g/dL, moderate surgical stress.</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ══ KPI STRIP ══ -->
 <div class="sec-title" id="calcParams">Calculated Parameters</div>
@@ -422,7 +448,7 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
       <div id="fluidPlanRows" class="fplan">
         <div class="notice">Enter patient data and press Start to generate the hourly plan.</div>
       </div>
-      <div class="alert info" style="margin-top:12px;" id="planNote">Balanced crystalloid (e.g. PlasmaLyte, RL) preferred. Colloid/blood products as guided by MABL and clinical status.</div>
+      <div class="alert info" style="margin-top:12px;" id="planNote">Balanced crystalloid (e.g. PlasmaLyte, RL) preferred. The simulator always displays at least a 3-hour advance plan; adjust for blood loss, urine output, haemodynamics and local policy.</div>
     </div>
   </div>
 
@@ -613,6 +639,86 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
   </div>
 </div>
 
+
+<!-- ══ SODIUM BICARBONATE CALCULATOR ══ -->
+<div class="sec-title" id="bicarbCalcSec">Sodium Bicarbonate Calculator</div>
+<div class="grid2">
+  <div class="card">
+    <div class="cardhead"><span class="icon">🧂</span><h2>ABG-Based NaHCO₃ Dose</h2><span class="badge orange">Recheck ABG</span></div>
+    <div class="cardbody">
+      <div class="rowInline3">
+        <div><label>Weight (kg)</label><input id="bicWeight" type="number" step="0.1" placeholder="Auto from case" oninput="calcBicarb()"></div>
+        <div><label>Calculation mode</label>
+          <select id="bicMode" onchange="toggleBicarbMode();calcBicarb()">
+            <option value="baseDeficit">Base deficit</option>
+            <option value="hco3">Measured HCO₃⁻</option>
+          </select>
+        </div>
+        <div><label>Correction fraction</label>
+          <select id="bicFraction" onchange="calcBicarb()">
+            <option value="0.5" selected>Give ½ calculated dose</option>
+            <option value="0.33">Give ⅓ calculated dose</option>
+            <option value="0.25">Give ¼ calculated dose</option>
+            <option value="1">Full calculated dose</option>
+          </select>
+        </div>
+      </div>
+      <div class="rowInline" id="bicBaseDeficitRow">
+        <div><label>Base deficit / base excess magnitude (mEq/L)</label><input id="bicBaseDeficit" type="number" step="0.1" placeholder="e.g. 10" oninput="calcBicarb()"></div>
+        <div><label>Distribution factor</label>
+          <select id="bicFactorBD" onchange="calcBicarb()">
+            <option value="0.3" selected>0.3 × wt × BD</option>
+            <option value="0.2">0.2 × wt × BD</option>
+            <option value="0.5">0.5 × wt × BD</option>
+          </select>
+        </div>
+      </div>
+      <div class="rowInline" id="bicHco3Row" style="display:none;">
+        <div><label>Measured HCO₃⁻ (mEq/L)</label><input id="bicMeasured" type="number" step="0.1" placeholder="e.g. 10" oninput="calcBicarb()"></div>
+        <div><label>Target HCO₃⁻ (mEq/L)</label><input id="bicTarget" type="number" step="0.1" value="15" oninput="calcBicarb()"></div>
+      </div>
+      <div class="rowInline">
+        <div><label>NaHCO₃ concentration</label>
+          <select id="bicConc" onchange="calcBicarb()">
+            <option value="1" selected>8.4% = 1 mEq/mL</option>
+            <option value="0.5">4.2% = 0.5 mEq/mL</option>
+            <option value="0.6">5% ≈ 0.6 mEq/mL</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+        <div><label>Custom mEq/mL</label><input id="bicCustomConc" type="number" step="0.01" placeholder="Only if custom" oninput="calcBicarb()"></div>
+      </div>
+      <div class="quickFill">
+        <button class="microBtn" onclick="copyCaseWeightToBicarb()">Use case weight</button>
+        <button class="microBtn" onclick="setBicarbPreset('severe')">Severe acidosis target</button>
+        <button class="microBtn" onclick="setBicarbPreset('partial')">Partial correction</button>
+        <button class="microBtn" onclick="calcBicarb()">Recalculate</button>
+      </div>
+      <div class="convOut">
+        <div class="convKpi"><b id="bicDoseEq">—</b><span>Calculated deficit</span></div>
+        <div class="convKpi"><b id="bicGiveEq">—</b><span>Suggested initial dose</span></div>
+        <div class="convKpi"><b id="bicGiveMl">—</b><span>Volume to administer</span></div>
+        <div class="convKpi"><b id="bicSodiumLoad">—</b><span>Approx sodium load</span></div>
+      </div>
+      <div id="bicNote" class="alert info" style="margin-top:10px;">Enter ABG/base deficit and weight. Avoid normalising bicarbonate abruptly; give partial correction and repeat ABG/electrolytes.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="cardhead"><span class="icon">⚠️</span><h2>Clinical Guardrails</h2></div>
+    <div class="cardbody">
+      <div class="fplan">
+        <div class="frow"><span class="flabel">Common bedside formula</span><span class="fval" style="font-size:12px;">mEq = 0.3 × kg × base deficit</span></div>
+        <div class="frow"><span class="flabel">Alternative HCO₃⁻ formula</span><span class="fval" style="font-size:12px;">mEq = 0.5 × kg × ΔHCO₃⁻</span></div>
+        <div class="frow"><span class="flabel">8.4% preparation</span><span class="fval" style="font-size:12px;">1 mEq/mL, hypertonic</span></div>
+        <div class="frow highlight"><span class="flabel">Practical approach</span><span class="fval" style="font-size:12px;">Give ¼–½ dose, reassess</span></div>
+      </div>
+      <div class="alert warn" style="margin-top:10px;">Use only when clinically indicated, usually for severe acidemia or specific indications. Correct hypovolaemia, ventilation, hypoxia, hyperkalaemia, sepsis/lactate source and renal causes concurrently.</div>
+      <div class="alert danger" style="margin-top:8px;">Risks: hypernatraemia, hyperosmolality, volume load, CO₂ generation/paradoxical intracellular acidosis, hypokalaemia, reduced ionised calcium and overshoot alkalosis.</div>
+      <div class="notice" style="margin-top:10px;">Calculator output is decision support only. Local institutional protocols and senior anaesthesiology/critical-care judgement supersede this calculation.</div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ CLINICAL DECISION SUPPORT ══ -->
 <div class="sec-title" id="decisionSupport">Clinical Decision Support</div>
 <div class="grid3">
@@ -657,7 +763,7 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
 
 <!-- ══ FOOTER NOTE ══ -->
 <div class="alert info" style="margin-top:20px;font-size:11px;">
-  <strong>Reference:</strong> Holliday-Segar 4/2/1 mL/kg/hr maintenance. MABL = EBV × (Hb₀ − HbT) / Hb₀. EBV per age/sex from Miller's Anaesthesia (9th ed). Fasting deficit = maintenance × NPO hours. Third-space: minimal 1, moderate 4, major 8 mL/kg/hr. This simulator is a decision-support tool only; clinical judgment supersedes all calculations.
+  <strong>Reference:</strong> Holliday-Segar 4/2/1 mL/kg/hr maintenance. MABL = EBV × (Hb₀ − HbT) / Hb₀. EBV per age/sex from Miller's Anaesthesia (9th ed). Fasting deficit = maintenance × NPO hours. Third-space: minimal 1, moderate 4, major 8 mL/kg/hr. Sodium bicarbonate: mEq = 0.3 × kg × base deficit or 0.5 × kg × (target HCO₃⁻ − measured HCO₃⁻), commonly giving partial correction first. This simulator is a decision-support tool only; clinical judgment supersedes all calculations.
 </div>
 
 </div><!-- /wrap -->
@@ -853,8 +959,8 @@ function initCase(){
   const wt = parseFloat(document.getElementById('ptWt').value)||0;
   if(!wt){alert('Enter patient weight.');return;}
   const hb0 = parseFloat(document.getElementById('initHb').value)||0;
-  const hbT = parseFloat(document.getElementById('targetHb').value)||0;
-  const npo = parseFloat(document.getElementById('npoHrs').value)||0;
+  const hbT = parseFloat(document.getElementById('targetHb').value)||8;
+  const npo = parseFloat(document.getElementById('npoHrs').value)||10;
   const stress = parseFloat(document.getElementById('surgStress').value)||4;
   const enterOT = document.getElementById('enterOT').value||'08:00';
   const leaveOT = document.getElementById('leaveOT').value||'10:00';
@@ -891,6 +997,8 @@ function initCase(){
   document.getElementById('kHrRest').textContent = r(hrRest,0)+' mL/hr';
   document.getElementById('caseHrs').textContent = r(caseHrs,1)+' hrs';
 
+  if(!document.getElementById('bicWeight')?.value) document.getElementById('bicWeight').value=wt;
+  calcBicarb();
   buildFluidPlan(caseHrs,hr1,hr2,hrRest,wt,maint,deficit,thirdSp);
   buildHourTable(enterOT,leaveOT);
   buildTransfusionBox();
@@ -902,7 +1010,7 @@ function initCase(){
 
 function buildFluidPlan(caseHrs,hr1,hr2,hrRest,wt,maint,deficit,thirdSp){
   const rows = [];
-  const totalHrs = Math.ceil(caseHrs)||1;
+  const totalHrs = Math.max(3, Math.ceil(caseHrs)||1); // always show next 3 hours in advance
   let total = 0;
   for(let i=1;i<=totalHrs;i++){
     let vol = i===1?hr1:(i===2?hr2:hrRest);
@@ -915,7 +1023,7 @@ function buildFluidPlan(caseHrs,hr1,hr2,hrRest,wt,maint,deficit,thirdSp){
       <span class="fval">${r.vol} mL</span>
     </div>`).join('')+`
     <div class="frow highlight">
-      <span class="flabel">Total Planned</span>
+      <span class="flabel">Total Planned (shown hours)</span>
       <span class="fval">${Math.round(total)} mL</span>
     </div>`;
   document.getElementById('fluidPlanRows').innerHTML = html;
@@ -927,7 +1035,7 @@ function buildHourTable(enterOT, leaveOT){
   const body = document.getElementById('ioBody');
   const toMin = t=>{ const [h,m]=t.split(':').map(Number); return h*60+m; };
   const totMin = Math.max(toMin(leaveOT)-toMin(enterOT),60);
-  const hrs = Math.ceil(totMin/60);
+  const hrs = Math.max(3, Math.ceil(totMin/60)); // always prepare next 3 hours
 
   body.innerHTML='';
   hourRows=[];
@@ -1205,7 +1313,7 @@ const navObserver = new IntersectionObserver(entries=>{
     document.querySelectorAll('.sideNav a').forEach(a=>a.classList.toggle('active', a.getAttribute('href') === '#'+entry.target.id));
   });
 },{rootMargin:'-25% 0px -65% 0px',threshold:0.01});
-['patientSetup','calcParams','ioMonitor','drugLogSec','infusionConverterSec','drugSearchSec','decisionSupport'].forEach(id=>{const el=document.getElementById(id);if(el)navObserver.observe(el);});
+['patientSetup','calcParams','ioMonitor','drugLogSec','infusionConverterSec','drugSearchSec','bicarbCalcSec','decisionSupport'].forEach(id=>{const el=document.getElementById(id);if(el)navObserver.observe(el);});
 
 function infusionDoseDrugs(){
   const seen=new Set();
@@ -1270,6 +1378,68 @@ function calcInfusionRate(){
   if(perEl) perEl.textContent=Number.isFinite(amountPerHr)?`${amountPerHr.toFixed(labelUnit==='units'?2:1)} ${labelUnit}/hr`:'—';
   if(note) note.textContent=`Formula: target ${target} ${unit} ${unit.includes('/kg')?'× weight '+(wt||'—')+' kg ':''}→ hourly dose ÷ final concentration ${conc} ${concUnit}.`;
 }
+
+function bicarbWeight(){
+  return parseFloat(document.getElementById('bicWeight')?.value)||parseFloat(document.getElementById('ptWt')?.value)||0;
+}
+function copyCaseWeightToBicarb(){
+  const w=parseFloat(document.getElementById('ptWt')?.value)||0;
+  if(w) document.getElementById('bicWeight').value=w;
+  calcBicarb();
+}
+function toggleBicarbMode(){
+  const mode=document.getElementById('bicMode')?.value||'baseDeficit';
+  const bd=document.getElementById('bicBaseDeficitRow'), hc=document.getElementById('bicHco3Row');
+  if(bd) bd.style.display = mode==='baseDeficit' ? '' : 'none';
+  if(hc) hc.style.display = mode==='hco3' ? '' : 'none';
+}
+function setBicarbPreset(kind){
+  if(kind==='severe'){
+    document.getElementById('bicMode').value='hco3';
+    document.getElementById('bicTarget').value='15';
+    document.getElementById('bicFraction').value='0.5';
+  }else{
+    document.getElementById('bicMode').value='baseDeficit';
+    document.getElementById('bicFactorBD').value='0.3';
+    document.getElementById('bicFraction').value='0.5';
+  }
+  toggleBicarbMode(); calcBicarb();
+}
+function bicarbConcMeqMl(){
+  const sel=document.getElementById('bicConc')?.value||'1';
+  if(sel==='custom') return parseFloat(document.getElementById('bicCustomConc')?.value)||NaN;
+  return parseFloat(sel);
+}
+function calcBicarb(){
+  const wt=bicarbWeight();
+  const mode=document.getElementById('bicMode')?.value||'baseDeficit';
+  const fraction=parseFloat(document.getElementById('bicFraction')?.value)||0.5;
+  const conc=bicarbConcMeqMl();
+  let total=NaN, formula='';
+  if(mode==='baseDeficit'){
+    const bd=Math.abs(parseFloat(document.getElementById('bicBaseDeficit')?.value)||NaN);
+    const factor=parseFloat(document.getElementById('bicFactorBD')?.value)||0.3;
+    if(Number.isFinite(wt)&&wt>0&&Number.isFinite(bd)&&bd>0){ total=factor*wt*bd; formula=`${factor} × ${wt} kg × ${bd} mEq/L`; }
+  }else{
+    const measured=parseFloat(document.getElementById('bicMeasured')?.value);
+    const target=parseFloat(document.getElementById('bicTarget')?.value);
+    const delta=target-measured;
+    if(Number.isFinite(wt)&&wt>0&&Number.isFinite(measured)&&Number.isFinite(target)&&delta>0){ total=0.5*wt*delta; formula=`0.5 × ${wt} kg × (${target} − ${measured})`; }
+  }
+  const give=Number.isFinite(total)?total*fraction:NaN;
+  const ml=(Number.isFinite(give)&&Number.isFinite(conc)&&conc>0)?give/conc:NaN;
+  const sodium=Number.isFinite(give)?give:NaN; // 1 mEq HCO3 is delivered with ~1 mEq sodium.
+  const doseEl=document.getElementById('bicDoseEq'), giveEl=document.getElementById('bicGiveEq'), mlEl=document.getElementById('bicGiveMl'), naEl=document.getElementById('bicSodiumLoad'), note=document.getElementById('bicNote');
+  if(doseEl) doseEl.textContent=Number.isFinite(total)?`${total.toFixed(0)} mEq`:'—';
+  if(giveEl) giveEl.textContent=Number.isFinite(give)?`${give.toFixed(0)} mEq`:'—';
+  if(mlEl) mlEl.textContent=Number.isFinite(ml)?`${ml.toFixed(0)} mL`:'—';
+  if(naEl) naEl.textContent=Number.isFinite(sodium)?`${sodium.toFixed(0)} mEq Na⁺`:'—';
+  if(note){
+    if(!Number.isFinite(total)) note.textContent='Enter weight and ABG-derived base deficit or bicarbonate values. For base excess, enter the magnitude of a negative base excess.';
+    else note.textContent=`Formula: ${formula} = ${total.toFixed(0)} mEq. Initial selected correction: ${(fraction*100).toFixed(0)}% = ${give.toFixed(0)} mEq; at ${Number.isFinite(conc)?conc:'—'} mEq/mL give ${Number.isFinite(ml)?ml.toFixed(0):'—'} mL. Repeat ABG/electrolytes before further correction.`;
+  }
+}
+
 function searchStoeltingDrugs(){
   const q=(document.getElementById('stoeltingDrugSearch')?.value||'').toLowerCase().trim();
   const box=document.getElementById('stoeltingDrugResults'); if(!box) return;
@@ -1296,6 +1466,8 @@ function copyStoeltingToConverter(name){
   document.getElementById('infusionConverterSec')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
 populateInfusionSelect();
+toggleBicarbMode();
+calcBicarb();
 
 /* ── Stamp time on drug time field to now ── */
 document.getElementById('drugTime').value = new Date().toTimeString().slice(0,5);
