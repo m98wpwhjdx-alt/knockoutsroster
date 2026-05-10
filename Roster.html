@@ -306,10 +306,6 @@
   </div>
 </section>
 
-<div class="grid lg:grid-cols-2 gap-4 sm:gap-6 fade-up delay-300">
-  <section class="glass-panel p-6 flex flex-col"><div class="relative z-10"><h2 class="text-xl font-bold tracking-tight mb-6">Workload Comparison</h2><div class="relative chart-frame bar-frame w-full flex-grow"><canvas id="bar"></canvas></div></div></section>
-  <section class="glass-panel p-6 flex flex-col"><div class="relative z-10"><h2 class="text-xl font-bold tracking-tight mb-2">Duty Composition Radar</h2><p class="text-xs text-gray-400 mb-4">Tap a doctor card below to highlight the chart.</p><div class="relative chart-frame radar-frame w-full flex-grow"><canvas id="radar"></canvas></div></div></section>
-</div>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4" id="cards"></div>
 <footer class="glass-panel p-6 sm:p-8 fade-up delay-300">
   <div class="relative z-10">
@@ -407,7 +403,6 @@
     function filterSort(){const q=el('#search').value.toLowerCase(),s=el('#sort').value;current=DATA.filter(d=>d.doctor.toLowerCase().includes(q)).sort((a,b)=>b[s]-a[s]);renderCards();renderTable();}
     function drawAll(){drawBar();drawRadar();}
     function animateCharts(){drawAll();requestAnimationFrame(animateCharts);}
-    el('#search').addEventListener('input',filterSort);el('#sort').addEventListener('change',filterSort);window.addEventListener('resize',drawAll);
-    summary();filterSort();renderPreviousRoster();requestAnimationFrame(animateCharts);
+    el('#search').addEventListener('input',filterSort);el('#sort').addEventListener('change',filterSort);summary();filterSort();renderPreviousRoster();
   </script>
 </body></html>
