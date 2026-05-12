@@ -5,10 +5,15 @@
 <meta charset="utf-8"/>
 <title>AIIMS Jodhpur — Anaesthesia Record</title>
 <style>
-  /* ---------- Page setup ---------- */
+  /* ---------- Page setup ----------
+     A4 = 210 x 297 mm.
+     We give @page a small margin (6 mm) so the browser will never refuse to
+     fit our sheet AND so users don't have to fiddle with "margin: none" in
+     the print dialog. The .page <div> is then sized to fill exactly the
+     printable area so every .page becomes exactly one printed sheet. */
   @page {
     size: A4;
-    margin: 10mm 8mm;
+    margin: 6mm;
   }
   * { box-sizing: border-box; }
   html, body {
@@ -18,7 +23,7 @@
     color: #000;
     background: #e9eef5;
     font-size: 9pt;
-    line-height: 1.25;
+    line-height: 1.2;
   }
 
   /* ---------- Toolbar (hidden on print) ---------- */
@@ -56,18 +61,26 @@
   .toolbar button.secondary:hover { background: #545b62; }
   .toolbar .hint { font-size: 9pt; opacity: .85; }
 
-  /* ---------- Page (sheet) ---------- */
+  /* ---------- Page (sheet) ----------
+     Screen sheet visually matches the printed A4 (210x297) but the printable
+     area is 210-2*6 = 198 mm wide and 297-2*6 = 285 mm tall. We size the
+     .page to that printable area so screen view = print view. */
   .page {
     background: #fff;
-    width: 210mm;
-    min-height: 297mm;
+    width: 198mm;
+    height: 285mm;
     margin: 12px auto;
-    padding: 8mm 7mm;
+    padding: 3mm 3mm 2mm 3mm;
     box-shadow: 0 1px 4px rgba(0,0,0,.15);
     page-break-after: always;
+    break-after: page;
     position: relative;
+    overflow: hidden;
   }
-  .page:last-of-type { page-break-after: auto; }
+  .page:last-of-type {
+    page-break-after: auto;
+    break-after: auto;
+  }
 
   /* ---------- Header ---------- */
   .doc-header {
@@ -105,8 +118,8 @@
     border: 1px solid #000;
     text-align: center;
     font-weight: bold;
-    padding: 3px;
-    font-size: 10pt;
+    padding: 2px;
+    font-size: 9.5pt;
     letter-spacing: .5px;
   }
 
@@ -118,7 +131,7 @@
   }
   table.form td, table.form th {
     border: 1px solid #000;
-    padding: 3px 4px;
+    padding: 2px 3px;
     vertical-align: top;
     font-size: 8.5pt;
   }
@@ -145,9 +158,10 @@
   }
   textarea {
     resize: vertical;
-    min-height: 22px;
+    min-height: 18px;
     border: 1px dotted #aaa;
     border-radius: 2px;
+    line-height: 1.15;
   }
   input[type="checkbox"] {
     margin: 0 2px 0 0;
@@ -193,9 +207,9 @@
   }
   .monitor-grid td, .monitor-grid th {
     border: 1px solid #000;
-    padding: 2px;
+    padding: 1px;
     text-align: center;
-    height: 16px;
+    height: 14px;
   }
   .monitor-grid th { background: #f0f0f0; font-weight: bold; }
   .monitor-grid td input { text-align: center; font-size: 7.5pt; }
@@ -217,8 +231,8 @@
     border-right: none !important;
     border-top: none !important;
     border-bottom: 1px solid #000 !important;
-    padding: 3px 4px;
-    height: 21px;
+    padding: 2px 4px;
+    height: 18px;
     vertical-align: middle;
     text-align: left;
   }
@@ -270,28 +284,28 @@
   }
 
   /* Two column layout helpers */
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; }
   .box {
     border: 1px solid #000;
-    padding: 4px;
+    padding: 3px;
   }
   .box h4 {
-    margin: 0 0 3px 0;
-    font-size: 9pt;
+    margin: 0 0 2px 0;
+    font-size: 8.5pt;
     font-weight: bold;
     border-bottom: 1px solid #888;
-    padding-bottom: 2px;
+    padding-bottom: 1px;
   }
 
   ul.checklist {
     list-style: none;
     padding-left: 0;
-    margin: 4px 0;
+    margin: 2px 0;
     font-size: 8pt;
   }
   ul.checklist li {
-    padding: 2px 0;
+    padding: 1px 0;
     display: flex;
     align-items: flex-start;
     gap: 4px;
@@ -311,14 +325,27 @@
 
   /* ---------- Print rules ---------- */
   @media print {
-    body { background: #fff; }
+    html, body {
+      background: #fff;
+      margin: 0;
+      padding: 0;
+    }
     .toolbar { display: none !important; }
     .page {
       margin: 0;
       box-shadow: none;
-      width: auto;
-      min-height: auto;
-      padding: 0;
+      width: 198mm;
+      height: 285mm;
+      padding: 3mm 3mm 2mm 3mm;
+      overflow: hidden;
+      page-break-after: always;
+      break-after: page;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .page:last-of-type {
+      page-break-after: auto;
+      break-after: auto;
     }
     input, textarea, select {
       color: #000 !important;
@@ -329,7 +356,22 @@
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
+    /* Hide the on-screen numeric vital input rows + the helper label.
+       The blank canvas chart prints alone for hand-plotting, matching
+       the source PDF page 2 exactly. */
+    .vitals-input-row,
+    .screen-only {
+      display: none !important;
+    }
+    /* Give the freed vertical space back to the chart so it looks like
+       the big plotting rectangle in the source PDF. */
+    #vitalsCanvas {
+      height: 80mm !important;
+    }
   }
+
+  /* Screen-only helper hint above the chart */
+  .screen-only { display: block; }
 </style>
 </head>
 <body>
@@ -653,16 +695,19 @@
 <script>
     // We'll fill rows via JS to keep markup tidy
   </script>
-<!-- Vitals chart -->
-<div style="margin-top:6px;">
-<div style="font-weight:bold; font-size:9pt;">VITAL SIGNS — enter BP as S/D; MAP auto-plots ×. Symbols: systolic v, diastolic ^, Pulse +, SpO₂ ○</div>
-<div style="display:flex; gap:4px; align-items:stretch; margin-top:4px;">
-<div style="width:36px; display:flex; flex-direction:column; justify-content:space-between; font-size:7pt; text-align:right; padding-right:2px; border-right:1px solid #000;">
+<!-- Vitals chart: on-screen the user fills the BP/MAP/Pulse/SpO2 rows above
+     and watches symbols plot here in real time. On print the numerical-input
+     rows hide and ONLY this empty grid chart prints, matching the source PDF
+     page 2 layout (a blank chart for hand-plotting). -->
+<div class="vitals-chart-wrap" style="margin-top:4px;">
+<div style="font-weight:bold; font-size:8.5pt;" class="screen-only">VITAL SIGNS — enter BP as S/D in the row above; MAP auto-plots ×. Symbols: systolic v, diastolic ^, Pulse +, SpO₂ ○</div>
+<div style="display:flex; gap:2px; align-items:stretch; margin-top:2px;">
+<div style="width:28px; display:flex; flex-direction:column; justify-content:space-between; font-size:6.5pt; text-align:right; padding-right:2px; border-right:1px solid #000;">
 <span>260</span><span>240</span><span>220</span><span>200</span><span>180</span>
 <span>160</span><span>140</span><span>120</span><span>100</span><span>80</span>
 <span>60</span><span>40</span><span>20</span><span>0</span>
 </div>
-<canvas id="vitalsCanvas" style="flex:1; height:280px; background:#fafafa; border:1px solid #000;"></canvas>
+<canvas id="vitalsCanvas" style="flex:1; height:170px; background:#fafafa; border:1px solid #000;"></canvas>
 </div>
 </div>
 <!-- Fluid / Vent / Remarks block -->
@@ -754,31 +799,6 @@
 <td><input type="text" aria-label="Drug name 9" placeholder="Drug name"/></td>
 <td><input type="text" aria-label="Dose 9" placeholder="Dose"/></td>
 <td><input type="text" aria-label="Time 9" placeholder="Time"/></td>
-</tr>
-<tr>
-<td><input type="text" aria-label="Drug name 10" placeholder="Drug name"/></td>
-<td><input type="text" aria-label="Dose 10" placeholder="Dose"/></td>
-<td><input type="text" aria-label="Time 10" placeholder="Time"/></td>
-</tr>
-<tr>
-<td><input type="text" aria-label="Drug name 11" placeholder="Drug name"/></td>
-<td><input type="text" aria-label="Dose 11" placeholder="Dose"/></td>
-<td><input type="text" aria-label="Time 11" placeholder="Time"/></td>
-</tr>
-<tr>
-<td><input type="text" aria-label="Drug name 12" placeholder="Drug name"/></td>
-<td><input type="text" aria-label="Dose 12" placeholder="Dose"/></td>
-<td><input type="text" aria-label="Time 12" placeholder="Time"/></td>
-</tr>
-<tr>
-<td><input type="text" aria-label="Drug name 13" placeholder="Drug name"/></td>
-<td><input type="text" aria-label="Dose 13" placeholder="Dose"/></td>
-<td><input type="text" aria-label="Time 13" placeholder="Time"/></td>
-</tr>
-<tr>
-<td><input type="text" aria-label="Drug name 14" placeholder="Drug name"/></td>
-<td><input type="text" aria-label="Dose 14" placeholder="Dose"/></td>
-<td><input type="text" aria-label="Time 14" placeholder="Time"/></td>
 </tr>
   </tbody>
 </table>
@@ -1093,7 +1113,8 @@ document.querySelectorAll('.yn').forEach(group => {
   const tbody = document.querySelector('#monitorTable tbody');
   const timeSlots = 11;
   const makeTextRow = (label, opts = {}) => {
-    let html = `<tr><td style="text-align:left; font-weight:bold;">${label}</td>`;
+    const rowCls = opts.rowClass ? ` class="${opts.rowClass}"` : '';
+    let html = `<tr${rowCls}><td style="text-align:left; font-weight:bold;">${label}</td>`;
     for (let i = 0; i < timeSlots; i++) {
       const cls = opts.className || '';
       const placeholder = opts.placeholder || '';
@@ -1113,13 +1134,15 @@ document.querySelectorAll('.yn').forEach(group => {
     'TEMP'
   ].forEach(label => makeTextRow(label));
 
+  // VITAL SIGNS separator + 4 numeric-input rows. These are screen-only:
+  // on print they collapse so only the canvas chart shows (matches source PDF).
   tbody.insertAdjacentHTML('beforeend',
-    `<tr><td colspan="12" style="text-align:left; background:#f0f0f0; font-weight:bold;">VITAL SIGNS</td></tr>`);
+    `<tr class="vitals-input-row"><td colspan="12" style="text-align:left; background:#f0f0f0; font-weight:bold;">VITAL SIGNS (enter values — chart plots below)</td></tr>`);
 
-  makeTextRow('BP S/D (v / ^)', {className: 'bp-pair', placeholder: '120/80', inputmode: 'numeric'});
-  makeTextRow('MAP calc (×)', {className: 'map-output', readonly: true});
-  makeTextRow('Pulse (+)', {className: 'plot-value pulse-value', placeholder: '80', inputmode: 'numeric'});
-  makeTextRow('SpO₂ (○)', {className: 'plot-value spo2-value', placeholder: '98', inputmode: 'numeric'});
+  makeTextRow('BP S/D (v / ^)', {className: 'bp-pair', placeholder: '120/80', inputmode: 'text', rowClass: 'vitals-input-row'});
+  makeTextRow('MAP calc (×)',   {className: 'map-output', readonly: true,                       rowClass: 'vitals-input-row'});
+  makeTextRow('Pulse (+)',      {className: 'plot-value pulse-value', placeholder: '80', inputmode: 'numeric', rowClass: 'vitals-input-row'});
+  makeTextRow('SpO₂ (○)',       {className: 'plot-value spo2-value', placeholder: '98', inputmode: 'numeric', rowClass: 'vitals-input-row'});
 })();
 
 /* --- Fill fluid-in rows (page 3) --- */
@@ -1246,7 +1269,28 @@ document.querySelectorAll('.yn').forEach(group => {
   };
 
   document.addEventListener('input', e => {
-    if (e.target.matches('.bp-pair, .pulse-value, .spo2-value')) draw();
+    if (e.target.matches('.bp-pair')) {
+      // Auto-format BP: if user types only digits, insert "/" after the
+      // 3rd digit (so "12080" becomes "120/80"). Mobile users who can't
+      // easily reach "/" on their keyboard get the slash for free.
+      const el = e.target;
+      const raw = el.value;
+      // If user already typed a slash anywhere, leave their input alone.
+      if (!raw.includes('/')) {
+        const digits = raw.replace(/\D/g, '');
+        if (digits.length >= 4) {
+          // Split after first 3 digits (e.g. 120/80, 120/100)
+          el.value = digits.slice(0, 3) + '/' + digits.slice(3, 6);
+        } else if (digits.length === 0 && raw !== '') {
+          // user typed only non-digits; keep as-is so they can still type "/"
+        } else {
+          el.value = digits;
+        }
+      }
+      draw();
+      return;
+    }
+    if (e.target.matches('.pulse-value, .spo2-value')) draw();
   });
   window.addEventListener('resize', draw);
   window.addEventListener('beforeprint', draw);
