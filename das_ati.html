@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>DAS Airway Decision Aid — Adult Difficult Intubation + Awake Tracheal Intubation</title>
+  <style>
+    :root{
+      --ink:#18213a;
+      --muted:#5d667c;
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --line:#d9e1ef;
+      --das:#322756;
+      --das2:#4e3d82;
+      --green:#dfeec7;
+      --yellow:#fff1bd;
+      --red:#d93a2b;
+      --blue:#e8f0fb;
+      --shadow:0 14px 35px rgba(25,35,65,.10);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,#eef3fb 0%,#f7f9fc 38%,#ffffff 100%);
+      line-height:1.5;
+    }
+    a{color:#2f48a1;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{width:min(1180px,94vw);margin:auto}
+    header{
+      background:radial-gradient(circle at 20% 10%,#594d8a 0%,#322756 42%,#221b3d 100%);
+      color:white;
+      padding:38px 0 28px;
+      border-bottom:1px solid rgba(255,255,255,.15);
+    }
+    .eyebrow{
+      display:inline-flex;gap:.55rem;align-items:center;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:999px;
+      padding:.35rem .75rem;
+      font-size:.82rem;
+      letter-spacing:.02em;
+      margin-bottom:16px;
+    }
+    h1{font-size:clamp(2rem,4vw,4.35rem);line-height:1.02;margin:0 0 14px;font-weight:850;letter-spacing:-.045em}
+    .subtitle{font-size:clamp(1rem,1.5vw,1.25rem);max-width:930px;color:#eeeafb;margin:0}
+    .hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:end;margin-top:26px}
+    .callout{
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:var(--radius);
+      padding:18px;
+    }
+    .callout strong{color:#fff}
+    .nav{
+      position:sticky;top:0;z-index:10;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--line);
+    }
+    .nav .wrap{display:flex;gap:10px;overflow:auto;padding:10px 0}
+    .nav a{
+      flex:0 0 auto;
+      color:var(--ink);
+      background:#fff;
+      border:1px solid var(--line);
+      padding:.55rem .8rem;
+      border-radius:999px;
+      font-size:.9rem;
+      font-weight:650;
+      box-shadow:0 4px 12px rgba(20,30,55,.05);
+    }
+    main{padding:30px 0 70px}
+    section{margin:28px 0}
+    .section-title{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .section-title .badge{
+      background:var(--das);
+      color:#fff;
+      border-radius:12px;
+      padding:.35rem .6rem;
+      font-weight:800;
+      font-size:.88rem;
+    }
+    h2{font-size:clamp(1.5rem,2.4vw,2.35rem);line-height:1.12;margin:0;letter-spacing:-.025em}
+    h3{font-size:1.08rem;margin:0 0 8px}
+    p{margin:.4rem 0 .9rem}
+    .grid{display:grid;gap:18px}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:var(--shadow);
+    }
+    .compact{padding:16px}
+    .muted{color:var(--muted)}
+    .danger{color:var(--red);font-weight:800}
+    .pill{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.35rem .65rem;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:.82rem;
+      font-weight:750;
+      margin:.15rem .2rem .15rem 0;
+    }
+    ul{padding-left:1.15rem;margin:.45rem 0 0}
+    li{margin:.25rem 0}
+    .decision{
+      display:grid;
+      grid-template-columns:1fr 70px 1fr;
+      gap:14px;
+      align-items:center;
+    }
+    .diamond{
+      aspect-ratio:1/1;
+      width:min(190px,50vw);
+      margin:auto;
+      display:grid;
+      place-items:center;
+      transform:rotate(45deg);
+      background:var(--yellow);
+      border:2px solid var(--das);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+    }
+    .diamond span{transform:rotate(-45deg);font-weight:850;text-align:center;font-size:1.08rem;line-height:1.15}
+    .arrow{height:4px;background:var(--das);position:relative;border-radius:4px}
+    .arrow:after{content:"";position:absolute;right:-1px;top:50%;transform:translateY(-50%);border-left:13px solid var(--das);border-top:9px solid transparent;border-bottom:9px solid transparent}
+    .flow-card{border-left:8px solid var(--das)}
+    .flow-card.green{border-left-color:#78a850;background:#fbfff6}
+    .flow-card.red{border-left-color:var(--red);background:#fffafa}
+    .plan-row{display:grid;grid-template-columns:150px 1fr 230px;gap:14px;margin:14px 0;align-items:stretch}
+    .plan-label{
+      background:var(--das);
+      color:white;
+      border-radius:16px;
+      padding:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-weight:850;
+      font-size:1.15rem;
+      min-height:112px;
+    }
+    .plan-body{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 8px 18px rgba(20,30,55,.06)}
+    .plan-confirm{background:var(--green);border:1px solid #b9cfa0;border-radius:16px;padding:16px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center}
+    .plan-fail{margin-top:10px;padding:10px 12px;border-radius:12px;background:#fff1f0;border:1px solid #f0c4be;color:var(--red);font-weight:850}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+    button{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+      border-radius:999px;
+      padding:.65rem .95rem;
+      font-weight:800;
+      transition:.18s ease;
+      box-shadow:0 6px 16px rgba(20,30,55,.06);
+    }
+    button:hover,button.active{background:var(--das);color:#fff;border-color:var(--das)}
+    .panel{display:none}
+    .panel.active{display:block}
+    .checklist{display:grid;gap:10px}
+    .check{
+      display:flex;gap:10px;align-items:flex-start;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+    }
+    .check input{width:18px;height:18px;margin-top:3px;accent-color:#322756}
+    .micro{font-size:.86rem;color:var(--muted)}
+    .source-list{font-size:.92rem}
+    .footer-note{background:#fff;border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:.92rem}
+    .printbar{display:flex;justify-content:flex-end;margin:14px 0}
+    .printbar button{background:#322756;color:#fff}
+    .highlight{background:#fff8dc;border:1px solid #ecd98e;border-radius:14px;padding:12px 14px}
+    .tinytable{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+    .tinytable th,.tinytable td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+    .tinytable tr:last-child td{border-bottom:none}
+    .tinytable th{background:#f0f3fa;font-size:.9rem}
+    .big-number{font-size:2.3rem;line-height:1;font-weight:900;color:var(--das)}
+
+    /* Mobile-first hardening */
+    html,body{max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
+    body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+    .wrap{width:min(1180px,calc(100% - 32px))}
+    img,svg,video,canvas{max-width:100%;height:auto}
+    button,.nav a{min-height:44px;touch-action:manipulation}
+    .nav .wrap{-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-padding-inline:16px}
+    .nav .wrap::-webkit-scrollbar{display:none}
+    .table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px}
+    .table-scroll .tinytable{min-width:680px}
+    .card,.callout,.plan-body,.plan-confirm,.plan-label{overflow-wrap:anywhere}
+    :focus-visible{outline:3px solid rgba(78,61,130,.45);outline-offset:3px}
+
+    @media (max-width:850px){
+      .hero-grid,.grid-2,.grid-3,.decision,.plan-row{grid-template-columns:1fr}
+      .hero-grid{gap:14px;align-items:start;margin-top:20px}
+      .arrow{height:36px;width:4px;margin:auto}
+      .arrow:after{right:50%;top:auto;bottom:-1px;transform:translateX(50%);border-left:9px solid transparent;border-right:9px solid transparent;border-top:13px solid var(--das);border-bottom:none}
+      .plan-row{gap:10px;margin:16px 0}
+      .plan-label{min-height:64px;justify-content:flex-start;text-align:left;font-size:1.02rem}
+      .plan-confirm{min-height:64px;justify-content:flex-start;text-align:left}
+      .diamond{width:min(172px,58vw)}
+    }
+    @media (max-width:640px){
+      .wrap{width:min(100% - 24px,1180px)}
+      header{padding:24px 0 20px}
+      .eyebrow{font-size:.76rem;line-height:1.25;margin-bottom:12px;max-width:100%}
+      h1{font-size:clamp(2rem,12vw,3.1rem);letter-spacing:-.04em}
+      .subtitle{font-size:.98rem;line-height:1.45}
+      main{padding:18px 0 48px}
+      section{margin:22px 0;scroll-margin-top:76px}
+      .section-title{align-items:flex-start;gap:9px;margin-bottom:10px}
+      .section-title .badge{border-radius:10px;font-size:.76rem;padding:.3rem .52rem;line-height:1.1;margin-top:2px}
+      h2{font-size:1.38rem;line-height:1.16}
+      h3{font-size:1rem;line-height:1.25}
+      p,li{font-size:.96rem;line-height:1.48}
+      ul{padding-left:1rem}
+      .card{padding:14px;border-radius:16px;box-shadow:0 8px 22px rgba(25,35,65,.08)}
+      .compact{padding:14px}
+      .callout{padding:14px;border-radius:16px}
+      .grid{gap:12px}
+      .nav{top:0}
+      .nav .wrap{gap:8px;padding:8px 0}
+      .nav a{font-size:.82rem;padding:.48rem .7rem;min-width:max-content}
+      .printbar{justify-content:stretch;margin:8px 0 14px}
+      .printbar button{width:100%}
+      .toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+      .toolbar button{width:100%;padding:.7rem .6rem;border-radius:14px;white-space:normal;line-height:1.15}
+      .pill{font-size:.78rem;line-height:1.2;padding:.36rem .58rem;margin:.18rem .1rem}
+      .plan-body,.plan-confirm,.plan-label{border-radius:14px;padding:14px}
+      .plan-fail{font-size:.92rem;line-height:1.35}
+      .check{padding:10px;border-radius:12px}
+      .check input{flex:0 0 20px;width:20px;height:20px;margin-top:1px}
+      .big-number{font-size:1.9rem}
+      .tinytable th,.tinytable td{padding:10px;font-size:.9rem}
+      .footer-note{padding:18px 0;font-size:.86rem}
+    }
+    @media (max-width:420px){
+      .wrap{width:min(100% - 20px,1180px)}
+      h1{font-size:2.05rem}
+      .hero-grid{margin-top:16px}
+      .toolbar{grid-template-columns:1fr}
+      .diamond{width:min(150px,64vw);border-radius:14px}
+      .diamond span{font-size:.95rem}
+      .plan-label{font-size:.98rem}
+    }
+    @media print{
+      .nav,.printbar,button{display:none!important}
+      body{background:#fff;color:#000;font-size:10.5pt}
+      header{background:#fff;color:#000;padding:0;border:0}
+      .subtitle,.muted,.micro{color:#333}
+      .card,.plan-body{box-shadow:none;break-inside:avoid}
+      section{break-inside:avoid;margin:14px 0}
+      a{color:#000;text-decoration:none}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="eyebrow">Adult airway management · DAS 2025 + DAS ATI 2019</div>
+      <h1>DAS Airway Decision Aid</h1>
+      <p class="subtitle">A practical, single-page HTML summary for anaesthesiology decision-making: preparation, awake tracheal intubation trigger, Plan A–D escalation, oxygenation, capnography, and cognitive traps.</p>
+      <div class="hero-grid">
+        <div class="callout">
+          <strong>Clinical use:</strong> educational aid for theatre/ICU briefing and viva preparation. It is not an official DAS product and does not replace current DAS algorithms, senior judgement, or local difficult-airway policy.
+        </div>
+        <div class="callout">
+          <strong>Core principle:</strong> maximise first-pass success, maintain oxygen delivery, confirm ventilation with waveform capnography, and progress early when a plan fails.
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <div class="wrap">
+      <a href="#prep">Preparation</a>
+      <a href="#awake">Awake tracheal intubation</a>
+      <a href="#algorithm">Plan A–D</a>
+      <a href="#interactive">Interactive quick view</a>
+      <a href="#checklists">Checklists</a>
+      <a href="#traps">Trap questions</a>
+      <a href="#sources">Sources</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <div class="printbar"><button onclick="window.print()">Print / save as PDF</button></div>
+
+    <section id="prep">
+      <div class="section-title"><span class="badge">1</span><h2>Preparation and planning before tracheal intubation</h2></div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Airway assessment</h3>
+          <ul>
+            <li>Review previous airway history and bedside predictors of difficulty.</li>
+            <li>Assess the cricothyroid membrane as part of the airway exam.</li>
+            <li>Assess and manage pulmonary aspiration risk.</li>
+            <li>Assess physiological difficulty: oxygen reserve, haemodynamics, acidosis, RV failure, sepsis, pregnancy, obesity.</li>
+            <li>Review relevant imaging when available.</li>
+            <li>Consider awake airway visualisation: nasendoscopy or awake videolaryngoscopy.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Decision trigger</h3>
+          <div class="decision" aria-label="Decision flow">
+            <div class="diamond"><span>Is difficulty anticipated?</span></div>
+            <div class="arrow" aria-hidden="true"></div>
+            <div class="diamond"><span>Is awake tracheal intubation appropriate?</span></div>
+          </div>
+          <p class="highlight"><strong>If difficulty is anticipated and ATI is appropriate:</strong> perform awake tracheal intubation. If ATI is not appropriate or difficulty is not anticipated, proceed only after asleep-intubation preparation is complete.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="awake">
+      <div class="section-title"><span class="badge">ATI</span><h2>DAS awake tracheal intubation: high-yield rules</h2></div>
+      <div class="grid grid-3">
+        <div class="card compact">
+          <div class="big-number">1</div>
+          <h3>Indication threshold</h3>
+          <p>Consider ATI when predictors of difficult airway management are present, especially when difficulty is expected in intubation, facemask ventilation, SAD ventilation, aspiration management, apnoea tolerance, or eFONA.</p>
+        </div>
+        <div class="card compact">
+          <div class="big-number">2</div>
+          <h3>sTOP principle</h3>
+          <p><strong>Sedation, Topicalisation, Oxygenation, Performance.</strong> Topicalisation is the foundation; sedation must not compensate for poor topical anaesthesia.</p>
+        </div>
+        <div class="card compact">
+          <div class="big-number">3</div>
+          <h3>Confirmation before induction</h3>
+          <p>Only induce anaesthesia after tracheal tube position is confirmed by a two-point check: visual confirmation and waveform capnography.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h3>ATI clinical sequence for restricted mouth opening</h3>
+        <div class="table-scroll" role="region" aria-label="ATI clinical sequence table" tabindex="0">
+        <table class="tinytable">
+          <thead><tr><th>Phase</th><th>Practical action</th><th>Common pitfall</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Plan</strong></td><td>Declare Plan A awake nasal fibreoptic if oral access is poor; ensure Plan B/C/D and surgical airway support are explicit.</td><td>Starting without a named backup plan.</td></tr>
+            <tr><td><strong>Prepare</strong></td><td>Full monitoring, oxygen, suction, checked bronchoscope, smaller lubricated tube, vasoconstrictor for nasal route, difficult airway trolley, eFONA kit.</td><td>Secretions, bleeding, or dead scope discovered after starting.</td></tr>
+            <tr><td><strong>Topicalise</strong></td><td>Nasal/oropharyngeal/laryngeal/tracheal lidocaine, tested before instrumentation. Keep total lidocaine within recommended limit.</td><td>Trying to “sedate through” coughing.</td></tr>
+            <tr><td><strong>Sedate minimally</strong></td><td>Use cautious titrated sedation only if needed, ideally by an independent practitioner, while preserving spontaneous ventilation.</td><td>Deep sedation causing obstruction or loss of cooperation.</td></tr>
+            <tr><td><strong>Perform</strong></td><td>Identify epiglottis, cords, tracheal rings, carina; railroad tube; confirm with bronchoscopy and capnography; then induce.</td><td>Railroading forcefully or inducing before confirmed tube position.</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="grid grid-2" style="margin-top:18px">
+        <div class="card flow-card">
+          <h3>Mandatory ATI safeguards</h3>
+          <ul>
+            <li>Use a cognitive aid/checklist.</li>
+            <li>Give supplemental oxygen throughout.</li>
+            <li>Establish and test effective topicalisation.</li>
+            <li>Lidocaine maximum: <strong>9 mg/kg lean body weight</strong>.</li>
+            <li>Limit attempts: <strong>3 + 1</strong> by a more experienced operator.</li>
+          </ul>
+        </div>
+        <div class="card flow-card red">
+          <h3>Abort / change strategy if</h3>
+          <ul>
+            <li>Patient cooperation is lost.</li>
+            <li>Bleeding or secretions prevent safe visualisation.</li>
+            <li>Oxygenation worsens despite optimisation.</li>
+            <li>Repeated attempts risk airway trauma or complete obstruction.</li>
+            <li>Tube position cannot be confirmed.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="algorithm">
+      <div class="section-title"><span class="badge">A–D</span><h2>DAS 2025 adult unanticipated difficult tracheal intubation algorithm</h2></div>
+      <div class="card">
+        <p><strong>If difficulty is experienced, call for help.</strong> Maintain oxygenation, use waveform capnography, limit attempts, communicate clearly, and progress through the declared plans.</p>
+      </div>
+
+      <div class="plan-row">
+        <div class="plan-label">Plan A<br>Tracheal intubation</div>
+        <div class="plan-body">
+          <h3>Goal: successful tracheal intubation — maximum 3 + 1 attempts</h3>
+          <span class="pill">Peroxygenation: facemask ± nasal oxygen</span>
+          <span class="pill">Use a videolaryngoscope</span>
+          <span class="pill">Adequate neuromuscular blockade</span>
+          <span class="pill">Time awareness</span>
+          <ul>
+            <li>If unsuccessful, optimise: introducer such as bougie/stylet, external laryngeal manipulation, remove cricoid force if applied, improve position, change blade/device, change operator.</li>
+            <li>Airway assistant: monitor attempts/time, prompt equipment, prepare SAD for Plan B.</li>
+          </ul>
+          <div class="plan-fail">If unsuccessful: declare failed intubation; ensure eFONA kit immediately accessible; move to Plan B.</div>
+        </div>
+        <div class="plan-confirm">Verify success with two-point check:<br>1. Waveform capnography<br>2. Visual confirmation</div>
+      </div>
+
+      <div class="plan-row">
+        <div class="plan-label">Plan B<br>Supraglottic airway device</div>
+        <div class="plan-body">
+          <h3>Goal: restore oxygenation/ventilation via SAD — maximum 3 attempts</h3>
+          <span class="pill">Second-generation SAD</span>
+          <span class="pill">Adequate neuromuscular blockade</span>
+          <span class="pill">Consider size/device change</span>
+          <ul>
+            <li>If ventilation is confirmed: stop, think, communicate.</li>
+            <li>Consider waking the patient, intubating through the SAD, proceeding without intubation, or FONA if indicated.</li>
+            <li>Blind tracheal intubation through an SAD is not recommended.</li>
+          </ul>
+          <div class="plan-fail">If unsuccessful: declare failed SAD ventilation; open eFONA kit; move to Plan C.</div>
+        </div>
+        <div class="plan-confirm">Confirm ventilation with waveform capnography</div>
+      </div>
+
+      <div class="plan-row">
+        <div class="plan-label">Plan C<br>Final facemask ventilation</div>
+        <div class="plan-body">
+          <h3>Goal: final attempt at facemask ventilation</h3>
+          <span class="pill">Deliver 100% oxygen</span>
+          <span class="pill">Adequate neuromuscular blockade</span>
+          <span class="pill">Optimise position</span>
+          <span class="pill">OP/NP airway adjuncts</span>
+          <span class="pill">Two-person technique</span>
+          <span class="pill">Adequate depth of anaesthesia</span>
+          <ul>
+            <li>Ensure help is present or on the way.</li>
+            <li>Airway assistant opens the eFONA kit and assists facemask ventilation.</li>
+            <li>If ventilation is confirmed, senior decision: wake/reverse or proceed to FONA.</li>
+          </ul>
+          <div class="plan-fail">If unsuccessful: declare cannot intubate, cannot oxygenate; move immediately to Plan D.</div>
+        </div>
+        <div class="plan-confirm">Confirm ventilation with waveform capnography</div>
+      </div>
+
+      <div class="plan-row">
+        <div class="plan-label">Plan D<br>Emergency FONA</div>
+        <div class="plan-body">
+          <h3>Goal: emergency front-of-neck airway</h3>
+          <span class="pill">Continue 100% oxygen to upper airway</span>
+          <span class="pill">Scalpel size 10</span>
+          <span class="pill">Bougie</span>
+          <span class="pill">6.0 mm cuffed tube</span>
+          <ul>
+            <li>Maximal neck extension if feasible.</li>
+            <li>Full neuromuscular blockade.</li>
+            <li>Suction available.</li>
+            <li>If unsuccessful: smaller tube, extend incision, change position and/or operator.</li>
+            <li>Assistant: provide kit, load tube onto bougie, remove bougie, inflate cuff, connect circuit and capnography.</li>
+          </ul>
+        </div>
+        <div class="plan-confirm">Confirm ventilation with waveform capnography</div>
+      </div>
+    </section>
+
+    <section id="interactive">
+      <div class="section-title"><span class="badge">Quick</span><h2>Interactive quick view</h2></div>
+      <div class="card">
+        <div class="toolbar" role="tablist" aria-label="Plan tabs">
+          <button class="tab active" data-target="tab-prep">Preparation</button>
+          <button class="tab" data-target="tab-ati">ATI</button>
+          <button class="tab" data-target="tab-a">Plan A</button>
+          <button class="tab" data-target="tab-b">Plan B</button>
+          <button class="tab" data-target="tab-c">Plan C</button>
+          <button class="tab" data-target="tab-d">Plan D</button>
+        </div>
+        <div id="tab-prep" class="panel active">
+          <h3>Before asleep intubation</h3>
+          <p>RSI decision, team brief, Plans A–D equipment, optimal positioning/ergonomics, functioning waveform capnography, deliverable preoxygenation strategy.</p>
+        </div>
+        <div id="tab-ati" class="panel">
+          <h3>Awake tracheal intubation</h3>
+          <p>Use when difficulty is anticipated and ATI is appropriate. Oxygen throughout, topicalisation tested, lidocaine ≤ 9 mg/kg lean body weight, minimal sedation, attempts 3 + 1, induce only after visual + capnographic confirmation.</p>
+        </div>
+        <div id="tab-a" class="panel"><h3>Plan A</h3><p>Use videolaryngoscopy, optimise first-pass success, ensure NMB and time awareness. After 3 + 1 failed attempts or earlier if no improvement is possible, declare failed intubation and move to Plan B.</p></div>
+        <div id="tab-b" class="panel"><h3>Plan B</h3><p>Insert second-generation SAD. Confirm ventilation by waveform capnography. Stop, think, communicate: wake, intubate via SAD, proceed with SAD, or FONA. If failed SAD ventilation, open eFONA kit and move to Plan C.</p></div>
+        <div id="tab-c" class="panel"><h3>Plan C</h3><p>Final facemask ventilation attempt: 100% oxygen, optimise position, adjuncts, two-person technique, adequate NMB and depth. If not oxygenating, declare CICO and move to Plan D.</p></div>
+        <div id="tab-d" class="panel"><h3>Plan D</h3><p>Emergency front-of-neck airway: scalpel-bougie-tube with 6.0 cuffed tube. Continue oxygen delivery, ensure help present, and confirm ventilation by waveform capnography.</p></div>
+      </div>
+    </section>
+
+    <section id="checklists">
+      <div class="section-title"><span class="badge">✔</span><h2>Bedside checklists</h2></div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Asleep intubation preparation checklist</h3>
+          <div class="checklist">
+            <label class="check"><input type="checkbox"><span>RSI requirement assessed and aspiration plan declared.</span></label>
+            <label class="check"><input type="checkbox"><span>Airway team briefed: Plan A/B/C/D and stopping rules.</span></label>
+            <label class="check"><input type="checkbox"><span>Videolaryngoscope, bougie/stylet, SAD, facemask adjuncts and eFONA kit available.</span></label>
+            <label class="check"><input type="checkbox"><span>Patient positioning, staff position, equipment position and ergonomics optimised.</span></label>
+            <label class="check"><input type="checkbox"><span>Waveform capnography connected and functioning before induction.</span></label>
+            <label class="check"><input type="checkbox"><span>Preoxygenation/peroxygenation strategy deliverable.</span></label>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Awake fibreoptic / ATI checklist</h3>
+          <div class="checklist">
+            <label class="check"><input type="checkbox"><span>Patient informed, cooperative, consent/assent obtained where appropriate.</span></label>
+            <label class="check"><input type="checkbox"><span>Antisialagogue, nasal vasoconstrictor if nasal route, suction, oxygen and monitors ready.</span></label>
+            <label class="check"><input type="checkbox"><span>Topicalisation plan prepared and total lidocaine dose calculated.</span></label>
+            <label class="check"><input type="checkbox"><span>Scope checked: light, focus, suction channel, loaded lubricated tube.</span></label>
+            <label class="check"><input type="checkbox"><span>Minimal sedation strategy declared; spontaneous ventilation preserved.</span></label>
+            <label class="check"><input type="checkbox"><span>Backup plan includes alternative awake route/technique, postponement, or surgical airway.</span></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="traps">
+      <div class="section-title"><span class="badge">Viva</span><h2>Trap questions and safe answers</h2></div>
+      <div class="grid grid-2">
+        <div class="card"><h3>“Why not just induce?”</h3><p>Because induction can remove airway tone, spontaneous ventilation, and rescue options. If difficulty is anticipated across intubation, ventilation, aspiration, oxygen reserve, or eFONA, ATI should be considered.</p></div>
+        <div class="card"><h3>“Can you deepen sedation if the patient coughs?”</h3><p>No. Stop, oxygenate, improve topicalisation within safe lidocaine dosing, reassess, then proceed. Sedation is not a substitute for topical anaesthesia.</p></div>
+        <div class="card"><h3>“How many attempts?”</h3><p>ATI and Plan A intubation both use a 3 + 1 concept: three attempts, then one more by a more experienced operator, unless earlier progression is safer.</p></div>
+        <div class="card"><h3>“What proves the tube is in?”</h3><p>Waveform capnography is central. For ATI, use two-point confirmation: visual confirmation plus waveform capnography before induction.</p></div>
+        <div class="card"><h3>“SAD rescue successful — now what?”</h3><p>Stop, think, communicate. Options include waking the patient, intubating via SAD, proceeding with SAD if appropriate, or FONA if tracheal intubation is essential or risk is unacceptable.</p></div>
+        <div class="card"><h3>“When do you declare CICO?”</h3><p>After failed tracheal intubation, failed SAD ventilation, and unsuccessful final facemask oxygenation. Declare clearly and proceed immediately to eFONA.</p></div>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="section-title"><span class="badge">Ref</span><h2>Sources and use note</h2></div>
+      <div class="card source-list">
+        <p><strong>Primary sources used to build this aid:</strong></p>
+        <ul>
+          <li>Difficult Airway Society. DAS 2025 management of unanticipated difficult tracheal intubation guidelines and education package.</li>
+          <li>Ahmad I, El-Boghdadly K, Iliff H, et al. Difficult Airway Society 2025 guidelines for management of unanticipated difficult tracheal intubation in adults. British Journal of Anaesthesia. Open access article.</li>
+          <li>Difficult Airway Society. DAS guidelines for awake tracheal intubation (ATI) in adults, 2019.</li>
+        </ul>
+        <p class="micro">This HTML intentionally summarises and adapts the recommendations into a decision-support format. For clinical posting or departmental policy, use the current official DAS documents and local governance approval.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer-note">
+    <div class="wrap">Prepared as an educational airway decision aid for anaesthesiology. Always prioritise oxygenation, call for help early, limit repeated attempts, and use waveform capnography.</div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.panel');
+
+    tabs.forEach((btn, index) => {
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-selected', btn.classList.contains('active') ? 'true' : 'false');
+      btn.setAttribute('aria-controls', btn.dataset.target);
+      btn.addEventListener('click', () => activateTab(btn));
+      btn.addEventListener('keydown', event => {
+        if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+        event.preventDefault();
+        const direction = event.key === 'ArrowRight' ? 1 : -1;
+        const next = tabs[(index + direction + tabs.length) % tabs.length];
+        next.focus();
+        activateTab(next);
+      });
+    });
+
+    panels.forEach(panel => panel.setAttribute('role', 'tabpanel'));
+
+    function activateTab(activeButton) {
+      tabs.forEach(button => {
+        const isActive = button === activeButton;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+      panels.forEach(panel => panel.classList.toggle('active', panel.id === activeButton.dataset.target));
+    }
+  </script>
+</body>
+</html>
