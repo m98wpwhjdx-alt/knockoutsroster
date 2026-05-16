@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Anaesthesia & Critical Care Command Center</title>
+
+<style>
+
+  :root {
+    --bg: #020403;
+    --panel: rgba(255,255,255,.045);
+    --panel-strong: rgba(255,255,255,.075);
+    --text: #f4f7f5;
+    --muted: #747c78;
+    --soft: #aab0ad;
+    --line: rgba(255,255,255,.08);
+    --green: #22f5aa;
+    --green-2: #a7ff4f;
+    --cyan: #31f0ff;
+    --teal: #00d7bd;
+    --shadow: 0 26px 80px rgba(0,0,0,.62);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -4;
+    background:
+      radial-gradient(circle at 74% 18%, rgba(49,240,255,.15), transparent 10%),
+      radial-gradient(circle at 28% 20%, rgba(167,255,79,.11), transparent 10%),
+      radial-gradient(circle at 50% 72%, rgba(34,245,170,.10), transparent 18%),
+      #020403;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    pointer-events: none;
+    opacity: .18;
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(circle at center, black 0 34%, transparent 72%);
+  }
+
+  .ecg-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: rgba(255,255,255,.08);
+    z-index: 100;
+  }
+
+  .ecg-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, var(--green), var(--cyan), transparent);
+    background-size: 220% 100%;
+    animation: sweep 3.8s linear infinite;
+    opacity: .7;
+  }
+
+  @keyframes sweep {
+    0% { background-position: 220% 0; }
+    100% { background-position: -220% 0; }
+  }
+
+  .orb {
+    position: fixed;
+    border-radius: 999px;
+    filter: blur(96px);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .orb1 { width: 520px; height: 520px; background: #0aff9d; left: 50%; top: 18%; transform: translate(-50%, -50%); opacity: .11; }
+  .orb2 { width: 340px; height: 340px; background: #00e4ff; right: 14%; top: 18%; opacity: .12; }
+
+  header {
+    min-height: 92vh;
+    display: grid;
+    place-items: center;
+    position: relative;
+    z-index: 10;
+    padding: 96px 22px 64px;
+    text-align: center;
+    isolation: isolate;
+  }
+
+  header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+      linear-gradient(90deg, transparent 0 16%, rgba(255,255,255,.018) 16.1% 16.25%, transparent 16.3% 83%, rgba(255,255,255,.018) 83.05% 83.2%, transparent 83.25%),
+      radial-gradient(ellipse at center, rgba(255,255,255,.04), transparent 35%);
+  }
+
+  header::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 34%;
+    z-index: -1;
+    background: linear-gradient(180deg, transparent, #020403 92%);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    color: rgba(244,247,245,.66);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: rise .8s ease .05s forwards;
+  }
+
+  .pulse-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 18px rgba(34,245,170,.85);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .45; transform: scale(.72); }
+  }
+
+  h1 {
+    font-size: clamp(58px, 11vw, 132px);
+    line-height: .86;
+    letter-spacing: -.085em;
+    font-weight: 900;
+    text-wrap: balance;
+    margin: 0 auto;
+    color: rgba(244,247,245,.28);
+    opacity: 0;
+    animation: rise .9s ease .12s forwards;
+  }
+
+  h1 span.hl,
+  h1 span.hl2 {
+    color: #fff;
+    text-shadow: 0 0 50px rgba(255,255,255,.24);
+  }
+
+  h1 span.hl::before {
+    content: "";
+    display: inline-block;
+    width: .62em;
+    height: .62em;
+    margin: 0 .12em 0 .06em;
+    vertical-align: -.03em;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at center, var(--green-2) 0 18%, transparent 19%),
+      repeating-radial-gradient(circle at center, rgba(244,247,245,.62) 0 3px, transparent 4px 9px);
+    filter: drop-shadow(0 0 18px rgba(167,255,79,.45));
+    opacity: .95;
+  }
+
+  h1 span.hl2::before {
+    content: "+";
+    color: rgba(244,247,245,.30);
+    margin: 0 .20em 0 .08em;
+  }
+
+  h1 span.hl2::after {
+    content: "";
+    display: inline-block;
+    width: .55em;
+    height: .55em;
+    margin-left: .16em;
+    vertical-align: .02em;
+    background: linear-gradient(135deg, #32f2ff, #00d7bd 52%, #fff);
+    clip-path: polygon(50% 0, 61% 38%, 100% 50%, 61% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+    filter: drop-shadow(0 0 23px rgba(49,240,255,.75));
+    animation: breathe 3.4s ease-in-out infinite;
+  }
+
+  .subtitle {
+    width: min(650px, 100%);
+    margin: 30px auto 0;
+    color: rgba(244,247,245,.67);
+    font-size: clamp(15px, 1.6vw, 19px);
+    line-height: 1.5;
+    font-weight: 700;
+    letter-spacing: -.055em;
+    opacity: 0;
+    animation: rise .9s ease .22s forwards;
+  }
+
+  .subtitle strong { color: #fff; font-weight: 800; }
+
+  .stats {
+    width: min(760px, 100%);
+    margin: 48px auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    opacity: 0;
+    animation: rise .9s ease .38s forwards;
+  }
+
+  .stat {
+    min-height: 82px;
+    border: 1px solid rgba(255,255,255,.07);
+    background: rgba(255,255,255,.025);
+    border-radius: 18px;
+    padding: 18px 20px;
+    text-align: left;
+    backdrop-filter: blur(14px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  }
+
+  .stat-num {
+    display: block;
+    color: var(--green);
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: -.04em;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    color: rgba(244,247,245,.66);
+    font-size: 13px;
+    line-height: 1.45;
+    font-weight: 700;
+    letter-spacing: -.035em;
+    text-transform: none;
+  }
+
+  .divider { display: none; }
+
+  section {
+    position: relative;
+    z-index: 10;
+    width: min(1240px, calc(100% - 44px));
+    margin: 0 auto;
+    padding: 0 0 84px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0 0 24px;
+  }
+
+  .section-tag {
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .section-title {
+    color: rgba(244,247,245,.92);
+    font-size: clamp(22px, 2.4vw, 32px);
+    font-weight: 900;
+    letter-spacing: -.06em;
+    white-space: nowrap;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 18px;
+  }
+
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,.062), rgba(255,255,255,.028));
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 22px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    min-height: 292px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease, background .24s ease;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--card-accent, var(--green)) 22%, transparent), transparent 24%),
+      linear-gradient(135deg, color-mix(in srgb, var(--card-accent, var(--green)) 16%, transparent), transparent 38%);
+    opacity: .55;
+    transition: opacity .24s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    border-color: color-mix(in srgb, var(--card-accent, var(--green)) 48%, rgba(255,255,255,.12));
+    background: linear-gradient(180deg, rgba(255,255,255,.078), rgba(255,255,255,.034));
+    box-shadow: var(--shadow), 0 0 44px color-mix(in srgb, var(--card-accent, var(--green)) 16%, transparent);
+  }
+
+  .card:hover::before { opacity: .9; }
+
+  .card-top, .card-content, .card-title, .card-url, .card-desc, .card-footer { position: relative; z-index: 1; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .icon-wrap {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    background: rgba(2,4,3,.62);
+    border: 1px solid color-mix(in srgb, var(--card-accent, var(--green)) 32%, rgba(255,255,255,.08));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow: 0 0 24px color-mix(in srgb, var(--card-accent, var(--green)) 16%, transparent), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+
+  .card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+
+  .chip {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.045);
+    color: rgba(244,247,245,.62);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+
+  .chip.featured {
+    background: rgba(34,245,170,.10);
+    color: var(--green);
+    border-color: rgba(34,245,170,.22);
+  }
+
+  .card-title {
+    color: rgba(244,247,245,.96);
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -.06em;
+    line-height: .98;
+  }
+
+  .card-url {
+    color: var(--card-accent, var(--green));
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    opacity: .86;
+  }
+
+  .card-desc {
+    color: rgba(244,247,245,.62);
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 600;
+    letter-spacing: -.035em;
+    flex: 1;
+  }
+
+  .card-desc strong, .card-desc em { color: rgba(244,247,245,.9); }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    margin-top: auto;
+  }
+
+  .card-category {
+    color: rgba(244,247,245,.54);
+    font-size: 12px;
+    line-height: 1.35;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+
+  .arrow {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(244,247,245,.66);
+    transition: background .2s ease, color .2s ease, transform .2s ease, border-color .2s ease;
+  }
+
+  .card:hover .arrow {
+    background: linear-gradient(135deg, var(--green), var(--cyan));
+    border-color: transparent;
+    color: #001711;
+    transform: rotate(-45deg);
+  }
+
+  .card.wide {
+    grid-column: span 2;
+    flex-direction: row;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .card.wide .card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  footer {
+    position: relative;
+    z-index: 10;
+    width: min(1240px, calc(100% - 44px));
+    margin: 0 auto;
+    border-top: 1px solid rgba(255,255,255,.08);
+    padding: 30px 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  .footer-text {
+    color: rgba(244,247,245,.54);
+    font-size: 12px;
+    line-height: 1.6;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+
+  .footer-text span { color: var(--green); }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: scale(.96) rotate(0deg); opacity: .88; }
+    50% { transform: scale(1.08) rotate(4deg); opacity: 1; }
+  }
+
+  @media (max-width: 900px) {
+    header { min-height: auto; padding: 104px 18px 70px; }
+    .stats { grid-template-columns: 1fr; }
+    section, footer { width: min(100% - 32px, 1240px); }
+    .card.wide { grid-column: span 1; flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (max-width: 640px) {
+    h1 { font-size: clamp(50px, 17vw, 74px); line-height: .92; letter-spacing: -.075em; }
+    .badge { font-size: 10px; line-height: 1.5; }
+    .grid { grid-template-columns: 1fr; }
+    .section-header { align-items: flex-start; flex-direction: column; gap: 9px; }
+    .section-line { width: 100%; flex: none; }
+    .section-title { white-space: normal; }
+    .card { min-height: auto; }
+    footer { display: block; }
+    .footer-text + .footer-text { margin-top: 16px; text-align: left !important; }
+  }
+
+</style>
+</head>
+<body>
+<div class="ecg-bar"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<header>
+<div class="badge">
+<div class="pulse-dot"></div>
+    ANAESTHESIA & ICU RESIDENCY COMMAND CENTER
+  </div>
+<h1>CRITICAL<br/><span class="hl">CARE</span><br/><span class="hl2">ARSENAL</span></h1>
+<p class="subtitle">
+    The definitive resource hub for the <strong>modern anaesthesiologist-intensivist</strong>. Curated by specialty, built for speed. Everything a junior resident needs — from airway and regional anaesthesia to ICU evidence and guidelines.
+  </p>
+<div class="stats">
+<div class="stat">
+<div class="stat-num">34</div>
+<div class="stat-label">Resources</div>
+</div>
+<div class="divider"></div>
+<div class="stat">
+<div class="stat-num">8</div>
+<div class="stat-label">Categories</div>
+</div>
+<div class="divider"></div>
+<div class="stat">
+<div class="stat-num">∞</div>
+<div class="stat-label">Lives Saved</div>
+</div>
+</div>
+</header>
+<section>
+<!-- FLAGSHIP SITES -->
+<div class="section-header">
+<div class="section-tag">01 — Flagship</div>
+<div class="section-line"></div>
+<div class="section-title">Must-Know Giants</div>
+</div>
+<div class="grid" style="margin-bottom: 60px;">
+<a class="card wide" href="https://litfl.com" rel="noopener" style="--card-accent: #00d4ff;" target="_blank">
+<div class="icon-wrap" style="width:64px;height:64px;font-size:30px;">⚡</div>
+<div class="card-content">
+<div class="card-top">
+<div>
+<div class="card-title">LIFE IN THE FAST LANE</div>
+<div class="card-url">litfl.com</div>
+</div>
+<div class="card-badges">
+<span class="chip featured">⭐ Essential</span>
+<span class="chip">ECG Library</span>
+<span class="chip">Toxicology</span>
+</div>
+</div>
+<p class="card-desc">The gold standard reference for Emergency Medicine and Critical Care. World-renowned <strong>ECG Library</strong> with thousands of annotated tracings, comprehensive toxicology resources, clinical cases, CCC (Critical Care Compendium), and the FOAM movement's crown jewel. If you bookmark one site, make it this.</p>
+<div class="card-footer">
+<span class="card-category">EM • Critical Care • ECG • Tox</span>
+<div class="arrow">→</div>
+</div>
+</div>
+</a>
+<a class="card wide" href="https://emcrit.org" rel="noopener" style="--card-accent: #ff4d6d;" target="_blank">
+<div class="icon-wrap" style="width:64px;height:64px;font-size:30px;">🔬</div>
+<div class="card-content">
+<div class="card-top">
+<div>
+<div class="card-title">EMCRIT</div>
+<div class="card-url">emcrit.org</div>
+</div>
+<div class="card-badges">
+<span class="chip featured">⭐ Essential</span>
+<span class="chip">Resuscitation</span>
+<span class="chip">Podcast</span>
+</div>
+</div>
+<p class="card-desc">Dr. Scott Weingart's landmark resource for <strong>Emergency Critical Care</strong>. Deep-dives on airway management, resuscitation, hemodynamics, and critical procedures. The podcast is mandatory listening. IBCC (Internet Book of Critical Care) is the most comprehensive free ICU textbook ever written.</p>
+<div class="card-footer">
+<span class="card-category">Resuscitation • Airway • Hemodynamics</span>
+<div class="arrow">→</div>
+</div>
+</div>
+</a>
+</div>
+<!-- CORE REFERENCE -->
+<div class="section-header">
+<div class="section-tag">02 — Reference</div>
+<div class="section-line"></div>
+<div class="section-title">Core Clinical References</div>
+</div>
+<div class="grid" style="margin-bottom: 60px;">
+<a class="card" href="https://www.uptodate.com" rel="noopener" style="--card-accent: #39ff14;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">📗</div>
+<div class="card-badges"><span class="chip">Evidence-Based</span></div>
+</div>
+<div class="card-title">UPTODATE</div>
+<div class="card-url">uptodate.com</div>
+<p class="card-desc">The bedside clinician's bible. Peer-reviewed, continuously updated guidance on diagnosis and management. Your first stop for any unfamiliar condition at 3 AM.</p>
+<div class="card-footer">
+<span class="card-category">Clinical Decision Support</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.mdcalc.com" rel="noopener" style="--card-accent: #f5c542;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🧮</div>
+<div class="card-badges"><span class="chip">Calculators</span></div>
+</div>
+<div class="card-title">MDCALC</div>
+<div class="card-url">mdcalc.com</div>
+<p class="card-desc">500+ validated clinical calculators. APACHE II, SOFA, Wells, CURB-65, GCS, Revised Trauma Score, and every scoring system you'll ever need — all at your fingertips.</p>
+<div class="card-footer">
+<span class="card-category">Scoring • Risk Stratification</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.ncbi.nlm.nih.gov/pubmed/" rel="noopener" style="--card-accent: #a78bfa;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🔭</div>
+<div class="card-badges"><span class="chip">Literature</span></div>
+</div>
+<div class="card-title">PUBMED</div>
+<div class="card-url">pubmed.ncbi.nlm.nih.gov</div>
+<p class="card-desc">The definitive biomedical literature database. Know how to search it efficiently — use MeSH terms, filters by RCT and systematic reviews. Master this and you master evidence.</p>
+<div class="card-footer">
+<span class="card-category">Research • Evidence</span>
+<div class="arrow">→</div>
+</div>
+</a>
+</div>
+<!-- FOAM ECOSYSTEM -->
+<div class="section-header">
+<div class="section-tag">03 — FOAM</div>
+<div class="section-line"></div>
+<div class="section-title">The FOAM Ecosystem</div>
+</div>
+<div class="grid" style="margin-bottom: 60px;">
+<a class="card" href="https://www.thebottomline.org.uk" rel="noopener" style="--card-accent: #00d4ff;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">📊</div>
+<div class="card-badges"><span class="chip featured">⭐ Top Pick</span></div>
+</div>
+<div class="card-title">THE BOTTOM LINE</div>
+<div class="card-url">thebottomline.org.uk</div>
+<p class="card-desc">Expertly summarized critical care trials. Every landmark RCT distilled — PROSEVA, ARMA, FEAST, ANDROMEDA-SHOCK — with clinical bottom lines you can actually use at the bedside.</p>
+<div class="card-footer">
+<span class="card-category">Trial Summaries • Evidence</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://intensiveblog.com" rel="noopener" style="--card-accent: #ff4d6d;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">💡</div>
+<div class="card-badges"><span class="chip">ICU Focused</span></div>
+</div>
+<div class="card-title">THE INTENSIVE CARE NETWORK</div>
+<div class="card-url">intensiveblog.com</div>
+<p class="card-desc">ICU-specific education, podcasts, and critical care commentary from practicing intensivists. Real-world perspectives that bridge the gap between evidence and the messy reality of the ICU.</p>
+<div class="card-footer">
+<span class="card-category">FOAM • Education • Podcast</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.icudelirium.org" rel="noopener" style="--card-accent: #39ff14;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🧠</div>
+<div class="card-badges"><span class="chip">ABCDEF Bundle</span></div>
+</div>
+<div class="card-title">ICU DELIRIUM</div>
+<div class="card-url">icudelirium.org</div>
+<p class="card-desc">Vanderbilt's authoritative resource on ICU delirium, sedation, and ABCDEF bundle implementation. CAM-ICU tools, training videos, and everything to fight the "ICU brain" epidemic.</p>
+<div class="card-footer">
+<span class="card-category">Delirium • Sedation • Analgesia</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.criticalcarereviews.com" rel="noopener" style="--card-accent: #f5c542;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">📰</div>
+<div class="card-badges"><span class="chip">Annual Meeting</span></div>
+</div>
+<div class="card-title">CRITICAL CARE REVIEWS</div>
+<div class="card-url">criticalcarereviews.com</div>
+<p class="card-desc">Annual meeting, year-in-review summaries, and free access to top critical care lectures. The CCR newsletter distills the most important publications in critical care each week.</p>
+<div class="card-footer">
+<span class="card-category">Reviews • Lectures • Newsletter</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://rebelem.com" rel="noopener" style="--card-accent: #a78bfa;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🎯</div>
+<div class="card-badges"><span class="chip">EM • Critical Care</span></div>
+</div>
+<div class="card-title">REBEL EM</div>
+<div class="card-url">rebelem.com</div>
+<p class="card-desc">Rational Evidence Based Evaluation of Literature. Systematic, balanced critical appraisal of landmark EM and critical care papers. Teaches you HOW to think about evidence, not just what to believe.</p>
+<div class="card-footer">
+<span class="card-category">Critical Appraisal • FOAM</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.iccm-journal.com" rel="noopener" style="--card-accent: #ff4d6d;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">📖</div>
+<div class="card-badges"><span class="chip">Journal</span></div>
+</div>
+<div class="card-title">INTENSIVE CARE MEDICINE</div>
+<div class="card-url">iccm-journal.com</div>
+<p class="card-desc">The ESICM flagship journal. Home of the seminal ESICM guidelines, task force reports, and the highest-impact critical care research. Read the editorials — they contextualize the evidence beautifully.</p>
+<div class="card-footer">
+<span class="card-category">ESICM • Research Journal</span>
+<div class="arrow">→</div>
+</div>
+</a>
+</div>
+<!-- PROCEDURES & ULTRASOUND -->
+<div class="section-header">
+<div class="section-tag">04 — Skills</div>
+<div class="section-line"></div>
+<div class="section-title">Procedures &amp; POCUS</div>
+</div>
+<div class="grid" style="margin-bottom: 60px;">
+<a class="card" href="https://www.pocus.org" rel="noopener" style="--card-accent: #00d4ff;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">📡</div>
+<div class="card-badges"><span class="chip featured">⭐ Essential</span></div>
+</div>
+<div class="card-title">POCUS.ORG</div>
+<div class="card-url">pocus.org</div>
+<p class="card-desc">Point-of-Care Ultrasound education, cases, and protocols. RUSH exam, lung ultrasound (B-lines, consolidations), cardiac views, abdominal FAST — master the 5th vital sign of the ICU.</p>
+<div class="card-footer">
+<span class="card-category">Ultrasound • POCUS • Imaging</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.sonocloud.org" rel="noopener" style="--card-accent: #39ff14;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🔊</div>
+<div class="card-badges"><span class="chip">Cases</span></div>
+</div>
+<div class="card-title">SONOCLOUD</div>
+<div class="card-url">sonocloud.org</div>
+<p class="card-desc">Video-rich ultrasound case library. Real pathology clips with expert interpretation. Excellent for developing pattern recognition in cardiac, lung, and vascular ultrasound.</p>
+<div class="card-footer">
+<span class="card-category">Ultrasound Cases • Video Library</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.nejm.org/multimedia/medical-videos" rel="noopener" style="--card-accent: #f5c542;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🎥</div>
+<div class="card-badges"><span class="chip">NEJM</span></div>
+</div>
+<div class="card-title">NEJM CLINICAL VIDEOS</div>
+<div class="card-url">nejm.org/multimedia</div>
+<p class="card-desc">NEJM's library of procedure videos — intubation, central lines, thoracentesis, paracentesis, arterial lines. High production quality, evidence-based technique. Watch before you perform.</p>
+<div class="card-footer">
+<span class="card-category">Procedures • Technique • Video</span>
+<div class="arrow">→</div>
+</div>
+</a>
+</div>
+<!-- GUIDELINES -->
+<div class="section-header">
+<div class="section-tag">05 — Guidelines</div>
+<div class="section-line"></div>
+<div class="section-title">Society Guidelines</div>
+</div>
+<div class="grid" style="margin-bottom: 60px;">
+<a class="card" href="https://www.sccm.org/clinical-resources/guidelines" rel="noopener" style="--card-accent: #ff4d6d;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🏛️</div>
+<div class="card-badges"><span class="chip featured">⭐ Essential</span><span class="chip">SCCM</span></div>
+</div>
+<div class="card-title">SCCM GUIDELINES</div>
+<div class="card-url">sccm.org</div>
+<p class="card-desc">Society of Critical Care Medicine guidelines — Surviving Sepsis Campaign, PAD/PADIS guidelines for pain/agitation/delirium, nutrition guidelines, and more. These are your clinical practice anchors.</p>
+<div class="card-footer">
+<span class="card-category">SCCM • Sepsis • PAD • Nutrition</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.esicm.org/resources/guidelines/" rel="noopener" style="--card-accent: #a78bfa;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🇪🇺</div>
+<div class="card-badges"><span class="chip">ESICM</span></div>
+</div>
+<div class="card-title">ESICM GUIDELINES</div>
+<div class="card-url">esicm.org</div>
+<p class="card-desc">European Society of Intensive Care Medicine guidelines and task force reports. Often more nuanced than American counterparts — especially strong in ARDS, hemodynamic monitoring, and organ failure.</p>
+<div class="card-footer">
+<span class="card-category">ESICM • European Guidelines</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.survivingsepsis.org" rel="noopener" style="--card-accent: #39ff14;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🦠</div>
+<div class="card-badges"><span class="chip featured">⭐ Must Know</span></div>
+</div>
+<div class="card-title">SURVIVING SEPSIS CAMPAIGN</div>
+<div class="card-url">survivingsepsis.org</div>
+<p class="card-desc">The global sepsis authority. Hour-1 Bundle, full guidelines, implementation tools, and quality improvement resources. Sepsis kills 1 in 5 ICU patients — own these guidelines cold.</p>
+<div class="card-footer">
+<span class="card-category">Sepsis • Bundles • Protocols</span>
+<div class="arrow">→</div>
+</div>
+</a>
+</div>
+
+<!-- ANAESTHESIA GUIDELINES -->
+<div class="section-header">
+<div class="section-tag">06 — Anaesthesia</div>
+<div class="section-line"></div>
+<div class="section-title">Anaesthesia Guidelines for Junior Residents</div>
+</div>
+<div class="grid" style="margin-bottom: 60px;">
+<a class="card wide" href="https://das.uk.com/guidelines/" rel="noopener" style="--card-accent: #00d4ff;" target="_blank">
+<div class="icon-wrap" style="width:64px;height:64px;font-size:30px;">🫁</div>
+<div class="card-content">
+<div class="card-top">
+<div>
+<div class="card-title">DAS GUIDELINES</div>
+<div class="card-url">das.uk.com/guidelines</div>
+</div>
+<div class="card-badges"><span class="chip featured">⭐ Must Know</span><span class="chip">Airway</span><span class="chip">Algorithms</span></div>
+</div>
+<p class="card-desc">Difficult Airway Society algorithms for unanticipated difficult intubation, extubation, obstetric failed intubation, awake tracheal intubation, and ICU intubation. For a junior resident, these are <strong>the airway crisis maps</strong> to rehearse before every OT and emergency call.</p>
+<div class="card-footer"><span class="card-category">Airway • Failed Intubation • Extubation</span><div class="arrow">→</div></div>
+</div>
+</a>
+<a class="card wide" href="https://www.nysora.com/" rel="noopener" style="--card-accent: #a78bfa;" target="_blank">
+<div class="icon-wrap" style="width:64px;height:64px;font-size:30px;">🧭</div>
+<div class="card-content">
+<div class="card-top">
+<div>
+<div class="card-title">NYSORA</div>
+<div class="card-url">nysora.com</div>
+</div>
+<div class="card-badges"><span class="chip featured">⭐ Essential</span><span class="chip">Regional</span><span class="chip">Ultrasound</span></div>
+</div>
+<p class="card-desc">High-yield regional anaesthesia, neuraxial, anatomy, local anaesthetic toxicity, ultrasound-guided blocks, and pain medicine education. Excellent for translating sonoanatomy into safe block planning at the bedside.</p>
+<div class="card-footer"><span class="card-category">Regional Anaesthesia • POCUS • Pain</span><div class="arrow">→</div></div>
+</div>
+</a>
+<a class="card" href="https://asra.com/guidelines-articles/guidelines" rel="noopener" style="--card-accent: #39ff14;" target="_blank">
+<div class="card-top"><div class="icon-wrap">🩸</div><div class="card-badges"><span class="chip featured">⭐ Essential</span><span class="chip">Anticoag</span></div></div>
+<div class="card-title">ASRA GUIDELINES</div>
+<div class="card-url">asra.com/guidelines</div>
+<p class="card-desc">Regional anaesthesia in anticoagulated patients, infection control, interventional pain, and local anaesthetic safety guidance. Use before neuraxial or deep peripheral blocks in patients on antiplatelets, heparin, DOACs, or thrombolytics.</p>
+<div class="card-footer"><span class="card-category">Neuraxial • Antithrombotics • Pain</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://www.asahq.org/standards-and-practice-parameters" rel="noopener" style="--card-accent: #ff4d6d;" target="_blank">
+<div class="card-top"><div class="icon-wrap">🏛️</div><div class="card-badges"><span class="chip featured">⭐ Core</span><span class="chip">ASA</span></div></div>
+<div class="card-title">ASA STANDARDS & PARAMETERS</div>
+<div class="card-url">asahq.org/standards</div>
+<p class="card-desc">Core American Society of Anesthesiologists standards, practice guidelines, advisories, statements, monitoring standards, difficult airway guidance, fasting, obstetric anaesthesia, sedation, and perioperative safety documents.</p>
+<div class="card-footer"><span class="card-category">Monitoring • Fasting • Safety • Airway</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://www.jacc.org/guidelines/perioperative-cardiovascular-management" rel="noopener" style="--card-accent: #f5c542;" target="_blank">
+<div class="card-top"><div class="icon-wrap">❤️</div><div class="card-badges"><span class="chip featured">⭐ Pre-op</span><span class="chip">AHA/ACC</span></div></div>
+<div class="card-title">AHA/ACC PERIOP CV GUIDELINE</div>
+<div class="card-url">jacc.org/guidelines</div>
+<p class="card-desc">Perioperative cardiovascular evaluation and management for adult noncardiac surgery. Important for pre-anaesthetic check-up: functional capacity, cardiac risk, testing, beta-blockers, anticoagulants, and perioperative myocardial injury.</p>
+<div class="card-footer"><span class="card-category">PAC • Cardiac Risk • Noncardiac Surgery</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" rel="noopener" style="--card-accent: #00d4ff;" target="_blank">
+<div class="card-top"><div class="icon-wrap">⚡</div><div class="card-badges"><span class="chip">ACLS</span><span class="chip">CPR</span></div></div>
+<div class="card-title">AHA CPR & ECC GUIDELINES</div>
+<div class="card-url">cpr.heart.org</div>
+<p class="card-desc">Adult and paediatric resuscitation science, ACLS/PALS algorithms, post-cardiac arrest care, and emergency cardiovascular care updates. Essential for OT arrests, code blue, perioperative anaphylaxis, and ICU emergencies.</p>
+<div class="card-footer"><span class="card-category">ACLS • PALS • Arrest Algorithms</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://esaic.org/guidelines/" rel="noopener" style="--card-accent: #a78bfa;" target="_blank">
+<div class="card-top"><div class="icon-wrap">🇪🇺</div><div class="card-badges"><span class="chip">ESAIC</span></div></div>
+<div class="card-title">ESAIC GUIDELINES</div>
+<div class="card-url">esaic.org/guidelines</div>
+<p class="card-desc">European anaesthesiology and intensive care guidance including pre-operative evaluation, perioperative bleeding, neuromuscular blockade, procedural sedation, perioperative medicine, and critical care topics.</p>
+<div class="card-footer"><span class="card-category">European • Perioperative • ICU</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://anaesthetists.org/Guidelines-and-publications/Guidelines" rel="noopener" style="--card-accent: #39ff14;" target="_blank">
+<div class="card-top"><div class="icon-wrap">📟</div><div class="card-badges"><span class="chip">AAGBI/AoA</span><span class="chip">Safety</span></div></div>
+<div class="card-title">ASSOCIATION OF ANAESTHETISTS</div>
+<div class="card-url">anaesthetists.org/guidelines</div>
+<p class="card-desc">Practical UK/Irish safety guidance: monitoring standards, checking anaesthetic equipment, perioperative care, transfusion, emergencies, consent, and safe conduct of anaesthesia. Very useful for OT preparation habits.</p>
+<div class="card-footer"><span class="card-category">Monitoring • Machine Check • OT Safety</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://www.rcoa.ac.uk/safety-standards-quality/guidance-resources/guidelines-provision-anaesthetic-services" rel="noopener" style="--card-accent: #ff4d6d;" target="_blank">
+<div class="card-top"><div class="icon-wrap">📘</div><div class="card-badges"><span class="chip">RCoA</span><span class="chip">GPAS</span></div></div>
+<div class="card-title">RCoA GPAS</div>
+<div class="card-url">rcoa.ac.uk/gpas</div>
+<p class="card-desc">Guidelines for the Provision of Anaesthetic Services: emergency, obstetric, paediatric, regional, remote-site, day-care, and perioperative pathways. Good framework for understanding how safe anaesthesia services are organized.</p>
+<div class="card-footer"><span class="card-category">Service Standards • Subspecialty Anaesthesia</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://www.soap.org/consensus-statements-and-advisories" rel="noopener" style="--card-accent: #f5c542;" target="_blank">
+<div class="card-top"><div class="icon-wrap">🤰</div><div class="card-badges"><span class="chip">SOAP</span><span class="chip">Obstetric</span></div></div>
+<div class="card-title">SOAP CONSENSUS STATEMENTS</div>
+<div class="card-url">soap.org</div>
+<p class="card-desc">Obstetric anaesthesia consensus statements: thrombocytopenia and neuraxial procedures, thromboprophylaxis, neuraxial morphine monitoring, enhanced recovery after caesarean, and cardiac arrest in pregnancy.</p>
+<div class="card-footer"><span class="card-category">Obstetric • Neuraxial • Pregnancy</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://www.oaa-anaes.ac.uk/oaa-quick-reference-handbook/qrh" rel="noopener" style="--card-accent: #00d4ff;" target="_blank">
+<div class="card-top"><div class="icon-wrap">🚨</div><div class="card-badges"><span class="chip featured">⭐ Emergency</span><span class="chip">QRH</span></div></div>
+<div class="card-title">OAA OBSTETRIC QRH</div>
+<div class="card-url">oaa-anaes.ac.uk/qrh</div>
+<p class="card-desc">Quick Reference Handbook for obstetric emergencies. Action cards for failed intubation, high spinal, local anaesthetic systemic toxicity, massive haemorrhage, eclampsia, sepsis, anaphylaxis, and maternal collapse.</p>
+<div class="card-footer"><span class="card-category">Obstetric Emergencies • Crisis Cards</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://esraeurope.org/prospect/" rel="noopener" style="--card-accent: #a78bfa;" target="_blank">
+<div class="card-top"><div class="icon-wrap">💉</div><div class="card-badges"><span class="chip">PROSPECT</span><span class="chip">Pain</span></div></div>
+<div class="card-title">PROSPECT PAIN GUIDELINES</div>
+<div class="card-url">esraeurope.org/prospect</div>
+<p class="card-desc">Procedure-specific postoperative pain recommendations. Helps residents choose multimodal analgesia, regional techniques, NSAIDs/paracetamol/opioid-sparing plans, and block selection by surgical procedure.</p>
+<div class="card-footer"><span class="card-category">Post-op Pain • Multimodal Analgesia</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://wfsahq.org/our-work/safety-quality/international-standards/" rel="noopener" style="--card-accent: #39ff14;" target="_blank">
+<div class="card-top"><div class="icon-wrap">🌍</div><div class="card-badges"><span class="chip">WFSA</span><span class="chip">Standards</span></div></div>
+<div class="card-title">WFSA INTERNATIONAL STANDARDS</div>
+<div class="card-url">wfsahq.org/standards</div>
+<p class="card-desc">Global standards for safe anaesthesia practice: facilities, personnel, equipment, monitoring, medications, recovery, and quality assurance. Especially useful in resource-variable settings and for minimum safe practice checklists.</p>
+<div class="card-footer"><span class="card-category">Global Standards • Patient Safety</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://resources.wfsahq.org/anaesthesia-tutorial-of-the-week/" rel="noopener" style="--card-accent: #ff4d6d;" target="_blank">
+<div class="card-top"><div class="icon-wrap">🎓</div><div class="card-badges"><span class="chip">ATOTW</span><span class="chip">Learning</span></div></div>
+<div class="card-title">WFSA ATOTW</div>
+<div class="card-url">resources.wfsahq.org</div>
+<p class="card-desc">Anaesthesia Tutorial of the Week: concise, peer-reviewed teaching across general, paediatric, obstetric, regional, pain, ICU, pharmacology, physics, and patient safety topics. Ideal weekly reading for junior residents.</p>
+<div class="card-footer"><span class="card-category">Tutorials • Exams • Core Knowledge</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://www.isaweb.in/Pdf/ISA-PPF-GUIDELINES.pdf" rel="noopener" style="--card-accent: #f5c542;" target="_blank">
+<div class="card-top"><div class="icon-wrap">🇮🇳</div><div class="card-badges"><span class="chip">India</span><span class="chip">Minimum Standards</span></div></div>
+<div class="card-title">ISA MINIMUM STANDARDS</div>
+<div class="card-url">isaweb.in</div>
+<p class="card-desc">Indian Society of Anaesthesiologists professional practice guidance, including minimum mandatory standards in the operating room. Relevant for Indian residents learning safe baseline OT setup and monitoring expectations.</p>
+<div class="card-footer"><span class="card-category">India • OR Standards • Monitoring</span><div class="arrow">→</div></div>
+</a>
+<a class="card" href="https://www.asahq.org/standards-and-practice-parameters/standards-for-basic-anesthetic-monitoring" rel="noopener" style="--card-accent: #00d4ff;" target="_blank">
+<div class="card-top"><div class="icon-wrap">📈</div><div class="card-badges"><span class="chip featured">⭐ Day 1</span><span class="chip">Monitoring</span></div></div>
+<div class="card-title">BASIC ANAESTHETIC MONITORING</div>
+<div class="card-url">asahq.org/monitoring</div>
+<p class="card-desc">The first standard every resident should internalize: continuous evaluation of oxygenation, ventilation, circulation, and temperature during anaesthesia. Use it as the mental checklist before induction and during maintenance.</p>
+<div class="card-footer"><span class="card-category">Monitoring • Patient Safety • OT Basics</span><div class="arrow">→</div></div>
+</a>
+</div>
+
+<!-- PHARMACOLOGY -->
+<div class="section-header">
+<div class="section-tag">07 — Pharmacology</div>
+<div class="section-line"></div>
+<div class="section-title">Drug References</div>
+</div>
+<div class="grid" style="margin-bottom: 60px;">
+<a class="card" href="https://www.globalrph.com" rel="noopener" style="--card-accent: #f5c542;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">💊</div>
+<div class="card-badges"><span class="chip">Dosing</span></div>
+</div>
+<div class="card-title">GLOBALRPH</div>
+<div class="card-url">globalrph.com</div>
+<p class="card-desc">Comprehensive drug dosing calculators, renal dosing adjustments, pharmacokinetic calculators, and IV compatibility charts. The pharmacist in your pocket at 3 AM when the ICU pharmacy is closed.</p>
+<div class="card-footer">
+<span class="card-category">Drug Dosing • Renal Adjustment</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.micromedexsolutions.com" rel="noopener" style="--card-accent: #00d4ff;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">⚗️</div>
+<div class="card-badges"><span class="chip">Institutional</span></div>
+</div>
+<div class="card-title">MICROMEDEX</div>
+<div class="card-url">micromedexsolutions.com</div>
+<p class="card-desc">The gold standard institutional pharmacology database. Drug interactions, pregnancy safety, toxicology data, and evidence-based dosing. Access via your hospital's subscription — essential for complex poly-pharmacy patients.</p>
+<div class="card-footer">
+<span class="card-category">Pharmacology • Drug Interactions</span>
+<div class="arrow">→</div>
+</div>
+</a>
+</div>
+<!-- JOURNALS -->
+<div class="section-header">
+<div class="section-tag">08 — Literature</div>
+<div class="section-line"></div>
+<div class="section-title">Critical Care Journals</div>
+</div>
+<div class="grid" style="margin-bottom: 40px;">
+<a class="card" href="https://www.nejm.org" rel="noopener" style="--card-accent: #ff4d6d;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">📜</div>
+<div class="card-badges"><span class="chip featured">⭐ Top Journal</span></div>
+</div>
+<div class="card-title">NEW ENGLAND JOURNAL OF MEDICINE</div>
+<div class="card-url">nejm.org</div>
+<p class="card-desc">The world's most influential medical journal. Landmark critical care trials published here define practice for decades. Read every ICU-relevant original article and the "Perspective" pieces.</p>
+<div class="card-footer">
+<span class="card-category">High-Impact Research</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://www.thelancet.com" rel="noopener" style="--card-accent: #39ff14;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🩺</div>
+<div class="card-badges"><span class="chip">Global Health</span></div>
+</div>
+<div class="card-title">THE LANCET</div>
+<div class="card-url">thelancet.com</div>
+<p class="card-desc">Major international trials and global health critical care research. <em>Lancet Respiratory Medicine</em> and <em>Lancet Infectious Diseases</em> are must-follows for the intensivist.</p>
+<div class="card-footer">
+<span class="card-category">International • Respiratory • ID</span>
+<div class="arrow">→</div>
+</div>
+</a>
+<a class="card" href="https://ccforum.biomedcentral.com" rel="noopener" style="--card-accent: #a78bfa;" target="_blank">
+<div class="card-top">
+<div class="icon-wrap">🔓</div>
+<div class="card-badges"><span class="chip">Open Access</span></div>
+</div>
+<div class="card-title">CRITICAL CARE (BMC)</div>
+<div class="card-url">ccforum.biomedcentral.com</div>
+<p class="card-desc">Fully open-access critical care journal with high-quality research across all ICU subspecialties. No paywall means more equitable access to evidence — ideal for training programs in all settings.</p>
+<div class="card-footer">
+<span class="card-category">Open Access • Broad Scope</span>
+<div class="arrow">→</div>
+</div>
+</a>
+</div>
+</section>
+<footer>
+<div class="footer-text">
+    ANAESTHESIA & CRITICAL CARE COMMAND CENTER — FOR EDUCATIONAL USE<br/>
+<span>Always verify with current institutional protocols &amp; guidelines.</span>
+</div>
+<div class="footer-text" style="text-align:right;">
+    Built for the <span>next generation</span> of anaesthesiologists & intensivists<br/>
+    FOAM — Free Open Access Medical Education
+  </div>
+</footer>
+</body>
+</html>
