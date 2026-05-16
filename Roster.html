@@ -230,6 +230,62 @@
       input, select, button { min-height: 46px; font-size: 16px !important; }
       #cards article { padding: 1rem !important; }
     }
+
+    .glass-collapse {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(255, 139, 45, .28), transparent 38%),
+        radial-gradient(circle at 90% 76%, rgba(57, 215, 255, .20), transparent 42%),
+        linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.025));
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 22px 52px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.10);
+      backdrop-filter: blur(22px) saturate(1.25);
+      -webkit-backdrop-filter: blur(22px) saturate(1.25);
+      border-radius: 1.35rem;
+      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+    .glass-collapse:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,.28);
+      box-shadow: 0 28px 66px rgba(0,0,0,.38), 0 0 30px rgba(57,215,255,.08), inset 0 1px 0 rgba(255,255,255,.14);
+    }
+    .glass-collapse summary {
+      list-style: none;
+      cursor: pointer;
+      min-height: 4.8rem;
+      position: relative;
+      z-index: 1;
+    }
+    .glass-collapse summary::-webkit-details-marker { display: none; }
+    .glass-collapse summary::after {
+      content: "⌄";
+      position: absolute;
+      right: .95rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2rem;
+      height: 2rem;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.82);
+      transition: transform .25s ease, background .25s ease;
+    }
+    .glass-collapse[open] summary::after {
+      transform: translateY(-50%) rotate(180deg);
+      background: rgba(255,139,45,.18);
+    }
+    .glass-collapse .collapse-body {
+      animation: fadeUp .28s ease forwards;
+      border-top: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.10);
+      position: relative;
+      z-index: 1;
+    }
+
     @media print {
       body { background: white !important; color: black !important; }
       .bg-blobs, .grain, .no-print, .orb-card { display: none !important; }
@@ -255,7 +311,7 @@
     <div class="relative z-10">
       <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 mb-6">Duty Equity Dashboard</span>
       <h1 class="text-[2.35rem] sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] mb-4 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-100 to-gray-500">Knockouts Duty Equity Dashboard</h1>
-      <p class="text-sm sm:text-base text-gray-400 max-w-2xl leading-relaxed">Mobile-friendly view of Saturday/Sunday duties, ICU day-night duties, regular duties, till-7 assignments, and duties performed during official leave periods. Updated till 17 May 2026.</p>
+      <p class="text-sm sm:text-base text-gray-400 max-w-2xl leading-relaxed">Mobile-friendly view of Saturday/Sunday duties, ICU day-night duties, regular duties, till-7 assignments, and duties performed during official leave periods. Updated till 24 May 2026.</p>
     </div>
   </div>
   <div class="lg:col-span-4 glass-panel p-6" id="summary"></div>
@@ -268,21 +324,21 @@
         <h2 class="text-2xl font-bold tracking-tight mb-1">This Week Roster</h2>
         <p class="text-xs text-gray-400 max-w-xl">Rule: first name = 24-hour duty; second name = till 7 PM. Every till-7 duty counts as 0.5 workload point.</p>
       </div>
-      <div class="font-mono text-sm font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 px-4 py-2 rounded-full whitespace-nowrap">11 May - 17 May</div>
+      <div class="font-mono text-sm font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 px-4 py-2 rounded-full whitespace-nowrap">18 May - 24 May</div>
     </div>
     <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4 mb-6">
-      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Monday</span><span class="font-mono text-xs text-cyan-400 mb-3">11 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Manju</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Aditi</div></div></div>
-      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Tuesday</span><span class="font-mono text-xs text-cyan-400 mb-3">12 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Abhiram</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Aman</div></div></div>
-      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Wednesday</span><span class="font-mono text-xs text-cyan-400 mb-3">13 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Ashwin</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Sharmila</div></div></div>
-      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Thursday</span><span class="font-mono text-xs text-cyan-400 mb-3">14 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Himanshi</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Shivani</div></div></div>
-      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Friday</span><span class="font-mono text-xs text-cyan-400 mb-3">15 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Shivani</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Ashwin</div></div></div>
-      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px] border-orange-500/30 bg-orange-500/5"><span class="text-sm font-bold text-orange-300">Saturday</span><span class="font-mono text-xs text-orange-400 mb-3">16 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Aditi</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Abhiram</div></div></div>
-      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px] border-orange-500/30 bg-orange-500/5"><span class="text-sm font-bold text-orange-300">Sunday</span><span class="font-mono text-xs text-orange-400 mb-3">17 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Sharmila</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Manju</div></div></div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Monday</span><span class="font-mono text-xs text-cyan-400 mb-3">18 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Manju</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Aditi</div></div></div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Tuesday</span><span class="font-mono text-xs text-cyan-400 mb-3">19 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Aman</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Abhiram</div></div></div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Wednesday</span><span class="font-mono text-xs text-cyan-400 mb-3">20 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Himanshi</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Manju</div></div></div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Thursday</span><span class="font-mono text-xs text-cyan-400 mb-3">21 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Abhiram</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Shivani</div></div></div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Friday</span><span class="font-mono text-xs text-cyan-400 mb-3">22 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Shivani</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Himanshi</div></div></div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px] border-orange-500/30 bg-orange-500/5"><span class="text-sm font-bold text-orange-300">Saturday</span><span class="font-mono text-xs text-orange-400 mb-3">23 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Devendra</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Sharmila</div></div></div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px] border-orange-500/30 bg-orange-500/5"><span class="text-sm font-bold text-orange-300">Sunday</span><span class="font-mono text-xs text-orange-400 mb-3">24 May</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Aditi</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Aman</div></div></div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="glass-card rounded-xl p-4 flex justify-between items-center bg-green-500/5 border-green-500/20"><span class="text-xs font-bold tracking-widest text-green-400 uppercase">ICU Day</span><span class="font-bold text-white">Devendra</span></div>
-      <div class="glass-card rounded-xl p-4 flex justify-between items-center bg-blue-500/5 border-blue-500/20"><span class="text-xs font-bold tracking-widest text-blue-400 uppercase">ICU Night</span><span class="font-bold text-white">Vamshi</span></div>
-      <div class="glass-card rounded-xl p-4 flex justify-between items-center bg-purple-500/5 border-purple-500/20"><span class="text-xs font-bold tracking-widest text-purple-400 uppercase">Starting ICU · 17 May</span><span class="font-bold text-white">Sudip</span></div>
+      <div class="glass-card rounded-xl p-4 flex justify-between items-center bg-green-500/5 border-green-500/20"><span class="text-xs font-bold tracking-widest text-green-400 uppercase">ICU Day</span><span class="font-bold text-white">Vamshi</span></div>
+      <div class="glass-card rounded-xl p-4 flex justify-between items-center bg-blue-500/5 border-blue-500/20"><span class="text-xs font-bold tracking-widest text-blue-400 uppercase">ICU Night</span><span class="font-bold text-white">Sudip</span></div>
+      <div class="glass-card rounded-xl p-4 flex justify-between items-center bg-purple-500/5 border-purple-500/20"><span class="text-xs font-bold tracking-widest text-purple-400 uppercase">Starting ICU · 22 May</span><span class="font-bold text-white">Ashwin</span></div>
     </div>
   </div>
 </section>
@@ -309,8 +365,8 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4" id="cards"></div>
 <footer class="glass-panel p-6 sm:p-8 fade-up delay-300">
   <div class="relative z-10">
-    <div class="flex flex-col sm:flex-row justify-between gap-4 mb-5"><div><h2 class="text-xl font-bold tracking-tight">Previous Week Roster</h2><p class="text-xs text-gray-400">Kept at footer end for reference.</p></div><div class="font-mono text-xs font-bold text-gray-300 bg-white/5 border border-white/10 px-3 py-2 rounded-full self-start">04 May 2026 – 10 May 2026</div></div>
-    <div id="previousRoster" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
+    <div class="flex flex-col sm:flex-row justify-between gap-4 mb-5"><div><h2 class="text-xl font-bold tracking-tight">Previous Rosters</h2><p class="text-xs text-gray-400">Collapsible week-wise reference cards.</p></div><div class="font-mono text-xs font-bold text-gray-300 bg-white/5 border border-white/10 px-3 py-2 rounded-full self-start">04 May 2026 – 17 May 2026</div></div>
+    <div id="previousRoster" class="grid grid-cols-1 gap-3"></div>
   </div>
 </footer>
 </div>
@@ -318,14 +374,15 @@
 <script data-purpose="data-and-logic">
     const BASE_DATA=[{"doctor":"Dr. Sudip","saturday":11.0,"sunday":10.5,"dayICU":3.0,"nightICU":3.0,"leaveEmergencyText":"4 (2oct, 5nov, 25dec, 4mar)","icuLeaveText":"2(31mar)(1may)","duties":12.0,"till7":8.0,"weekend":21.5,"icuTotal":6.0,"leaveEmergency":4.0,"icuLeave":2.0,"totalLoad":53.5,"balanceScore":6.14,"leavePeriodDutyTotal":6.0},{"doctor":"Dr. Devendra","saturday":10.0,"sunday":11.0,"dayICU":4.0,"nightICU":2.0,"leaveEmergencyText":"3 (5nov, 15 feb, 4mar)","icuLeaveText":"2(26 jan 31 mar)","duties":14.0,"till7":6.0,"weekend":21.0,"icuTotal":6.0,"leaveEmergency":3.0,"icuLeave":2.0,"totalLoad":52.0,"balanceScore":4.64,"leavePeriodDutyTotal":5.0},{"doctor":"Dr. Abhiram","saturday":12.0,"sunday":12.0,"dayICU":3.0,"nightICU":4.0,"leaveEmergencyText":"2 (2oct, 25dec)","icuLeaveText":"1 (5nov)","duties":11.0,"till7":6.0,"weekend":24.0,"icuTotal":7.0,"leaveEmergency":2.0,"icuLeave":1.0,"totalLoad":51.0,"balanceScore":3.64,"leavePeriodDutyTotal":3.0},{"doctor":"Dr. Aditi","saturday":9.0,"sunday":9.0,"dayICU":3.0,"nightICU":4.0,"leaveEmergencyText":"2 (2oct, 5nov)","icuLeaveText":"4(26jan,21mar,3 apr,1 may)","duties":8.0,"till7":5.0,"weekend":18.0,"icuTotal":7.0,"leaveEmergency":2.0,"icuLeave":4.0,"totalLoad":44.0,"balanceScore":-3.36,"leavePeriodDutyTotal":6.0},{"doctor":"Dr. Manju","saturday":10.5,"sunday":10.5,"dayICU":3.0,"nightICU":3.0,"leaveEmergencyText":"2(21 mar)(1may)","icuLeaveText":"3 (2oct, 25dec,3 apr)","duties":12.0,"till7":1.0,"weekend":21.0,"icuTotal":6.0,"leaveEmergency":2.0,"icuLeave":3.0,"totalLoad":45.0,"balanceScore":-2.36,"leavePeriodDutyTotal":5.0},{"doctor":"Dr. Ashwin","saturday":10.5,"sunday":10.5,"dayICU":3.0,"nightICU":3.0,"leaveEmergencyText":"3(20oct, 15feb,31 mar)","icuLeaveText":"1(2oct)","duties":9.0,"till7":5.0,"weekend":21.0,"icuTotal":6.0,"leaveEmergency":3.0,"icuLeave":1.0,"totalLoad":45.0,"balanceScore":-2.36,"leavePeriodDutyTotal":4.0},{"doctor":"Dr. Shivani","saturday":10.0,"sunday":11.0,"dayICU":3.0,"nightICU":3.0,"leaveEmergencyText":"3 (5nov)(31 mar)(1 may)","icuLeaveText":"2 (20oct, 4mar)","duties":10.0,"till7":4.0,"weekend":21.0,"icuTotal":6.0,"leaveEmergency":3.0,"icuLeave":2.0,"totalLoad":46.0,"balanceScore":-1.36,"leavePeriodDutyTotal":5.0},{"doctor":"Dr. Aman","saturday":12.0,"sunday":11.0,"dayICU":3.0,"nightICU":3.0,"leaveEmergencyText":"2 (25dec,21mar)","icuLeaveText":"2 (5nov, 4mar)","duties":13.0,"till7":3.0,"weekend":23.0,"icuTotal":6.0,"leaveEmergency":2.0,"icuLeave":2.0,"totalLoad":49.0,"balanceScore":1.64,"leavePeriodDutyTotal":4.0},{"doctor":"Dr. Sharmila","saturday":9.5,"sunday":10.0,"dayICU":3.0,"nightICU":3.0,"leaveEmergencyText":"3 (20oct,26jan,3 apr)","icuLeaveText":"1(21mar)","duties":13.0,"till7":5.0,"weekend":19.5,"icuTotal":6.0,"leaveEmergency":3.0,"icuLeave":1.0,"totalLoad":47.5,"balanceScore":0.14,"leavePeriodDutyTotal":4.0},{"doctor":"Dr. Vamshi","saturday":9.0,"sunday":11.0,"dayICU":3.0,"nightICU":3.0,"leaveEmergencyText":"2 (20oct,26jan)","icuLeaveText":"1 (25 dec)","duties":9.0,"till7":3.0,"weekend":20.0,"icuTotal":6.0,"leaveEmergency":2.0,"icuLeave":1.0,"totalLoad":41.0,"balanceScore":-6.36,"leavePeriodDutyTotal":3.0},{"doctor":"Dr. Himanshi","saturday":9.0,"sunday":12.0,"dayICU":3.0,"nightICU":3.0,"leaveEmergencyText":"2(25dec,3 apr)","icuLeaveText":"1 (oct)","duties":11.0,"till7":6.0,"weekend":21.0,"icuTotal":6.0,"leaveEmergency":2.0,"icuLeave":1.0,"totalLoad":47.0,"balanceScore":-0.36,"leavePeriodDutyTotal":3.0}];
     const PREVIOUS_WEEK_ROSTER={"range":"04 May 2026 – 10 May 2026","days":[{"day":"Monday","date":"04 May 2026","full":"Shivani","till7":"Sharmila"},{"day":"Tuesday","date":"05 May 2026","full":"Sharmila","till7":"Abhiram"},{"day":"Wednesday","date":"06 May 2026","full":"Abhiram","till7":"Sudip"},{"day":"Thursday","date":"07 May 2026","full":"Manju","till7":"Himanshi"},{"day":"Friday","date":"08 May 2026","full":"Aman","till7":"Aswin"},{"day":"Saturday","date":"09 May 2026","full":"Himanshi","till7":"Shivani"},{"day":"Sunday","date":"10 May 2026","full":"Aswin","till7":"Sudip"}],"icu":{"day":"Aditi","night":"Devendra","fromSaturday":"Vamshi","fromSaturdayDate":"09 May 2026"}};
-    const WEEKLY_ROSTER={"range":"11 May 2026 – 17 May 2026","days":[{"day":"Monday","date":"11 May 2026","full":"Manju","till7":"Aditi"},{"day":"Tuesday","date":"12 May 2026","full":"Abhiram","till7":"Aman"},{"day":"Wednesday","date":"13 May 2026","full":"Ashwin","till7":"Sharmila"},{"day":"Thursday","date":"14 May 2026","full":"Himanshi","till7":"Shivani"},{"day":"Friday","date":"15 May 2026","full":"Shivani","till7":"Ashwin"},{"day":"Saturday","date":"16 May 2026","full":"Aditi","till7":"Abhiram"},{"day":"Sunday","date":"17 May 2026","full":"Sharmila","till7":"Manju"}],"icu":{"day":"Devendra","night":"Vamshi","nextStart":"Sudip","nextStartDate":"17 May 2026"}};
+    const LAST_WEEK_ROSTER={"range": "11 May 2026 – 17 May 2026", "days": [{"day": "Monday", "date": "11 May 2026", "full": "Manju", "till7": "Aditi"}, {"day": "Tuesday", "date": "12 May 2026", "full": "Abhiram", "till7": "Aman"}, {"day": "Wednesday", "date": "13 May 2026", "full": "Ashwin", "till7": "Sharmila"}, {"day": "Thursday", "date": "14 May 2026", "full": "Himanshi", "till7": "Shivani"}, {"day": "Friday", "date": "15 May 2026", "full": "Shivani", "till7": "Ashwin"}, {"day": "Saturday", "date": "16 May 2026", "full": "Aditi", "till7": "Abhiram"}, {"day": "Sunday", "date": "17 May 2026", "full": "Sharmila", "till7": "Manju"}], "icu": {"day": "Devendra", "night": "Vamshi", "nextStart": "Sudip", "nextStartDate": "17 May 2026"}};
+    const WEEKLY_ROSTER={"range": "18 May 2026 – 24 May 2026", "days": [{"day": "Monday", "date": "18 May 2026", "full": "Manju", "till7": "Aditi"}, {"day": "Tuesday", "date": "19 May 2026", "full": "Aman", "till7": "Abhiram"}, {"day": "Wednesday", "date": "20 May 2026", "full": "Himanshi", "till7": "Manju"}, {"day": "Thursday", "date": "21 May 2026", "full": "Abhiram", "till7": "Shivani"}, {"day": "Friday", "date": "22 May 2026", "full": "Shivani", "till7": "Himanshi"}, {"day": "Saturday", "date": "23 May 2026", "full": "Devendra", "till7": "Sharmila"}, {"day": "Sunday", "date": "24 May 2026", "full": "Aditi", "till7": "Aman"}], "icu": {"day": "Vamshi", "night": "Sudip", "nextStart": "Ashwin", "nextStartDate": "22 May 2026"}};
     const NAME_ALIASES={'aswin':'Ashwin','ashwin':'Ashwin'};
     function canonicalName(name){const raw=String(name||'').trim();return NAME_ALIASES[raw.toLowerCase()]||raw;}
     function doctorKey(name){return 'Dr. '+canonicalName(name).replace(/^Dr\.\s*/i,'');}
     function addDateText(existing,date){const s=String(existing||'').trim();return s ? `${s}, ${date}` : date;}
     function computeTotal(d){d.weekend=(Number(d.saturday)||0)+(Number(d.sunday)||0);d.icuTotal=(Number(d.dayICU)||0)+(Number(d.nightICU)||0);d.leavePeriodDutyTotal=(Number(d.leaveEmergency)||0)+(Number(d.icuLeave)||0);d.till7Points=(Number(d.till7)||0)*0.5;d.totalLoad=d.weekend+d.icuTotal+(Number(d.leaveEmergency)||0)+(Number(d.icuLeave)||0)+(Number(d.duties)||0)+d.till7Points;}
     function applyRoster(base, roster){const data=base.map(x=>JSON.parse(JSON.stringify(x)));const byDoctor=Object.fromEntries(data.map(d=>[d.doctor,d]));const get=(name)=>byDoctor[doctorKey(name)];roster.days.forEach(item=>{const full=get(item.full), till=get(item.till7);const isSat=/^sat/i.test(item.day), isSun=/^sun/i.test(item.day);if(full){if(isSat) full.saturday+=1;else if(isSun) full.sunday+=1;else full.duties+=1;}if(till){if(isSat) till.saturday+=0.5;else if(isSun) till.sunday+=0.5;else till.till7+=1;}});if(roster.icu?.day){const d=get(roster.icu.day); if(d) d.dayICU+=1;}if(roster.icu?.night){const d=get(roster.icu.night); if(d) d.nightICU+=1;}if(roster.icu?.fromSaturday){const d=get(roster.icu.fromSaturday);if(d){d.icuLeave+=1; d.icuLeaveText=addDateText(d.icuLeaveText, roster.icu.fromSaturdayDate||'upcoming Saturday');}}data.forEach(computeTotal);const mean=data.reduce((a,d)=>a+d.totalLoad,0)/data.length;data.forEach(d=>d.balanceScore=Number((d.totalLoad-mean).toFixed(2)));return data;}
-    const DATA=applyRoster(applyRoster(BASE_DATA,PREVIOUS_WEEK_ROSTER),WEEKLY_ROSTER);
+    const DATA=applyRoster(applyRoster(applyRoster(BASE_DATA,PREVIOUS_WEEK_ROSTER),LAST_WEEK_ROSTER),WEEKLY_ROSTER);
     const STATS={team:DATA.length,totalDuties:DATA.reduce((a,d)=>a+d.duties,0),totalWeekend:DATA.reduce((a,d)=>a+d.weekend,0),totalICU:DATA.reduce((a,d)=>a+d.icuTotal,0),totalLoad:DATA.reduce((a,d)=>a+d.totalLoad,0),meanLoad:Number((DATA.reduce((a,d)=>a+d.totalLoad,0)/DATA.length).toFixed(2)),maxLoad:DATA.reduce((a,d)=>d.totalLoad>a.totalLoad?d:a,DATA[0]),minLoad:DATA.reduce((a,d)=>d.totalLoad<a.totalLoad?d:a,DATA[0]),totalLeavePeriodDuties:DATA.reduce((a,d)=>a+d.leavePeriodDutyTotal,0)};
     let active=DATA[0]?.doctor; let current=[...DATA]; const maxLoad=Math.max(...DATA.map(d=>d.totalLoad)); const mean=STATS.meanLoad;
     function el(s){return document.querySelector(s)}
@@ -335,7 +392,46 @@
     function summary(){el('#summary').innerHTML=`<div class="relative z-10 grid grid-cols-2 gap-4 h-full"><div class="glass-card p-4 rounded-xl flex flex-col justify-center"><span class="text-xs uppercase tracking-widest text-gray-400 font-bold mb-1">Members</span><b class="text-2xl font-black">${STATS.team}</b></div><div class="glass-card p-4 rounded-xl flex flex-col justify-center"><span class="text-xs uppercase tracking-widest text-gray-400 font-bold mb-1">Mean Load</span><b class="text-2xl font-black">${fmt(STATS.meanLoad)}</b></div><div class="glass-card p-4 rounded-xl flex flex-col justify-center"><span class="text-xs uppercase tracking-widest text-gray-400 font-bold mb-1">Highest</span><b class="text-xl font-bold text-orange-400">${esc(STATS.maxLoad.doctor?.replace('Dr. ',''))}</b></div><div class="glass-card p-4 rounded-xl flex flex-col justify-center"><span class="text-xs uppercase tracking-widest text-gray-400 font-bold mb-1">Total Wt.</span><b class="text-xl font-bold text-cyan-400">${fmt(STATS.totalLoad)}</b></div></div>`;}
     function renderCards(){el('#cards').innerHTML=current.map((d,i)=>`<article class="glass-card p-5 rounded-2xl cursor-pointer relative group ${d.doctor===active?'border-orange-500/50 shadow-[0_0_20px_rgba(255,139,45,0.2)] bg-orange-500/5':''}" onclick="active='${esc(d.doctor)}';drawAll();renderCards();"><div class="absolute -right-4 -top-4 w-16 h-16 bg-gradient-to-br from-orange-500/20 to-transparent rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div><div class="flex justify-between items-start mb-3 relative z-10"><h3 class="text-lg font-black tracking-tight">${esc(d.doctor)}</h3><span class="font-mono text-xs font-bold text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded">#${i+1}</span></div><div class="flex flex-wrap gap-2 mb-4 relative z-10"><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Load ${fmt(d.totalLoad)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Wknd ${fmt(d.weekend)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">ICU ${fmt(d.icuTotal)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Till7 ${fmt(d.till7)}</span></div><div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mb-3 relative z-10"><div class="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 rounded-full transition-all duration-500" style="width:${Math.max(4,d.totalLoad/maxLoad*100)}%"></div></div><div class="text-[11px] text-gray-400 leading-tight space-y-1 relative z-10"><p class="font-bold ${cls(d.balanceScore)}">Δ ${fmt(d.balanceScore)} vs mean</p><p class="truncate opacity-75">Lv Emerg: ${esc(d.leaveEmergencyText||'—')}</p><p class="truncate opacity-75">Lv ICU: ${esc(d.icuLeaveText||'—')}</p></div></article>`).join('');}
     function renderTable(){el('#ledger tbody').innerHTML=current.map(d=>`<tr class="hover:bg-white/5 transition-colors group"><td class="p-3 border-b border-white/5 font-bold group-hover:text-orange-400 transition-colors">${esc(d.doctor)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.saturday)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.sunday)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.dayICU)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.nightICU)}</td><td class="p-3 border-b border-white/5 text-xs truncate max-w-[150px]" title="${esc(d.leaveEmergencyText)}">${esc(d.leaveEmergencyText) || '-'}</td><td class="p-3 border-b border-white/5 text-xs truncate max-w-[150px]" title="${esc(d.icuLeaveText)}">${esc(d.icuLeaveText) || '-'}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.duties)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.till7)}</td><td class="p-3 border-b border-white/5 font-mono font-bold text-orange-400">${fmt(d.totalLoad)}</td><td class="p-3 border-b border-white/5 font-mono text-xs ${cls(d.balanceScore)}">${fmt(d.balanceScore)}</td></tr>`).join('');}
-    function renderPreviousRoster(){el('#previousRoster').innerHTML=PREVIOUS_WEEK_ROSTER.days.map(d=>`<div class="glass-card rounded-xl p-4"><div class="flex items-center justify-between gap-3 mb-3"><b class="text-sm text-gray-200">${esc(d.day)}</b><span class="font-mono text-[11px] text-gray-500">${esc(d.date.replace(' 2026',''))}</span></div><div class="flex flex-wrap gap-2"><span class="text-xs font-bold bg-white/5 rounded-full px-3 py-1.5">24h · ${esc(canonicalName(d.full))}</span><span class="text-xs font-bold bg-white/5 rounded-full px-3 py-1.5">Till 7 · ${esc(canonicalName(d.till7))}</span></div></div>`).join('') + `<div class="glass-card rounded-xl p-4 lg:col-span-4"><div class="grid sm:grid-cols-3 gap-3 text-sm"><div><span class="block text-xs uppercase tracking-widest text-gray-500 font-bold">ICU Day</span><b>${esc(PREVIOUS_WEEK_ROSTER.icu.day)}</b></div><div><span class="block text-xs uppercase tracking-widest text-gray-500 font-bold">ICU Night</span><b>${esc(PREVIOUS_WEEK_ROSTER.icu.night)}</b></div><div><span class="block text-xs uppercase tracking-widest text-gray-500 font-bold">ICU from Saturday</span><b>${esc(PREVIOUS_WEEK_ROSTER.icu.fromSaturday)} · ${esc(PREVIOUS_WEEK_ROSTER.icu.fromSaturdayDate)}</b></div></div></div>`;}
+    function renderPreviousRoster(){
+      const rosters=[PREVIOUS_WEEK_ROSTER,LAST_WEEK_ROSTER];
+      function icuStartLabel(roster){
+        if(roster.icu?.fromSaturday) return `${esc(canonicalName(roster.icu.fromSaturday))} · ${esc(roster.icu.fromSaturdayDate||'')}`;
+        if(roster.icu?.nextStart) return `${esc(canonicalName(roster.icu.nextStart))} · ${esc(roster.icu.nextStartDate||'')}`;
+        return '—';
+      }
+      el('#previousRoster').innerHTML=rosters.map((roster,i)=>`<details class="glass-collapse rounded-2xl" ${i===1?'open':''}>
+        <summary class="p-4 pr-14">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+            <div>
+              <b class="text-base text-white tracking-tight">${i===0?'Previous Week':'Last Week'} Roster</b>
+              <p class="text-[11px] text-gray-300/80 mt-1">Tap to expand or collapse complete week details</p>
+            </div>
+            <span class="font-mono text-[11px] text-cyan-200/80 bg-cyan-500/10 border border-cyan-500/15 px-3 py-1.5 rounded-full self-start sm:self-center">${esc(roster.range)}</span>
+          </div>
+        </summary>
+        <div class="collapse-body p-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            ${roster.days.map(d=>`<div class="bg-white/5 rounded-xl p-3 border border-white/10">
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <b class="text-sm text-gray-100">${esc(d.day)}</b>
+                <span class="font-mono text-[11px] text-gray-400">${esc(d.date.replace(' 2026',''))}</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span class="text-xs font-bold bg-white/10 border border-white/10 rounded-full px-3 py-1.5">24h · ${esc(canonicalName(d.full))}</span>
+                <span class="text-xs font-bold bg-white/10 border border-white/10 rounded-full px-3 py-1.5">Till 7 · ${esc(canonicalName(d.till7))}</span>
+              </div>
+            </div>`).join('')}
+            <div class="bg-white/5 rounded-xl p-3 border border-white/10 lg:col-span-4">
+              <div class="grid sm:grid-cols-3 gap-3 text-sm">
+                <div><span class="block text-xs uppercase tracking-widest text-gray-400 font-bold mb-1">ICU Day</span><b>${esc(canonicalName(roster.icu?.day||'—'))}</b></div>
+                <div><span class="block text-xs uppercase tracking-widest text-gray-400 font-bold mb-1">ICU Night</span><b>${esc(canonicalName(roster.icu?.night||'—'))}</b></div>
+                <div><span class="block text-xs uppercase tracking-widest text-gray-400 font-bold mb-1">Starting ICU</span><b>${icuStartLabel(roster)}</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>`).join('');
+    }
     function fit(c){const r=c.parentElement.getBoundingClientRect(),dpr=window.devicePixelRatio||1;c.width=r.width*dpr;c.height=r.height*dpr;const x=c.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);return [x,r.width,r.height];}
     function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
     let frameT=0;
