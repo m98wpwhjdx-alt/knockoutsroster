@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
-<title>Knockouts Duty Equity Dashboard</title>
+<title>Knockouts of Post-Duty Era</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500;700;800&amp;display=swap" rel="stylesheet"/>
 <style data-purpose="custom-animations-and-theme">
@@ -310,8 +310,8 @@
     <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
     <div class="relative z-10">
       <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 mb-6">Duty Equity Dashboard</span>
-      <h1 class="text-[2.35rem] sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] mb-4 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-100 to-gray-500">Knockouts Duty Equity Dashboard</h1>
-      <p class="text-sm sm:text-base text-gray-400 max-w-2xl leading-relaxed">Mobile-friendly view of Saturday/Sunday duties, ICU day-night duties, regular duties, till-7 assignments, and duties performed during official leave periods. Updated till 24 May 2026.</p>
+      <h1 class="text-[2.35rem] sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] mb-4 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-100 to-gray-500">Knockouts of Post-Duty Era</h1>
+      <p class="text-sm sm:text-base text-gray-300 max-w-2xl leading-relaxed">A bright fresh-week view for the team: previous regular Duties and Till 7 counts are nullified, and the new count begins from this week with a clean, happy reset. Saturday/Sunday, ICU day-night, and leave-period counts remain unchanged.</p>
     </div>
   </div>
   <div class="lg:col-span-4 glass-panel p-6" id="summary"></div>
@@ -354,7 +354,7 @@
 <section class="glass-panel p-6 fade-up delay-300">
   <div class="relative z-10">
     <h2 class="text-xl font-bold tracking-tight mb-4">Detailed Duty Ledger</h2>
-    <div class="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-4 mb-6 text-sm text-cyan-100"><strong class="text-cyan-300">Note:</strong> "Emergency duty during leave" and "ICU duty during leave" are duties performed on leave-period days, recorded for fair distribution.</div>
+    <div class="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-4 mb-6 text-sm text-cyan-100"><strong class="text-cyan-300">Note:</strong> Previous Duties and Till 7 counts are nullified. Fresh Duties and Till 7 counts start from this week, while Saturday/Sunday, ICU D/N, and leave counts stay the same.</div>
     <div class="table-container overflow-x-auto rounded-xl border border-white/10">
       <table class="w-full text-left text-sm" id="ledger"><thead class="text-xs uppercase tracking-wider text-gray-400"><tr><th class="p-4 font-bold border-b border-white/10">Doctor</th><th class="p-4 font-bold border-b border-white/10">Sat</th><th class="p-4 font-bold border-b border-white/10">Sun</th><th class="p-4 font-bold border-b border-white/10">ICU D</th><th class="p-4 font-bold border-b border-white/10">ICU N</th><th class="p-4 font-bold border-b border-white/10">Leave Emerg.</th><th class="p-4 font-bold border-b border-white/10">Leave ICU</th><th class="p-4 font-bold border-b border-white/10">Duties</th><th class="p-4 font-bold border-b border-white/10">Till 7</th><th class="p-4 font-bold border-b border-white/10 text-orange-400">Total</th><th class="p-4 font-bold border-b border-white/10">Δ Mean</th></tr></thead><tbody class="divide-y divide-white/5 text-gray-300"></tbody></table>
     </div>
@@ -382,7 +382,8 @@
     function addDateText(existing,date){const s=String(existing||'').trim();return s ? `${s}, ${date}` : date;}
     function computeTotal(d){d.weekend=(Number(d.saturday)||0)+(Number(d.sunday)||0);d.icuTotal=(Number(d.dayICU)||0)+(Number(d.nightICU)||0);d.leavePeriodDutyTotal=(Number(d.leaveEmergency)||0)+(Number(d.icuLeave)||0);d.till7Points=(Number(d.till7)||0)*0.5;d.totalLoad=d.weekend+d.icuTotal+(Number(d.leaveEmergency)||0)+(Number(d.icuLeave)||0)+(Number(d.duties)||0)+d.till7Points;}
     function applyRoster(base, roster){const data=base.map(x=>JSON.parse(JSON.stringify(x)));const byDoctor=Object.fromEntries(data.map(d=>[d.doctor,d]));const get=(name)=>byDoctor[doctorKey(name)];roster.days.forEach(item=>{const full=get(item.full), till=get(item.till7);const isSat=/^sat/i.test(item.day), isSun=/^sun/i.test(item.day);if(full){if(isSat) full.saturday+=1;else if(isSun) full.sunday+=1;else full.duties+=1;}if(till){if(isSat) till.saturday+=0.5;else if(isSun) till.sunday+=0.5;else till.till7+=1;}});if(roster.icu?.day){const d=get(roster.icu.day); if(d) d.dayICU+=1;}if(roster.icu?.night){const d=get(roster.icu.night); if(d) d.nightICU+=1;}if(roster.icu?.fromSaturday){const d=get(roster.icu.fromSaturday);if(d){d.icuLeave+=1; d.icuLeaveText=addDateText(d.icuLeaveText, roster.icu.fromSaturdayDate||'upcoming Saturday');}}data.forEach(computeTotal);const mean=data.reduce((a,d)=>a+d.totalLoad,0)/data.length;data.forEach(d=>d.balanceScore=Number((d.totalLoad-mean).toFixed(2)));return data;}
-    const DATA=applyRoster(applyRoster(applyRoster(BASE_DATA,PREVIOUS_WEEK_ROSTER),LAST_WEEK_ROSTER),WEEKLY_ROSTER);
+    function resetDutyTill7FromThisWeek(data, roster){const fresh=data.map(x=>JSON.parse(JSON.stringify(x)));fresh.forEach(d=>{d.duties=0;d.till7=0;});const byDoctor=Object.fromEntries(fresh.map(d=>[d.doctor,d]));const get=(name)=>byDoctor[doctorKey(name)];roster.days.forEach(item=>{const isWeekend=/^(sat|sun)/i.test(item.day);if(isWeekend)return;const full=get(item.full), till=get(item.till7);if(full) full.duties+=1;if(till) till.till7+=1;});fresh.forEach(computeTotal);const mean=fresh.reduce((a,d)=>a+d.totalLoad,0)/fresh.length;fresh.forEach(d=>d.balanceScore=Number((d.totalLoad-mean).toFixed(2)));return fresh;}
+    const DATA=resetDutyTill7FromThisWeek(applyRoster(applyRoster(applyRoster(BASE_DATA,PREVIOUS_WEEK_ROSTER),LAST_WEEK_ROSTER),WEEKLY_ROSTER),WEEKLY_ROSTER);
     const STATS={team:DATA.length,totalDuties:DATA.reduce((a,d)=>a+d.duties,0),totalWeekend:DATA.reduce((a,d)=>a+d.weekend,0),totalICU:DATA.reduce((a,d)=>a+d.icuTotal,0),totalLoad:DATA.reduce((a,d)=>a+d.totalLoad,0),meanLoad:Number((DATA.reduce((a,d)=>a+d.totalLoad,0)/DATA.length).toFixed(2)),maxLoad:DATA.reduce((a,d)=>d.totalLoad>a.totalLoad?d:a,DATA[0]),minLoad:DATA.reduce((a,d)=>d.totalLoad<a.totalLoad?d:a,DATA[0]),totalLeavePeriodDuties:DATA.reduce((a,d)=>a+d.leavePeriodDutyTotal,0)};
     let active=DATA[0]?.doctor; let current=[...DATA]; const maxLoad=Math.max(...DATA.map(d=>d.totalLoad)); const mean=STATS.meanLoad;
     function el(s){return document.querySelector(s)}
