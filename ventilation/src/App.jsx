@@ -1,0 +1,725 @@
+import React, { useMemo, useState } from "react";
+import {
+  Activity,
+  AlertTriangle,
+  Baby,
+  CheckCircle2,
+  ChevronRight,
+  Gauge,
+  HeartPulse,
+  Info,
+  Laptop,
+  Monitor,
+  ShieldAlert,
+  Stethoscope,
+  Syringe,
+  Wind,
+} from "lucide-react";
+
+const devices = {
+  ge750: {
+    name: "GE Carestation 750",
+    short: "GE 750",
+    accent: "from-cyan-400 to-blue-500",
+    uiTerms: ["Mode quick key", "Ventilator quick keys", "More Settings", "ComWheel", "Alarm Setup", "Bag/Vent switch"],
+    modes: [
+      { key: "VCV", label: "VCV", desc: "Set VT; pressure varies with compliance and resistance." },
+      { key: "PCV", label: "PCV", desc: "Set inspiratory pressure; VT varies with lung mechanics." },
+      { key: "PCV-VG", label: "PCV-VG", desc: "Volume target with pressure-regulated delivery." },
+      { key: "SIMV", label: "SIMV VCV / PCV", desc: "Mandatory synchronized breaths plus spontaneous breathing support." },
+      { key: "PSV", label: "PSVPro / CPAP+PSV", desc: "Spontaneous support with apnea backup depending configuration." },
+    ],
+    settingMap: {
+      vt: "VT",
+      rr: "Rate",
+      fio2: "O₂% / FiO₂",
+      peep: "PEEP",
+      pinsp: "Pinsp",
+      pmax: "Pmax",
+      tinsp: "Tinsp / I:E",
+      trigger: "Trigger",
+    },
+  },
+  mindray55: {
+    name: "Mindray WATO EX-55 Pro",
+    short: "Mindray EX-55 Pro",
+    accent: "from-emerald-400 to-teal-500",
+    uiTerms: ["Flat-menu structure", "Ventilation mode", "Digital gas mixer", "FGF Optimizer", "Multi-gas module", "Bag/Vent switch"],
+    modes: [
+      { key: "VCV", label: "VCV", desc: "Volume-controlled ventilation." },
+      { key: "PCV", label: "PCV", desc: "Pressure-controlled ventilation." },
+      { key: "SIMV-VC", label: "SIMV-VC", desc: "Synchronized intermittent mandatory volume breaths." },
+      { key: "SIMV-PC", label: "SIMV-PC", desc: "Synchronized intermittent mandatory pressure breaths." },
+      { key: "PS", label: "PS", desc: "Pressure support for spontaneous ventilation." },
+      { key: "PCV-VG", label: "PCV-VG / SIMV-VG", desc: "Show only if configured on local machine." },
+    ],
+    settingMap: {
+      vt: "VT",
+      rr: "Freq / Rate",
+      fio2: "O₂% / FiO₂",
+      peep: "PEEP",
+      pinsp: "Pinsp",
+      pmax: "Paw high / pressure limit",
+      tinsp: "Tinsp / I:E",
+      trigger: "Flow trigger",
+    },
+  },
+  primus: {
+    name: "Dräger Primus",
+    short: "Dräger Primus",
+    accent: "from-amber-300 to-orange-500",
+    uiTerms: ["Volume Mode / IPPV", "Pressure Mode / PCV", "Volume AutoFlow", "PMAX", "PINSP", "TSLOPE", "FreqMIN"],
+    modes: [
+      { key: "VOL", label: "Volume Mode / IPPV", desc: "Volume-controlled ventilation; PMAX limits pressure." },
+      { key: "PCV", label: "Pressure Mode / PCV", desc: "Set PINSP; VT depends on compliance and resistance." },
+      { key: "AF", label: "Volume AutoFlow", desc: "Volume target with adaptive pressure and decelerating flow." },
+      { key: "SYNC", label: "Volume sync / Pressure sync", desc: "Synchronized mandatory ventilation with optional pressure support." },
+      { key: "PS", label: "Pressure Support / CPAP", desc: "Spontaneous support with trigger, slope and apnea backup options." },
+    ],
+    settingMap: {
+      vt: "VT",
+      rr: "Freq.",
+      fio2: "FiO₂",
+      peep: "PEEP",
+      pinsp: "PINSP",
+      pmax: "PMAX",
+      tinsp: "TINSP / I:E / TIP:TINSP",
+      trigger: "Trigger",
+    },
+  },
+};
+
+const conditionPresets = {
+  normal: {
+    label: "Normal lungs",
+    icon: Wind,
+    vt: 7,
+    rr: 12,
+    peep: 5,
+    fio2: 50,
+    ie: "1:2",
+    pmax: 35,
+    note: "Start with lung-protective settings and titrate to ETCO₂, SpO₂ and mechanics.",
+  },
+  obese: {
+    label: "Obesity / laparoscopy",
+    icon: Activity,
+    vt: 6,
+    rr: 14,
+    peep: 8,
+    fio2: 60,
+    ie: "1:2",
+    pmax: 40,
+    note: "Use PBW for VT; consider higher PEEP and recruitment only if haemodynamics tolerate.",
+  },
+  copd: {
+    label: "COPD / asthma",
+    icon: Gauge,
+    vt: 6,
+    rr: 10,
+    peep: 4,
+    fio2: 50,
+    ie: "1:3–1:4",
+    pmax: 40,
+    note: "Prioritise longer expiratory time, lower RR and avoidance of dynamic hyperinflation.",
+  },
+  ards: {
+    label: "Low compliance / ARDS",
+    icon: HeartPulse,
+    vt: 6,
+    rr: 16,
+    peep: 8,
+    fio2: 70,
+    ie: "1:1.5–1:2",
+    pmax: 35,
+    note: "Keep VT low, monitor plateau/driving pressure where available, and titrate PEEP carefully.",
+  },
+  paeds: {
+    label: "Paediatric quick mode",
+    icon: Baby,
+    vt: 7,
+    rr: 20,
+    peep: 5,
+    fio2: 50,
+    ie: "1:2",
+    pmax: 30,
+    note: "Use age/weight-based VT and RR; confirm local paediatric circuit and machine settings.",
+  },
+};
+
+const airwaySteps = [
+  {
+    title: "Plan A — optimise first intubation attempt",
+    detail: "Preoxygenate, position, suction, VL/Macintosh choice, bougie/stylet, capnography ready.",
+  },
+  {
+    title: "Plan B — oxygenate with supraglottic airway",
+    detail: "Limit repeated attempts. Insert 2nd-generation SGA, confirm ventilation, decide wake/scope/proceed.",
+  },
+  {
+    title: "Plan C — facemask ventilation",
+    detail: "Two-hand mask, airway adjuncts, reduce insufflation, call for help, prepare emergency front-of-neck access.",
+  },
+  {
+    title: "Plan D — emergency front-of-neck airway",
+    detail: "CICO: declare emergency, scalpel-bougie-tube or local protocol pathway, continue oxygenation attempts.",
+  },
+];
+
+const troubleshooting = [
+  { problem: "High peak pressure", checks: ["Kinked ETT/circuit", "Bronchospasm", "Secretions", "Endobronchial intubation", "Pneumoperitoneum / positioning", "Low compliance"] },
+  { problem: "Low expired VT", checks: ["Circuit leak", "Cuff leak", "SGA malposition", "Bellows/ventilator issue", "Low Pinsp in PCV", "High resistance"] },
+  { problem: "High ETCO₂", checks: ["Increase minute ventilation", "Check soda lime", "Rebreathing", "Fever/MH/sepsis", "CO₂ insufflation", "Hypoventilation"] },
+  { problem: "Hypoxia", checks: ["FiO₂", "Airway position", "Atelectasis", "Bronchospasm", "Aspiration", "Circuit disconnection", "PEEP/recruitment"] },
+];
+
+const airwayModifiers = {
+  ETT: "Cuffed ETT: use measured expired VT and capnography as primary feedback.",
+  SGA: "SGA: keep airway pressures conservative; treat leaks or gastric insufflation early.",
+  Tracheostomy: "Tracheostomy: confirm tube type, cuff state, humidification and circuit fit.",
+  Mask: "Mask: use assisted/manual ventilation only; reassess aspiration risk and airway plan.",
+};
+
+const modeFamilies = {
+  VCV: "volume",
+  VOL: "volume",
+  "SIMV-VC": "volume",
+  PCV: "pressure",
+  "PCV-VG": "volumeTarget",
+  AF: "volumeTarget",
+  SYNC: "mixed",
+  SIMV: "mixed",
+  "SIMV-PC": "pressure",
+  PSV: "spontaneous",
+  PS: "spontaneous",
+};
+
+function classNames(...items) {
+  return items.filter(Boolean).join(" ");
+}
+
+function calcPBW(sex, heightCm) {
+  const h = Number(heightCm || 0);
+  if (!h || h < 100) return 0;
+  const base = sex === "female" ? 45.5 : 50;
+  return Math.max(30, base + 0.91 * (h - 152.4));
+}
+
+function round(value, digits = 0) {
+  const p = Math.pow(10, digits);
+  return Math.round(value * p) / p;
+}
+
+function toNumber(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+}
+
+function clamp(value, min, max) {
+  const number = toNumber(value);
+  if (!number) return "";
+  return String(Math.min(max, Math.max(min, number)));
+}
+
+function getModeFamily(selectedMode) {
+  return modeFamilies[selectedMode] || "mixed";
+}
+
+function buildSettingsRows(device, preset, pbw, vtMl, minuteVent, selectedMode, airway) {
+  const family = getModeFamily(selectedMode);
+  const rows = [
+    { label: device.settingMap.fio2, value: `${preset.fio2}%`, note: "Start here, then titrate to SpO2 and clinical context." },
+    { label: device.settingMap.peep, value: `${preset.peep} cmH2O`, note: "Reassess compliance, leak and haemodynamics after changes." },
+    { label: device.settingMap.rr, value: `${preset.rr}/min`, note: `${minuteVent} L/min estimated minute ventilation.` },
+    { label: device.settingMap.tinsp, value: preset.ie, note: "Confirm enough expiratory time, especially obstructive disease." },
+    { label: device.settingMap.pmax, value: `${preset.pmax} cmH2O`, note: "Alarm/limit only; do not use as a treatment target." },
+  ];
+
+  if (family === "pressure" || family === "spontaneous") {
+    rows.unshift({
+      label: device.settingMap.pinsp,
+      value: family === "spontaneous" ? "PS to comfort/VT" : "Titrate to VT",
+      note: pbw ? `Aim for roughly ${vtMl} mL expired VT if appropriate.` : "Enter height to estimate target VT.",
+    });
+  } else {
+    rows.unshift({
+      label: device.settingMap.vt,
+      value: pbw ? `${vtMl} mL` : "Enter height",
+      note: `${preset.vt} mL/kg PBW. ${airwayModifiers[airway]}`,
+    });
+  }
+
+  return rows;
+}
+
+function Pill({ children, active, onClick, danger }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={classNames(
+        "rounded-full px-4 py-2 text-sm font-medium transition border",
+        active
+          ? danger
+            ? "bg-red-500/20 border-red-400 text-red-100 shadow-lg shadow-red-950/30"
+            : "bg-white/15 border-white/30 text-white shadow-lg shadow-black/20"
+          : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function StatCard({ label, value, unit, helper, icon: Icon }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 shadow-xl shadow-black/20 backdrop-blur">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{label}</p>
+          <div className="mt-2 flex items-end gap-1">
+            <span className="text-3xl font-semibold text-white">{value}</span>
+            {unit && <span className="mb-1 text-sm text-slate-400">{unit}</span>}
+          </div>
+        </div>
+        {Icon && <Icon className="h-5 w-5 text-slate-300" />}
+      </div>
+      {helper && <p className="mt-3 text-sm leading-5 text-slate-400">{helper}</p>}
+    </div>
+  );
+}
+
+function SectionTitle({ icon: Icon, title, subtitle }) {
+  return (
+    <div className="mb-5 flex items-start justify-between gap-4">
+      <div className="flex items-start gap-3">
+        <div className="rounded-2xl bg-white/10 p-3 text-white">
+          <Icon className="h-5 w-5" />
+        </div>
+        <div>
+          <h2 className="text-xl font-semibold text-white">{title}</h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">{subtitle}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const [tab, setTab] = useState("ventilator");
+  const [deviceKey, setDeviceKey] = useState("ge750");
+  const [condition, setCondition] = useState("normal");
+  const [sex, setSex] = useState("male");
+  const [height, setHeight] = useState(170);
+  const [actualWeight, setActualWeight] = useState(70); // Display input only; ventilator VT uses PBW.
+  const [airway, setAirway] = useState("ETT");
+  const [selectedMode, setSelectedMode] = useState("VCV");
+
+  const changeDevice = (key) => {
+    setDeviceKey(key);
+    setSelectedMode(devices[key].modes[0].key);
+  };
+
+  const device = devices[deviceKey];
+  const preset = conditionPresets[condition];
+  const pbw = useMemo(() => calcPBW(sex, height), [sex, height]);
+  const vtMl = pbw ? Math.round(pbw * preset.vt) : "—";
+  const minuteVent = pbw ? round((pbw * preset.vt * preset.rr) / 1000, 1) : "—";
+  const bmi = useMemo(() => {
+    const heightM = toNumber(height) / 100;
+    const weight = toNumber(actualWeight);
+    return heightM && weight ? round(weight / (heightM * heightM), 1) : 0;
+  }, [actualWeight, height]);
+  const modeFamily = getModeFamily(selectedMode);
+  const settingsRows = buildSettingsRows(device, preset, pbw, vtMl, minuteVent, selectedMode, airway);
+  const inputWarnings = [
+    toNumber(height) && (toNumber(height) < 120 || toNumber(height) > 220) ? "Height is outside the usual adult range; check units before using PBW." : null,
+    toNumber(actualWeight) && (toNumber(actualWeight) < 20 || toNumber(actualWeight) > 250) ? "Actual weight looks unusual; confirm kg input." : null,
+    airway === "SGA" && preset.pmax > 35 ? "SGA selected: keep leak pressure and gastric insufflation risk in mind." : null,
+    condition === "paeds" ? "Paediatric mode is a quick prompt only; use age, PBW/actual weight policy and local paediatric settings." : null,
+  ].filter(Boolean);
+
+  const tabs = [
+    { key: "ventilator", label: "Ventilator", icon: Wind },
+    { key: "airway", label: "Airway", icon: Stethoscope },
+    { key: "machines", label: "Machines", icon: Monitor },
+    { key: "emergency", label: "Emergency", icon: ShieldAlert, danger: true },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#070b12] text-slate-100">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.95),rgba(7,11,18,1)_34%,rgba(7,11,18,1))]" />
+
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8">
+        <header className="mb-5 flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-white/[0.06] p-3 shadow-2xl shadow-black/30 backdrop-blur-xl">
+          <div className="flex items-center gap-3">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 to-emerald-400 text-slate-950 shadow-lg shadow-cyan-950/40">
+              <Wind className="h-6 w-6" />
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold tracking-tight text-white sm:text-xl">Airway + Ventilator</h1>
+              <p className="text-xs text-slate-400">Anaesthesia decision-support prototype</p>
+            </div>
+          </div>
+
+          <div className="hidden items-center gap-2 lg:flex">
+            {Object.entries(devices).map(([key, item]) => (
+              <Pill key={key} active={deviceKey === key} onClick={() => changeDevice(key)}>
+                {item.short}
+              </Pill>
+            ))}
+          </div>
+
+          <label className="min-w-0 lg:hidden">
+            <span className="sr-only">Selected machine</span>
+            <select
+              value={deviceKey}
+              onChange={(event) => changeDevice(event.target.value)}
+              className="w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm font-semibold text-white outline-none"
+            >
+              {Object.entries(devices).map(([key, item]) => (
+                <option key={key} value={key}>{item.short}</option>
+              ))}
+            </select>
+          </label>
+        </header>
+
+        <div className="mb-5 flex gap-2 overflow-x-auto rounded-lg border border-white/10 bg-black/20 p-2 backdrop-blur">
+          {tabs.map(({ key, label, icon: Icon, danger }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setTab(key)}
+              aria-pressed={tab === key}
+              className={classNames(
+                "flex min-w-fit items-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold transition",
+                tab === key
+                  ? danger
+                    ? "bg-red-500 text-white shadow-lg shadow-red-950/30"
+                    : "bg-white text-slate-950 shadow-lg shadow-black/20"
+                  : danger
+                    ? "text-red-200 hover:bg-red-500/10"
+                    : "text-slate-300 hover:bg-white/10 hover:text-white"
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "ventilator" && (
+          <main className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+            <section className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl">
+              <SectionTitle
+                icon={Wind}
+                title="Ventilator setup"
+                subtitle="Calculate PBW-based starting settings, then map the same concept to GE, Mindray or Dräger labels. Final values must be verified on the machine and local protocol."
+              />
+
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <label className="rounded-2xl border border-white/10 bg-black/20 p-3">
+                  <span className="text-xs uppercase tracking-[0.16em] text-slate-400">Sex</span>
+                  <select value={sex} onChange={(e) => setSex(e.target.value)} className="mt-2 w-full bg-transparent text-lg font-semibold text-white outline-none">
+                    <option className="bg-slate-900" value="male">Male</option>
+                    <option className="bg-slate-900" value="female">Female</option>
+                  </select>
+                </label>
+                <label className="rounded-2xl border border-white/10 bg-black/20 p-3">
+                  <span className="text-xs uppercase tracking-[0.16em] text-slate-400">Height</span>
+                  <div className="mt-2 flex items-end gap-2">
+                    <input
+                      aria-label="Height cm"
+                      value={height}
+                      onChange={(e) => setHeight(e.target.value)}
+                      onBlur={(e) => setHeight(clamp(e.target.value, 80, 230) || 170)}
+                      type="number"
+                      min="80"
+                      max="230"
+                      inputMode="numeric"
+                      className="w-full bg-transparent text-lg font-semibold text-white outline-none"
+                    />
+                    <span className="text-sm text-slate-400">cm</span>
+                  </div>
+                </label>
+                <label className="rounded-2xl border border-white/10 bg-black/20 p-3">
+                  <span className="text-xs uppercase tracking-[0.16em] text-slate-400">Actual weight</span>
+                  <div className="mt-2 flex items-end gap-2">
+                    <input
+                      aria-label="Actual weight kg"
+                      value={actualWeight}
+                      onChange={(e) => setActualWeight(e.target.value)}
+                      onBlur={(e) => setActualWeight(clamp(e.target.value, 1, 300) || 70)}
+                      type="number"
+                      min="1"
+                      max="300"
+                      inputMode="numeric"
+                      className="w-full bg-transparent text-lg font-semibold text-white outline-none"
+                    />
+                    <span className="text-sm text-slate-400">kg</span>
+                  </div>
+                </label>
+                <label className="rounded-2xl border border-white/10 bg-black/20 p-3">
+                  <span className="text-xs uppercase tracking-[0.16em] text-slate-400">Airway</span>
+                  <select value={airway} onChange={(e) => setAirway(e.target.value)} className="mt-2 w-full bg-transparent text-lg font-semibold text-white outline-none">
+                    <option className="bg-slate-900">ETT</option>
+                    <option className="bg-slate-900">SGA</option>
+                    <option className="bg-slate-900">Tracheostomy</option>
+                    <option className="bg-slate-900">Mask</option>
+                  </select>
+                </label>
+              </div>
+
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+                {Object.entries(conditionPresets).map(([key, item]) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setCondition(key)}
+                      aria-pressed={condition === key}
+                      className={classNames(
+                        "rounded-2xl border p-4 text-left transition",
+                        condition === key ? "border-cyan-300 bg-cyan-400/15 shadow-lg shadow-cyan-950/30" : "border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
+                      )}
+                    >
+                      <Icon className="mb-3 h-5 w-5 text-cyan-200" />
+                      <p className="text-sm font-semibold text-white">{item.label}</p>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <StatCard label="PBW" value={pbw ? round(pbw, 1) : "—"} unit="kg" helper="VT is calculated from predicted, not actual, body weight." icon={Gauge} />
+                <StatCard label="VT target" value={vtMl} unit="mL" helper={`${preset.vt} mL/kg PBW`} icon={Wind} />
+                <StatCard label="RR" value={preset.rr} unit="/min" helper={`${minuteVent} L/min estimated minute ventilation`} icon={Activity} />
+                <StatCard label="BMI" value={bmi || "—"} unit={bmi ? "kg/m2" : ""} helper="Shown for context; VT remains PBW-based." icon={HeartPulse} />
+              </div>
+
+              {inputWarnings.length > 0 && (
+                <div className="mt-5 rounded-lg border border-amber-300/30 bg-amber-300/10 p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-200" />
+                    <div>
+                      <p className="font-semibold text-amber-50">Check before applying</p>
+                      <ul className="mt-2 space-y-1 text-sm leading-6 text-amber-100/90">
+                        {inputWarnings.map((warning) => (
+                          <li key={warning}>{warning}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div className="flex items-start gap-3">
+                  <Info className="mt-0.5 h-5 w-5 text-cyan-200" />
+                  <div>
+                    <p className="font-semibold text-white">Clinical note</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-300">{preset.note}</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-400">{airwayModifiers[airway]}</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <aside className="space-y-5">
+              <section className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl">
+                <div className={`mb-4 rounded-2xl bg-gradient-to-br ${device.accent} p-[1px]`}>
+                  <div className="rounded-2xl bg-slate-950/90 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Selected machine</p>
+                    <h2 className="mt-1 text-xl font-semibold text-white">{device.name}</h2>
+                  </div>
+                </div>
+
+                <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+                  {Object.entries(devices).map(([key, item]) => (
+                    <button key={key} type="button" onClick={() => changeDevice(key)} aria-pressed={deviceKey === key} className={classNames("rounded-2xl border p-3 text-left text-sm transition", deviceKey === key ? "border-white/30 bg-white/15 text-white" : "border-white/10 bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]")}>{item.short}</button>
+                  ))}
+                </div>
+
+                <h3 className="mt-5 text-sm font-semibold uppercase tracking-[0.16em] text-slate-400">Mode selection</h3>
+                <div className="mt-3 space-y-2">
+                  {device.modes.map((mode) => (
+                    <button
+                      key={mode.key}
+                      type="button"
+                      onClick={() => setSelectedMode(mode.key)}
+                      aria-pressed={selectedMode === mode.key}
+                      className={classNames(
+                        "w-full rounded-2xl border p-3 text-left transition",
+                        selectedMode === mode.key ? "border-cyan-300 bg-cyan-400/15" : "border-white/10 bg-black/20 hover:bg-white/[0.06]"
+                      )}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-semibold text-white">{mode.label}</p>
+                        <ChevronRight className="h-4 w-4 text-slate-400" />
+                      </div>
+                      <p className="mt-1 text-sm leading-5 text-slate-400">{mode.desc}</p>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-5 rounded-lg border border-cyan-300/20 bg-cyan-300/10 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-cyan-100">Starting prescription</h3>
+                      <p className="mt-1 text-sm leading-5 text-cyan-100/80">
+                        {selectedMode} is treated as a {modeFamily === "volumeTarget" ? "volume-targeted pressure" : modeFamily} mode.
+                      </p>
+                    </div>
+                    <Monitor className="h-5 w-5 shrink-0 text-cyan-100" />
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    {settingsRows.map((row) => (
+                      <div key={row.label} className="rounded-lg border border-white/10 bg-slate-950/50 p-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-sm font-semibold text-white">{row.label}</p>
+                          <p className="text-right text-sm font-semibold text-cyan-100">{row.value}</p>
+                        </div>
+                        <p className="mt-1 text-xs leading-5 text-slate-400">{row.note}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              <section className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-400">Machine label map</h3>
+                <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                  {Object.entries(device.settingMap).map(([key, value]) => (
+                    <div key={key} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+                      <p className="uppercase tracking-[0.14em] text-slate-500">{key}</p>
+                      <p className="mt-1 font-semibold text-white">{value}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </aside>
+          </main>
+        )}
+
+        {tab === "airway" && (
+          <main className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+            <section className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl">
+              <SectionTitle icon={Stethoscope} title="Airway assessment" subtitle="Rapid pre-induction screen with escalation prompts. Designed for theatre use, not documentation replacement." />
+              <div className="space-y-3">
+                {[
+                  ["Mask risk", "Beard, obesity, edentulous, OSA, limited jaw protrusion"],
+                  ["Intubation risk", "Mouth opening, neck mobility, Mallampati, airway pathology, prior record"],
+                  ["SGA risk", "Restricted mouth opening, obstruction, aspiration risk, low compliance"],
+                  ["Front-of-neck risk", "Neck mass, radiation, infection, obesity, distorted anatomy"],
+                ].map(([title, body]) => (
+                  <div key={title} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-300" />
+                      <p className="font-semibold text-white">{title}</p>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl">
+              <SectionTitle icon={ShieldAlert} title="Difficult airway pathway" subtitle="Linear Plan A–D layout with oxygenation-first prompts and a hard stop on repeated failed attempts." />
+              <div className="relative space-y-3">
+                {airwaySteps.map((step, index) => (
+                  <div key={step.title} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div className="flex items-start gap-3">
+                      <div className={classNames("grid h-9 w-9 shrink-0 place-items-center rounded-2xl font-bold", index === 3 ? "bg-red-500 text-white" : "bg-cyan-400 text-slate-950")}>{index + 1}</div>
+                      <div>
+                        <p className="font-semibold text-white">{step.title}</p>
+                        <p className="mt-1 text-sm leading-6 text-slate-400">{step.detail}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </main>
+        )}
+
+        {tab === "machines" && (
+          <main className="grid gap-5 lg:grid-cols-3">
+            {Object.entries(devices).map(([key, item]) => (
+              <section key={key} className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl">
+                <div className={`rounded-2xl bg-gradient-to-br ${item.accent} p-[1px]`}>
+                  <div className="rounded-2xl bg-slate-950/90 p-4">
+                    <Laptop className="mb-3 h-6 w-6 text-white" />
+                    <h2 className="text-lg font-semibold text-white">{item.name}</h2>
+                  </div>
+                </div>
+
+                <h3 className="mt-5 text-sm font-semibold uppercase tracking-[0.16em] text-slate-400">Common modes</h3>
+                <div className="mt-3 space-y-2">
+                  {item.modes.map((mode) => (
+                    <div key={mode.key} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+                      <p className="font-semibold text-white">{mode.label}</p>
+                      <p className="mt-1 text-sm leading-5 text-slate-400">{mode.desc}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <h3 className="mt-5 text-sm font-semibold uppercase tracking-[0.16em] text-slate-400">UI terms</h3>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {item.uiTerms.map((term) => (
+                    <span key={term} className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs text-slate-300">{term}</span>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </main>
+        )}
+
+        {tab === "emergency" && (
+          <main className="grid gap-5 lg:grid-cols-[1fr_1fr]">
+            <section className="rounded-3xl border border-red-400/30 bg-red-500/10 p-5 shadow-2xl shadow-red-950/25 backdrop-blur-xl">
+              <SectionTitle icon={AlertTriangle} title="CICO / severe hypoxia" subtitle="Crisis screen uses short imperatives and avoids hidden steps. Declare emergency early and follow local front-of-neck protocol." />
+              <div className="space-y-3">
+                {[
+                  "Call for help. Announce: cannot intubate, cannot oxygenate.",
+                  "100% oxygen. Stop volatile if needed. Maintain anaesthesia or deepen if laryngospasm suspected.",
+                  "Two-hand mask ventilation with adjuncts. Check circuit, filter, valve, bag/vent switch.",
+                  "Second-generation SGA attempt if not already done. Confirm capnography and chest movement.",
+                  "Prepare emergency front-of-neck airway. Continue oxygenation attempts until incision.",
+                ].map((item, idx) => (
+                  <div key={item} className="flex gap-3 rounded-2xl border border-red-300/20 bg-black/25 p-4">
+                    <div className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-red-500 font-bold text-white">{idx + 1}</div>
+                    <p className="text-sm font-medium leading-6 text-red-50">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl">
+              <SectionTitle icon={Syringe} title="Ventilation troubleshooting" subtitle="Fast differential diagnosis for common intraoperative ventilator alarms and gas-exchange problems." />
+              <div className="space-y-3">
+                {troubleshooting.map((item) => (
+                  <details key={item.problem} className="group rounded-2xl border border-white/10 bg-black/20 p-4 open:bg-white/[0.06]">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold text-white">
+                      {item.problem}
+                      <ChevronRight className="h-4 w-4 transition group-open:rotate-90" />
+                    </summary>
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {item.checks.map((check) => (
+                        <div key={check} className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-slate-300">{check}</div>
+                      ))}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </section>
+          </main>
+        )}
+
+        <footer className="mt-5 rounded-3xl border border-white/10 bg-black/30 p-4 text-xs leading-5 text-slate-400 backdrop-blur">
+          <span className="font-semibold text-slate-200">Safety:</span> This prototype is for trained anaesthesia clinicians as educational decision support. Confirm all settings on the actual workstation, manufacturer IFU, patient condition and institutional protocol before clinical use.
+        </footer>
+      </div>
+    </div>
+  );
+}
