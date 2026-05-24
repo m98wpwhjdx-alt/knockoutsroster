@@ -304,6 +304,7 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
     <a href="#infusionConverterSec"><b>⚙</b>Infusion converter</a>
     <a href="#drugSearchSec"><b>🔎</b>Drug search</a>
     <a href="#bicarbCalcSec"><b>🧂</b>Sodium bicarbonate</a>
+    <a href="#abgCompSec"><b>🫁</b>ABG compensation</a>
     <a href="#decisionSupport"><b>⚠</b>Decision support</a>
     <div class="navHint">Black interface, sticky navigation, live calculators and separate drug search.</div>
   </aside>
@@ -719,6 +720,48 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
   </div>
 </div>
 
+<!-- ══ ABG RESPIRATORY COMPENSATION ══ -->
+<div class="sec-title" id="abgCompSec">ABG Respiratory Compensation</div>
+<div class="grid2">
+  <div class="card">
+    <div class="cardhead"><span class="icon">🫁</span><h2>Expected PaCO₂ from HCO₃⁻</h2><span class="badge blue">Metabolic disorders</span></div>
+    <div class="cardbody">
+      <div class="rowInline3">
+        <div><label>HCO₃⁻ (mEq/L)</label><input id="abgHco3" type="number" step="0.1" placeholder="e.g. 12 or 34" oninput="calcAbgComp()"></div>
+        <div><label>Measured PaCO₂ (optional)</label><input id="abgPaco2" type="number" step="0.1" placeholder="Optional" oninput="calcAbgComp()"></div>
+        <div><label>Preset</label>
+          <select id="abgPreset" onchange="setAbgCompPreset()">
+            <option value="">Choose preset</option>
+            <option value="12">Metabolic acidosis: HCO₃⁻ 12</option>
+            <option value="34">Metabolic alkalosis: HCO₃⁻ 34</option>
+            <option value="24">Normal HCO₃⁻ 24</option>
+          </select>
+        </div>
+      </div>
+      <div class="quickFill">
+        <button class="microBtn" onclick="copyBicarbHco3ToComp()">Use bicarbonate calculator HCO₃⁻</button>
+        <button class="microBtn" onclick="calcAbgComp()">Recalculate</button>
+      </div>
+      <div class="convOut">
+        <div class="convKpi"><b id="winterRange">—</b><span>Winter formula: metabolic acidosis</span></div>
+        <div class="convKpi"><b id="alkRange">—</b><span>Metabolic alkalosis compensation</span></div>
+      </div>
+      <div id="abgCompNote" class="alert info" style="margin-top:10px;">Enter HCO₃⁻ to calculate expected PaCO₂. Compare with measured PaCO₂ to screen for a superimposed respiratory disorder.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="cardhead"><span class="icon">📐</span><h2>Formulas Added</h2></div>
+    <div class="cardbody">
+      <div class="fplan">
+        <div class="frow"><span class="flabel">Metabolic acidosis</span><span class="fval" style="font-size:12px;">Expected PaCO₂ = 1.5 × HCO₃⁻ + 8 ± 2</span></div>
+        <div class="frow"><span class="flabel">Metabolic alkalosis</span><span class="fval" style="font-size:12px;">Expected PaCO₂ = 0.7 × HCO₃⁻ + 20 ± 5</span></div>
+        <div class="frow highlight"><span class="flabel">Equivalent alkalosis form</span><span class="fval" style="font-size:12px;">Expected PaCO₂ = 40 + 0.7 × (HCO₃⁻ − 24) ± 5</span></div>
+      </div>
+      <div class="alert warn" style="margin-top:10px;">Interpret only in the clinical context and with pH/base excess. A measured PaCO₂ outside the expected range suggests an additional primary respiratory process or inadequate/ excessive ventilatory compensation.</div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ CLINICAL DECISION SUPPORT ══ -->
 <div class="sec-title" id="decisionSupport">Clinical Decision Support</div>
 <div class="grid3">
@@ -763,7 +806,7 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
 
 <!-- ══ FOOTER NOTE ══ -->
 <div class="alert info" style="margin-top:20px;font-size:11px;">
-  <strong>Reference:</strong> Holliday-Segar 4/2/1 mL/kg/hr maintenance. MABL = EBV × (Hb₀ − HbT) / Hb₀. EBV per age/sex from Miller's Anaesthesia (9th ed). Fasting deficit = maintenance × NPO hours. Third-space: minimal 1, moderate 4, major 8 mL/kg/hr. Sodium bicarbonate: mEq = 0.3 × kg × base deficit or 0.5 × kg × (target HCO₃⁻ − measured HCO₃⁻), commonly giving partial correction first. This simulator is a decision-support tool only; clinical judgment supersedes all calculations.
+  <strong>Reference:</strong> Holliday-Segar 4/2/1 mL/kg/hr maintenance. MABL = EBV × (Hb₀ − HbT) / Hb₀. EBV per age/sex from Miller's Anaesthesia (9th ed). Fasting deficit = maintenance × NPO hours. Third-space: minimal 1, moderate 4, major 8 mL/kg/hr. Sodium bicarbonate: mEq = 0.3 × kg × base deficit or 0.5 × kg × (target HCO₃⁻ − measured HCO₃⁻), commonly giving partial correction first. Respiratory compensation: Winter formula PaCO₂ = 1.5 × HCO₃⁻ + 8 ± 2 for metabolic acidosis; metabolic alkalosis expected PaCO₂ = 0.7 × HCO₃⁻ + 20 ± 5. This simulator is a decision-support tool only; clinical judgment supersedes all calculations.
 </div>
 
 </div><!-- /wrap -->
@@ -1313,7 +1356,7 @@ const navObserver = new IntersectionObserver(entries=>{
     document.querySelectorAll('.sideNav a').forEach(a=>a.classList.toggle('active', a.getAttribute('href') === '#'+entry.target.id));
   });
 },{rootMargin:'-25% 0px -65% 0px',threshold:0.01});
-['patientSetup','calcParams','ioMonitor','drugLogSec','infusionConverterSec','drugSearchSec','bicarbCalcSec','decisionSupport'].forEach(id=>{const el=document.getElementById(id);if(el)navObserver.observe(el);});
+['patientSetup','calcParams','ioMonitor','drugLogSec','infusionConverterSec','drugSearchSec','bicarbCalcSec','abgCompSec','decisionSupport'].forEach(id=>{const el=document.getElementById(id);if(el)navObserver.observe(el);});
 
 function infusionDoseDrugs(){
   const seen=new Set();
@@ -1440,6 +1483,48 @@ function calcBicarb(){
   }
 }
 
+function setAbgCompPreset(){
+  const v=document.getElementById('abgPreset')?.value;
+  if(v) document.getElementById('abgHco3').value=v;
+  calcAbgComp();
+}
+function copyBicarbHco3ToComp(){
+  const mode=document.getElementById('bicMode')?.value||'baseDeficit';
+  const measured=parseFloat(document.getElementById('bicMeasured')?.value);
+  const target=parseFloat(document.getElementById('bicTarget')?.value);
+  if(mode==='hco3' && Number.isFinite(measured)) document.getElementById('abgHco3').value=measured;
+  else if(Number.isFinite(target)) document.getElementById('abgHco3').value=target;
+  calcAbgComp();
+}
+function calcAbgComp(){
+  const hco3=parseFloat(document.getElementById('abgHco3')?.value);
+  const measured=parseFloat(document.getElementById('abgPaco2')?.value);
+  const winterEl=document.getElementById('winterRange');
+  const alkEl=document.getElementById('alkRange');
+  const note=document.getElementById('abgCompNote');
+  if(!Number.isFinite(hco3)||hco3<=0){
+    if(winterEl) winterEl.textContent='—';
+    if(alkEl) alkEl.textContent='—';
+    if(note) note.textContent='Enter HCO₃⁻ to calculate expected PaCO₂. Compare with measured PaCO₂ to screen for a superimposed respiratory disorder.';
+    return;
+  }
+  const winter=1.5*hco3+8;
+  const winterLow=winter-2, winterHigh=winter+2;
+  const alk=0.7*hco3+20;
+  const alkLow=alk-5, alkHigh=alk+5;
+  if(winterEl) winterEl.textContent=`${winterLow.toFixed(1)}–${winterHigh.toFixed(1)} mmHg`;
+  if(alkEl) alkEl.textContent=`${alkLow.toFixed(1)}–${alkHigh.toFixed(1)} mmHg`;
+  if(note){
+    let msg=`For HCO₃⁻ ${hco3.toFixed(1)} mEq/L: Winter expected PaCO₂ ${(winter).toFixed(1)} ± 2 mmHg; metabolic alkalosis expected PaCO₂ ${(alk).toFixed(1)} ± 5 mmHg.`;
+    if(Number.isFinite(measured)){
+      const acidInterp = measured<winterLow ? 'below Winter range → concurrent respiratory alkalosis / excessive ventilation if metabolic acidosis is present' : measured>winterHigh ? 'above Winter range → concurrent respiratory acidosis / hypoventilation if metabolic acidosis is present' : 'within Winter range';
+      const alkInterp = measured<alkLow ? 'below alkalosis-compensation range → concurrent respiratory alkalosis' : measured>alkHigh ? 'above alkalosis-compensation range → concurrent respiratory acidosis' : 'within alkalosis-compensation range';
+      msg += ` Measured PaCO₂ ${measured.toFixed(1)} mmHg is ${acidInterp}; for metabolic alkalosis it is ${alkInterp}.`;
+    }
+    note.textContent=msg;
+  }
+}
+
 function searchStoeltingDrugs(){
   const q=(document.getElementById('stoeltingDrugSearch')?.value||'').toLowerCase().trim();
   const box=document.getElementById('stoeltingDrugResults'); if(!box) return;
@@ -1468,6 +1553,7 @@ function copyStoeltingToConverter(name){
 populateInfusionSelect();
 toggleBicarbMode();
 calcBicarb();
+calcAbgComp();
 
 /* ── Stamp time on drug time field to now ── */
 document.getElementById('drugTime').value = new Date().toTimeString().slice(0,5);
