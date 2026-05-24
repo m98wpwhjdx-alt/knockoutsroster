@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Preoperative Medications Reference</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Reference navigation">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M7 3h10v4l-2 1.5V18a3 3 0 0 1-6 0V8.5L7 7V3Z"/><path d="M10 11h4"/><path d="M10 15h4"/></svg>
+          </span>
+          <div>
+            <p>karthikMD</p>
+            <h1>Preop Meds</h1>
+          </div>
+        </div>
+
+        <nav id="categoryNav" class="nav-list"></nav>
+
+        <div class="sidebar-note">
+          <strong>Reference only.</strong>
+          Use institutional protocols and clinician judgement for patient care.
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <section class="hero">
+          <div>
+            <p class="eyebrow">Anaesthesia · Surgery · Critical Care</p>
+            <h2>Medication hold, continue, and restart decisions at a glance.</h2>
+            <p class="hero-copy">
+              A searchable app built from the supplied 2026 karthikMD preoperative medication cheatsheet.
+            </p>
+          </div>
+          <div class="hero-stats" aria-label="Reference statistics">
+            <span><strong id="drugCount">0</strong> records</span>
+            <span><strong>12</strong> categories</span>
+            <span><strong>2026</strong> edition</span>
+          </div>
+        </section>
+
+        <section class="controls" aria-label="Search and filters">
+          <label class="search-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+            <input id="searchInput" type="search" placeholder="Search aspirin, GLP-1, neuraxial, restart..." autocomplete="off" />
+          </label>
+          <div class="segmented" role="group" aria-label="Action filters">
+            <button class="chip active" data-filter="all">All</button>
+            <button class="chip" data-filter="stop">Stop</button>
+            <button class="chip" data-filter="continue">Continue</button>
+            <button class="chip" data-filter="hold">Hold</button>
+            <button class="chip" data-filter="caution">Caution</button>
+          </div>
+        </section>
+
+        <section class="dashboard" aria-label="Clinical tools">
+          <article class="planner">
+            <div class="panel-title">
+              <div>
+                <p class="eyebrow">Planner</p>
+                <h3>Last-dose helper</h3>
+              </div>
+              <button id="clearPlanner" class="icon-button" title="Clear planner" aria-label="Clear planner">
+                <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>
+              </button>
+            </div>
+            <div class="planner-grid">
+              <label for="surgeryDate">
+                Surgery date
+                <input id="surgeryDate" type="date" />
+              </label>
+              <label for="riskSelect">
+                Bleeding risk
+                <select id="riskSelect">
+                  <option value="low">Low</option>
+                  <option value="high">High</option>
+                </select>
+              </label>
+              <label for="neuraxialToggle" class="check-row">
+                <input id="neuraxialToggle" type="checkbox" />
+                Neuraxial block planned
+              </label>
+              <label for="plannerDrug">
+                Drug/class
+                <select id="plannerDrug"></select>
+              </label>
+            </div>
+            <div id="plannerResult" class="planner-result"></div>
+          </article>
+
+          <article class="principles">
+            <p class="eyebrow">Golden principles</p>
+            <ol>
+              <li>Stop drugs that increase bleeding, hypotension, aspiration, ketosis, or toxicity risk.</li>
+              <li>Continue drugs where withdrawal or omission can be more dangerous than surgery.</li>
+              <li>Ask directly about supplements, vitamins, and natural remedies.</li>
+            </ol>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <div>
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Reference Library</p>
+                <h3 id="activeCategoryTitle">All medications</h3>
+              </div>
+              <button id="printSummary" class="text-button">
+                <svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>
+                Print
+              </button>
+            </div>
+            <div id="cards" class="cards" aria-live="polite"></div>
+          </div>
+
+          <aside class="detail-panel" aria-label="Selected medication details">
+            <div id="detailPanel"></div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
