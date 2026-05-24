@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POCUS (Harvard Lecture Series)</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #19080c;
+      --panel: rgba(255, 255, 255, 0.08);
+      --panel-strong: rgba(255, 255, 255, 0.14);
+      --text: #f7fafc;
+      --muted: #f0b8c1;
+      --line: rgba(255, 255, 255, 0.18);
+      --accent: #ff6b7a;
+      --accent-2: #ffb3a7;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255, 72, 91, 0.28), transparent 28%),
+        radial-gradient(circle at 82% 12%, rgba(255, 165, 138, 0.18), transparent 30%),
+        linear-gradient(135deg, #14050a 0%, #2a0d16 52%, #431523 100%);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 44px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    }
+
+    .brand-mark svg {
+      width: 24px;
+      height: 24px;
+      color: var(--accent);
+    }
+
+    .brand-text {
+      display: grid;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 42px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+    }
+
+    .source-link:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 107, 122, 0.58);
+      background: rgba(255, 107, 122, 0.14);
+    }
+
+    .source-link svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .content {
+      display: flex;
+      min-height: 100%;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 32px;
+      padding: 4px 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 7px rgba(255, 107, 122, 0.14);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 6.4rem);
+      line-height: 0.94;
+      letter-spacing: 0;
+    }
+
+    .summary {
+      max-width: 640px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.7vw, 1.2rem);
+      line-height: 1.7;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 680px;
+    }
+
+    .stat {
+      min-height: 92px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      backdrop-filter: blur(16px);
+    }
+
+    .stat-value {
+      display: block;
+      color: var(--accent-2);
+      font-size: 1.45rem;
+      font-weight: 850;
+    }
+
+    .stat-label {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .lecture-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 32px;
+    }
+
+    .player-panel {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(28, 7, 13, 0.76);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+    }
+
+    .player-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .window-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.32);
+    }
+
+    .window-dots span:nth-child(1) {
+      background: #fb7185;
+    }
+
+    .window-dots span:nth-child(2) {
+      background: #ffb3a7;
+    }
+
+    .window-dots span:nth-child(3) {
+      background: #ff6b7a;
+    }
+
+    .player-label {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #05070d;
+    }
+
+    .video-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .player-footer {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .lecture-meta {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .lecture-meta h2 {
+      margin: 0 0 7px;
+      font-size: 1.05rem;
+      line-height: 1.3;
+    }
+
+    .lecture-kicker {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .lecture-meta p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .lecture-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      margin-top: 12px;
+      color: var(--accent-2);
+      font-size: 0.86rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .lecture-link:hover {
+      color: var(--text);
+    }
+
+    .lecture-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      border: 1px solid rgba(255, 107, 122, 0.42);
+      border-radius: 999px;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .chapters {
+      display: grid;
+      gap: 10px;
+    }
+
+    .chapter {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .chapter strong {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--panel-strong);
+      color: var(--accent-2);
+      font-size: 0.8rem;
+    }
+
+    .chapter span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 880px) {
+      .page {
+        width: min(100% - 24px, 720px);
+        padding: 28px 0;
+      }
+
+      .topbar,
+      .lecture-meta {
+        align-items: flex-start;
+      }
+
+      .stats,
+      .lecture-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar {
+        flex-direction: column;
+      }
+
+      .source-link {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .lecture-meta {
+        display: grid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero" aria-label="POCUS lecture series overview">
+      <div class="content">
+        <div>
+          <div class="eyebrow"><span class="pulse" aria-hidden="true"></span>Harvard Lecture Series</div>
+          <h1>POCUS (Harvard Lecture Series)</h1>
+        </div>
+      </div>
+    </section>
+
+    <section class="lecture-grid" aria-label="Embedded lectures">
+      <article class="player-panel">
+        <header class="player-header">
+          <div class="window-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="player-label">youtube.com/embed/KWMDFo_EQzE</span>
+        </header>
+
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/KWMDFo_EQzE?list=PL9hnCXfz_xymh2HU_m3CiF30W7XsXO8KF&rel=0"
+            title="Basics of Probe and Knobology"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <footer class="player-footer">
+          <div class="lecture-meta">
+            <div>
+              <span class="lecture-kicker">Cardiac POCUS</span>
+              <h2>Basics of Probe and Knobology</h2>
+              <p>Introductory point-of-care ultrasound lecture on probe handling and machine controls.</p>
+              <a class="lecture-link" href="https://youtu.be/KWMDFo_EQzE?list=PL9hnCXfz_xymh2HU_m3CiF30W7XsXO8KF" target="_blank" rel="noopener noreferrer">
+                Open on YouTube
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+            <span class="badge">Video</span>
+          </div>
+        </footer>
+      </article>
+
+      <article class="player-panel">
+        <header class="player-header">
+          <div class="window-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="player-label">youtube.com/embed/CdvufN-f6rM</span>
+        </header>
+
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/CdvufN-f6rM?list=PL9hnCXfz_xymh2HU_m3CiF30W7XsXO8KF&rel=0"
+            title="PLAX and PSAX view"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <footer class="player-footer">
+          <div class="lecture-meta">
+            <div>
+              <span class="lecture-kicker">Cardiac POCUS</span>
+              <h2>PLAX and PSAX view</h2>
+              <p>Parasternal long-axis and short-axis ultrasound view lecture.</p>
+              <a class="lecture-link" href="https://youtu.be/CdvufN-f6rM?list=PL9hnCXfz_xymh2HU_m3CiF30W7XsXO8KF" target="_blank" rel="noopener noreferrer">
+                Open on YouTube
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+            <span class="badge">Video</span>
+          </div>
+        </footer>
+      </article>
+
+      <article class="player-panel">
+        <header class="player-header">
+          <div class="window-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="player-label">youtube.com/embed/tyQ8nYtZrI0</span>
+        </header>
+
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/tyQ8nYtZrI0?list=PL9hnCXfz_xymh2HU_m3CiF30W7XsXO8KF&rel=0"
+            title="Apical 4 chamber, Subcostal 4 chamber, Subcostal IVC"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <footer class="player-footer">
+          <div class="lecture-meta">
+            <div>
+              <span class="lecture-kicker">Cardiac POCUS</span>
+              <h2>Apical 4 chamber, Subcostal 4 chamber, Subcostal IVC</h2>
+              <p>Apical four-chamber, subcostal four-chamber, and subcostal IVC ultrasound view lecture.</p>
+              <a class="lecture-link" href="https://youtu.be/tyQ8nYtZrI0?list=PL9hnCXfz_xymh2HU_m3CiF30W7XsXO8KF" target="_blank" rel="noopener noreferrer">
+                Open on YouTube
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+            <span class="badge">Video</span>
+          </div>
+        </footer>
+      </article>
+
+      <article class="player-panel">
+        <header class="player-header">
+          <div class="window-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="player-label">youtube.com/embed/Flc8xS2foOU</span>
+        </header>
+
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/Flc8xS2foOU?rel=0"
+            title="IVC POCUS (AMBROSS)"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <footer class="player-footer">
+          <div class="lecture-meta">
+            <div>
+              <span class="lecture-kicker">Cardiac POCUS</span>
+              <h2>IVC POCUS (AMBROSS)</h2>
+              <p>Inferior vena cava point-of-care ultrasound reference lecture.</p>
+              <a class="lecture-link" href="https://youtu.be/Flc8xS2foOU" target="_blank" rel="noopener noreferrer">
+                Open on YouTube
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+            <span class="badge">Video</span>
+          </div>
+        </footer>
+      </article>
+
+      <article class="player-panel">
+        <header class="player-header">
+          <div class="window-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="player-label">youtube.com/embed/tYUve9VrycE</span>
+        </header>
+
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/tYUve9VrycE?list=PL9hnCXfz_xymh2HU_m3CiF30W7XsXO8KF&rel=0"
+            title="Basics of probe selection LUS"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <footer class="player-footer">
+          <div class="lecture-meta">
+            <div>
+              <span class="lecture-kicker">Lung ultrasound</span>
+              <h2>Basics of probe selection LUS</h2>
+              <p>Lung ultrasound probe selection lecture from the provided playlist.</p>
+              <a class="lecture-link" href="https://youtu.be/tYUve9VrycE?list=PL9hnCXfz_xymh2HU_m3CiF30W7XsXO8KF" target="_blank" rel="noopener noreferrer">
+                Open on YouTube
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+            <span class="badge">Video</span>
+          </div>
+        </footer>
+      </article>
+
+      <article class="player-panel">
+        <header class="player-header">
+          <div class="window-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="player-label">youtube.com/embed/Xc5r2x4mseQ</span>
+        </header>
+
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/Xc5r2x4mseQ?rel=0"
+            title="Lung Zones and A-lines"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <footer class="player-footer">
+          <div class="lecture-meta">
+            <div>
+              <span class="lecture-kicker">Lung ultrasound</span>
+              <h2>Lung Zones and A-lines</h2>
+              <p>Lung ultrasound lecture covering scanning zones and A-line pattern recognition.</p>
+              <a class="lecture-link" href="https://youtu.be/Xc5r2x4mseQ" target="_blank" rel="noopener noreferrer">
+                Open on YouTube
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+            <span class="badge">Video</span>
+          </div>
+        </footer>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
