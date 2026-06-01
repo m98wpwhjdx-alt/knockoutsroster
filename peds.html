@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pediatric Anaesthesia Drug & Airway Calculator</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --ink: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --soft: #f8fafc;
+      --brand: #0f766e;
+      --brand-2: #115e59;
+      --warn: #92400e;
+      --warn-bg: #fffbeb;
+      --danger: #991b1b;
+      --danger-bg: #fef2f2;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+
+    .title-card,
+    .input-card,
+    .card {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .title-card {
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .title-card::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(15,118,110,0.12), rgba(15,118,110,0));
+      right: -60px;
+      top: -80px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      color: var(--brand-2);
+      background: #ecfdf5;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.05;
+      margin: 0 0 14px;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 720px;
+      margin: 0;
+    }
+
+    .protocol-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--soft);
+      color: #374151;
+    }
+
+    .input-card { padding: 24px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      color: #374151;
+      margin-bottom: 7px;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 16px;
+      outline: none;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.10);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 15px;
+      padding: 12px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .primary {
+      background: var(--brand);
+      color: white;
+    }
+
+    .secondary {
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid var(--line);
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 14px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .card { padding: 22px; }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .stat {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: baseline;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stat:last-child { border-bottom: 0; }
+
+    .stat .name {
+      font-weight: 800;
+      color: #1f2937;
+    }
+
+    .stat .dose {
+      font-weight: 900;
+      color: var(--brand-2);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .stat .detail {
+      grid-column: 1 / -1;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: -7px;
+    }
+
+    .wide-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--soft);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #4b5563;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .warning {
+      margin: 18px 0;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid #fde68a;
+      background: var(--warn-bg);
+      color: var(--warn);
+      font-weight: 700;
+    }
+
+    .danger {
+      margin: 18px 0;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid #fecaca;
+      background: var(--danger-bg);
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .case-line {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      padding: 16px;
+      font-size: 15px;
+      white-space: pre-wrap;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 940px) {
+      .hero, .wide-grid, .cards { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      .input-card, .actions { display: none; }
+      body { background: white; }
+      .title-card, .card { box-shadow: none; }
+      .shell { max-width: none; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="title-card">
+        <div class="eyebrow">Pediatric Anaesthesia • Drug + Airway Calculator</div>
+        <h1>Clean case-sheet dosing for pediatric OT.</h1>
+        <p class="subtitle">Institute protocol: Glyco + Ketamine + Midaz premedication, followed by Fentanyl + Propofol + Atracurium induction. Includes ETT size, dual ETT depth formulas, and i-gel selection.</p>
+        <div class="protocol-strip">
+          <span class="pill">Glyco</span>
+          <span class="pill">Ketamine</span>
+          <span class="pill">Midaz</span>
+          <span class="pill">Fentanyl</span>
+          <span class="pill">Propofol</span>
+          <span class="pill">Atracurium</span>
+          <span class="pill">ETT + i-gel</span>
+        </div>
+      </div>
+
+      <div class="input-card">
+        <div class="grid-2">
+          <div>
+            <label for="age">Age</label>
+            <input id="age" type="number" min="0" step="0.1" value="2" />
+          </div>
+          <div>
+            <label for="ageUnit">Age unit</label>
+            <select id="ageUnit">
+              <option value="years" selected>Years</option>
+              <option value="months">Months</option>
+            </select>
+          </div>
+          <div>
+            <label for="weight">Weight, kg</label>
+            <input id="weight" type="number" min="0" step="0.1" value="8" />
+          </div>
+          <div>
+            <label for="risk">Clinical context</label>
+            <select id="risk">
+              <option value="stable" selected>Stable elective</option>
+              <option value="sick">Sick / septic / shock / malnutrition</option>
+              <option value="airway">Difficult airway concern</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" onclick="calculate()">Calculate</button>
+          <button class="secondary" onclick="copyCaseLine()">Copy case line</button>
+          <button class="secondary" onclick="window.print()">Print</button>
+        </div>
+        <p class="small-note">This is a calculation aid. Confirm dose, concentration, airway fit, monitoring, and local protocol before administration.</p>
+      </div>
+    </section>
+
+    <div id="alerts"></div>
+
+    <section class="cards">
+      <div class="card">
+        <h2>Premedication</h2>
+        <div id="premedStats"></div>
+      </div>
+      <div class="card">
+        <h2>Induction</h2>
+        <div id="inductionStats"></div>
+      </div>
+      <div class="card">
+        <h2>Airway</h2>
+        <div id="airwayStats"></div>
+      </div>
+    </section>
+
+    <section class="wide-grid">
+      <div class="card">
+        <h2>Drug table</h2>
+        <div id="drugTable"></div>
+      </div>
+      <div class="card">
+        <h2>Airway table</h2>
+        <div id="airwayTable"></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:18px;">
+      <h2>Ready-to-write case-sheet line</h2>
+      <div id="caseLine" class="case-line"></div>
+      <p class="footer-note">Airway formula outputs are starting estimates only. Confirm ETT with capnography, bilateral air entry, chest rise, and adjustment after final positioning.</p>
+    </section>
+  </main>
+
+  <script>
+    const protocol = {
+      drugs: [
+        { section: "Premedication", name: "Glycopyrrolate", unit: "mcg", doseText: "4 mcg/kg", low: 4, high: 4, perKgUnit: "mcg/kg", concentration: "200 mcg/ml", directConc: 200, diluted: "20 mcg/ml", dilutedConc: 20, note: "Dilute 0.2 mg to 10 ml for small pediatric dose." },
+        { section: "Premedication", name: "Ketamine", unit: "mg", doseText: "0.5–1 mg/kg", low: 0.5, high: 1, perKgUnit: "mg/kg", concentration: "50 mg/ml", directConc: 50, diluted: "10 mg/ml", dilutedConc: 10, note: "Premed dose range. Titrate to clinical context." },
+        { section: "Premedication", name: "Midazolam", unit: "mg", doseText: "0.05 mg/kg", low: 0.05, high: 0.05, perKgUnit: "mg/kg", concentration: "1 mg/ml", directConc: 1, diluted: null, dilutedConc: null, note: "Use cautiously with opioid/propofol." },
+        { section: "Induction", name: "Fentanyl", unit: "mcg", doseText: "1–2 mcg/kg", low: 1, high: 2, perKgUnit: "mcg/kg", concentration: "50 mcg/ml", directConc: 50, diluted: "5 mcg/ml", dilutedConc: 5, note: "Give slowly; watch apnea/bradycardia/chest rigidity." },
+        { section: "Induction", name: "Propofol", unit: "mg", doseText: "2–3 mg/kg", low: 2, high: 3, perKgUnit: "mg/kg", concentration: "10 mg/ml", directConc: 10, diluted: null, dilutedConc: null, note: "Titrate to loss of consciousness; reduce in sick child." },
+        { section: "Induction", name: "Atracurium", unit: "mg", doseText: "0.5 mg/kg", low: 0.5, high: 0.5, perKgUnit: "mg/kg", concentration: "10 mg/ml", directConc: 10, diluted: null, dilutedConc: null, note: "Default intubating dose; ensure ventilation plan." }
+      ],
+      igel: [
+        { size: "1", min: 2, max: 5, group: "neonate" },
+        { size: "1.5", min: 5, max: 12, group: "infant" },
+        { size: "2", min: 10, max: 25, group: "small paediatric" },
+        { size: "2.5", min: 25, max: 35, group: "large paediatric" },
+        { size: "3", min: 30, max: 60, group: "small adult" },
+        { size: "4", min: 50, max: 90, group: "medium adult" },
+        { size: "5", min: 90, max: 999, group: "large adult" }
+      ]
+    };
+
+    function roundHalf(num) {
+      return Math.round(num * 2) / 2;
+    }
+
+    function fmt(num, decimals = 2) {
+      const rounded = Number(num.toFixed(decimals));
+      return String(rounded);
+    }
+
+    function doseString(low, high, unit) {
+      if (Math.abs(low - high) < 0.0001) return `${fmt(low)} ${unit}`;
+      return `${fmt(low)}–${fmt(high)} ${unit}`;
+    }
+
+    function volumeString(low, high, conc) {
+      const vLow = low / conc;
+      const vHigh = high / conc;
+      if (Math.abs(vLow - vHigh) < 0.0001) return `${fmt(vLow)} ml`;
+      return `${fmt(vLow)}–${fmt(vHigh)} ml`;
+    }
+
+    function getAgeYears() {
+      const age = parseFloat(document.getElementById("age").value || "0");
+      const unit = document.getElementById("ageUnit").value;
+      return unit === "months" ? age / 12 : age;
+    }
+
+    function getIgel(weight) {
+      const matches = protocol.igel.filter(x => weight >= x.min && weight <= x.max);
+      if (!matches.length) return { main: "Not in range", detail: "Check device availability and patient weight." };
+      const best = matches[0];
+      const adjacent = matches.length > 1 ? `Overlap: also consider size ${matches.map(m => m.size).join("/")} by clinical fit.` : `Size ${best.size}, ${best.group}, ${best.min}-${best.max} kg.`;
+      return { main: `Size ${best.size}`, detail: adjacent };
+    }
+
+    function airway(ageYears, weight) {
+      let cuffed = roundHalf(ageYears / 4 + 3.5);
+      let uncuffed = roundHalf(ageYears / 4 + 4.0);
+      if (ageYears < 1) {
+        cuffed = 3.0;
+        uncuffed = 3.5;
+      }
+      const oralByCuffedTube = cuffed * 3;
+      const oralByUncuffedTube = uncuffed * 3;
+      const oralByAge = ageYears / 2 + 12;
+      const nasal = oralByCuffedTube + 3;
+      const practicalLow = Math.min(oralByCuffedTube, oralByAge);
+      const practicalHigh = Math.max(oralByCuffedTube, oralByAge);
+      const igel = getIgel(weight);
+      return { cuffed, uncuffed, oralByCuffedTube, oralByUncuffedTube, oralByAge, nasal, practicalLow, practicalHigh, igel };
+    }
+
+    function renderStats(target, items) {
+      document.getElementById(target).innerHTML = items.map(item => `
+        <div class="stat">
+          <div class="name">${item.name}</div>
+          <div class="dose">${item.dose}</div>
+          <div class="detail">${item.detail}</div>
+        </div>
+      `).join("");
+    }
+
+    function calculate() {
+      const weight = parseFloat(document.getElementById("weight").value || "0");
+      const ageYears = getAgeYears();
+      const risk = document.getElementById("risk").value;
+      const alerts = [];
+
+      if (!weight || weight <= 0 || !ageYears || ageYears < 0) {
+        alerts.push(`<div class="danger">Enter valid age and weight.</div>`);
+      }
+      if (ageYears >= 1.5 && weight < 7) {
+        alerts.push(`<div class="warning">Age-weight mismatch: weight is low for the stated age. Recheck actual weight, but calculations below use the entered weight.</div>`);
+      }
+      if (risk === "sick") {
+        alerts.push(`<div class="warning">Sick/septic/shock/malnutrition selected: titrate propofol, opioid, and midazolam cautiously; prepare resuscitation drugs and airway backup.</div>`);
+      }
+      if (risk === "airway") {
+        alerts.push(`<div class="warning">Difficult airway concern selected: avoid committing to muscle relaxant unless airway strategy and backup plan are ready.</div>`);
+      }
+      document.getElementById("alerts").innerHTML = alerts.join("");
+
+      const rows = protocol.drugs.map(d => {
+        const low = weight * d.low;
+        const high = weight * d.high;
+        return { ...d, finalLow: low, finalHigh: high };
+      });
+
+      renderStats("premedStats", rows.filter(r => r.section === "Premedication").map(r => ({
+        name: r.name,
+        dose: doseString(r.finalLow, r.finalHigh, r.unit),
+        detail: `${r.doseText}; direct ${volumeString(r.finalLow, r.finalHigh, r.directConc)} of ${r.concentration}${r.diluted ? `; diluted ${volumeString(r.finalLow, r.finalHigh, r.dilutedConc)} of ${r.diluted}` : ""}`
+      })));
+
+      renderStats("inductionStats", rows.filter(r => r.section === "Induction").map(r => ({
+        name: r.name,
+        dose: doseString(r.finalLow, r.finalHigh, r.unit),
+        detail: `${r.doseText}; direct ${volumeString(r.finalLow, r.finalHigh, r.directConc)} of ${r.concentration}${r.diluted ? `; diluted ${volumeString(r.finalLow, r.finalHigh, r.dilutedConc)} of ${r.diluted}` : ""}`
+      })));
+
+      const aw = airway(ageYears, weight);
+      renderStats("airwayStats", [
+        { name: "Cuffed ETT", dose: `${aw.cuffed} mm`, detail: "Formula: age/4 + 3.5, rounded to nearest 0.5 mm." },
+        { name: "ETT depth: 3 × tube", dose: `${fmt(aw.oralByCuffedTube, 1)} cm`, detail: `Cuffed tube method: 3 × ${aw.cuffed} mm ID. Uncuffed method: ${fmt(aw.oralByUncuffedTube, 1)} cm.` },
+        { name: "ETT depth: age formula", dose: `${fmt(aw.oralByAge, 1)} cm`, detail: "Oral fixation estimate: age/2 + 12 cm." },
+        { name: "i-gel", dose: aw.igel.main, detail: aw.igel.detail }
+      ]);
+
+      document.getElementById("drugTable").innerHTML = `
+        <table>
+          <thead><tr><th>Drug</th><th>Dose/kg</th><th>Final dose</th><th>Volume</th></tr></thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td><strong>${r.name}</strong><br><span style="color:#6b7280">${r.section}</span></td>
+                <td>${r.doseText}</td>
+                <td><strong>${doseString(r.finalLow, r.finalHigh, r.unit)}</strong></td>
+                <td>Direct: ${volumeString(r.finalLow, r.finalHigh, r.directConc)} of ${r.concentration}${r.diluted ? `<br>Diluted: ${volumeString(r.finalLow, r.finalHigh, r.dilutedConc)} of ${r.diluted}` : ""}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>`;
+
+      document.getElementById("airwayTable").innerHTML = `
+        <table>
+          <thead><tr><th>Parameter</th><th>Result</th><th>Formula / note</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Cuffed ETT</strong></td><td>${aw.cuffed} mm ID</td><td>Age/4 + 3.5; keep one size smaller/larger.</td></tr>
+            <tr><td><strong>Uncuffed ETT</strong></td><td>${aw.uncuffed} mm ID</td><td>Age/4 + 4.0; keep one size smaller/larger.</td></tr>
+            <tr><td><strong>Oral depth by 3 × ETT ID</strong></td><td>Cuffed: ${fmt(aw.oralByCuffedTube, 1)} cm<br>Uncuffed: ${fmt(aw.oralByUncuffedTube, 1)} cm</td><td>Depth at lips = ETT internal diameter × 3.</td></tr>
+            <tr><td><strong>Oral depth by age formula</strong></td><td>${fmt(aw.oralByAge, 1)} cm at lips</td><td>Age/2 + 12 cm.</td></tr>
+            <tr><td><strong>Practical oral fixation range</strong></td><td>${fmt(aw.practicalLow, 1)}–${fmt(aw.practicalHigh, 1)} cm at lips</td><td>Use formula range as a starting estimate; confirm clinically and with capnography.</td></tr>
+            <tr><td><strong>Nasal depth</strong></td><td>${fmt(aw.nasal, 1)} cm</td><td>Based on cuffed 3 × ETT depth + 3 cm estimate.</td></tr>
+            <tr><td><strong>i-gel</strong></td><td>${aw.igel.main}</td><td>${aw.igel.detail}</td></tr>
+          </tbody>
+        </table>`;
+
+      const byName = Object.fromEntries(rows.map(r => [r.name, r]));
+      const caseLine = `Premedication: Inj. Glycopyrrolate ${doseString(byName.Glycopyrrolate.finalLow, byName.Glycopyrrolate.finalHigh, "mcg")} IV, Inj. Ketamine ${doseString(byName.Ketamine.finalLow, byName.Ketamine.finalHigh, "mg")} IV, Inj. Midazolam ${doseString(byName.Midazolam.finalLow, byName.Midazolam.finalHigh, "mg")} IV.\n\nInduction: Inj. Fentanyl ${doseString(byName.Fentanyl.finalLow, byName.Fentanyl.finalHigh, "mcg")} IV, Inj. Propofol ${doseString(byName.Propofol.finalLow, byName.Propofol.finalHigh, "mg")} IV titrated, Inj. Atracurium ${doseString(byName.Atracurium.finalLow, byName.Atracurium.finalHigh, "mg")} IV.\n\nAirway: Cuffed ETT ${aw.cuffed} mm ID / Uncuffed ETT ${aw.uncuffed} mm ID; oral depth by 3 × ETT ID: cuffed ${fmt(aw.oralByCuffedTube, 1)} cm, uncuffed ${fmt(aw.oralByUncuffedTube, 1)} cm; age-based oral depth ${fmt(aw.oralByAge, 1)} cm; practical fixation range ${fmt(aw.practicalLow, 1)}–${fmt(aw.practicalHigh, 1)} cm at lips; nasal depth about ${fmt(aw.nasal, 1)} cm; i-gel ${aw.igel.main}.`;
+      document.getElementById("caseLine").textContent = caseLine;
+    }
+
+    function copyCaseLine() {
+      const text = document.getElementById("caseLine").textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btns = document.querySelectorAll("button.secondary");
+        btns[0].textContent = "Copied";
+        setTimeout(() => btns[0].textContent = "Copy case line", 1000);
+      });
+    }
+
+    calculate();
+  </script>
+</body>
+</html>
