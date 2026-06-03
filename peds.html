@@ -183,7 +183,7 @@
 
     .cards {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 16px;
       margin-bottom: 18px;
     }
@@ -295,6 +295,10 @@
       margin-top: 18px;
     }
 
+    @media (max-width: 1100px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
+    }
+
     @media (max-width: 940px) {
       .hero, .wide-grid, .cards { grid-template-columns: 1fr; }
     }
@@ -313,7 +317,7 @@
       <div class="title-card">
         <div class="eyebrow">Pediatric Anaesthesia • Drug + Airway Calculator</div>
         <h1>Clean case-sheet dosing for pediatric OT.</h1>
-        <p class="subtitle">Institute protocol: Glyco + Ketamine + Midaz premedication, followed by Fentanyl + Propofol + Atracurium induction. Includes ETT size, dual ETT depth formulas, and i-gel selection.</p>
+        <p class="subtitle">Institute protocol: Glyco + Ketamine + Midaz premedication, followed by Fentanyl + Propofol + Atracurium induction. Includes laryngospasm succinylcholine rescue dosing, ETT size, dual ETT depth formulas, and i-gel selection.</p>
         <div class="protocol-strip">
           <span class="pill">Glyco</span>
           <span class="pill">Ketamine</span>
@@ -321,6 +325,7 @@
           <span class="pill">Fentanyl</span>
           <span class="pill">Propofol</span>
           <span class="pill">Atracurium</span>
+          <span class="pill">Sux laryngospasm</span>
           <span class="pill">ETT + i-gel</span>
         </div>
       </div>
@@ -372,6 +377,10 @@
         <div id="inductionStats"></div>
       </div>
       <div class="card">
+        <h2>Laryngospasm</h2>
+        <div id="laryngospasmStats"></div>
+      </div>
+      <div class="card">
         <h2>Airway</h2>
         <div id="airwayStats"></div>
       </div>
@@ -403,7 +412,8 @@
         { section: "Premedication", name: "Midazolam", unit: "mg", doseText: "0.05 mg/kg", low: 0.05, high: 0.05, perKgUnit: "mg/kg", concentration: "1 mg/ml", directConc: 1, diluted: null, dilutedConc: null, note: "Use cautiously with opioid/propofol." },
         { section: "Induction", name: "Fentanyl", unit: "mcg", doseText: "1–2 mcg/kg", low: 1, high: 2, perKgUnit: "mcg/kg", concentration: "50 mcg/ml", directConc: 50, diluted: "5 mcg/ml", dilutedConc: 5, note: "Give slowly; watch apnea/bradycardia/chest rigidity." },
         { section: "Induction", name: "Propofol", unit: "mg", doseText: "2–3 mg/kg", low: 2, high: 3, perKgUnit: "mg/kg", concentration: "10 mg/ml", directConc: 10, diluted: null, dilutedConc: null, note: "Titrate to loss of consciousness; reduce in sick child." },
-        { section: "Induction", name: "Atracurium", unit: "mg", doseText: "0.5 mg/kg", low: 0.5, high: 0.5, perKgUnit: "mg/kg", concentration: "10 mg/ml", directConc: 10, diluted: null, dilutedConc: null, note: "Default intubating dose; ensure ventilation plan." }
+        { section: "Induction", name: "Atracurium", unit: "mg", doseText: "0.5 mg/kg", low: 0.5, high: 0.5, perKgUnit: "mg/kg", concentration: "10 mg/ml", directConc: 10, diluted: null, dilutedConc: null, note: "Default intubating dose; ensure ventilation plan." },
+        { section: "Laryngospasm", name: "Succinylcholine", unit: "mg", doseText: "0.5 mg/kg IV", low: 0.5, high: 0.5, perKgUnit: "mg/kg", concentration: "50 mg/ml", directConc: 50, diluted: "10 mg/ml", dilutedConc: 10, note: "Rescue dose for laryngospasm. If no IV access, consider IM 3-4 mg/kg per emergency protocol." }
       ],
       igel: [
         { size: "1", min: 2, max: 5, group: "neonate" },
@@ -516,6 +526,12 @@
         detail: `${r.doseText}; direct ${volumeString(r.finalLow, r.finalHigh, r.directConc)} of ${r.concentration}${r.diluted ? `; diluted ${volumeString(r.finalLow, r.finalHigh, r.dilutedConc)} of ${r.diluted}` : ""}`
       })));
 
+      renderStats("laryngospasmStats", rows.filter(r => r.section === "Laryngospasm").map(r => ({
+        name: r.name,
+        dose: doseString(r.finalLow, r.finalHigh, r.unit),
+        detail: `${r.doseText}; direct ${volumeString(r.finalLow, r.finalHigh, r.directConc)} of ${r.concentration}${r.diluted ? `; diluted ${volumeString(r.finalLow, r.finalHigh, r.dilutedConc)} of ${r.diluted}` : ""}. ${r.note}`
+      })));
+
       const aw = airway(ageYears, weight);
       renderStats("airwayStats", [
         { name: "Cuffed ETT", dose: `${aw.cuffed} mm`, detail: "Formula: age/4 + 3.5, rounded to nearest 0.5 mm." },
@@ -554,7 +570,7 @@
         </table>`;
 
       const byName = Object.fromEntries(rows.map(r => [r.name, r]));
-      const caseLine = `Premedication: Inj. Glycopyrrolate ${doseString(byName.Glycopyrrolate.finalLow, byName.Glycopyrrolate.finalHigh, "mcg")} IV, Inj. Ketamine ${doseString(byName.Ketamine.finalLow, byName.Ketamine.finalHigh, "mg")} IV, Inj. Midazolam ${doseString(byName.Midazolam.finalLow, byName.Midazolam.finalHigh, "mg")} IV.\n\nInduction: Inj. Fentanyl ${doseString(byName.Fentanyl.finalLow, byName.Fentanyl.finalHigh, "mcg")} IV, Inj. Propofol ${doseString(byName.Propofol.finalLow, byName.Propofol.finalHigh, "mg")} IV titrated, Inj. Atracurium ${doseString(byName.Atracurium.finalLow, byName.Atracurium.finalHigh, "mg")} IV.\n\nAirway: Cuffed ETT ${aw.cuffed} mm ID / Uncuffed ETT ${aw.uncuffed} mm ID; oral depth by 3 × ETT ID: cuffed ${fmt(aw.oralByCuffedTube, 1)} cm, uncuffed ${fmt(aw.oralByUncuffedTube, 1)} cm; age-based oral depth ${fmt(aw.oralByAge, 1)} cm; practical fixation range ${fmt(aw.practicalLow, 1)}–${fmt(aw.practicalHigh, 1)} cm at lips; nasal depth about ${fmt(aw.nasal, 1)} cm; i-gel ${aw.igel.main}.`;
+      const caseLine = `Premedication: Inj. Glycopyrrolate ${doseString(byName.Glycopyrrolate.finalLow, byName.Glycopyrrolate.finalHigh, "mcg")} IV, Inj. Ketamine ${doseString(byName.Ketamine.finalLow, byName.Ketamine.finalHigh, "mg")} IV, Inj. Midazolam ${doseString(byName.Midazolam.finalLow, byName.Midazolam.finalHigh, "mg")} IV.\n\nInduction: Inj. Fentanyl ${doseString(byName.Fentanyl.finalLow, byName.Fentanyl.finalHigh, "mcg")} IV, Inj. Propofol ${doseString(byName.Propofol.finalLow, byName.Propofol.finalHigh, "mg")} IV titrated, Inj. Atracurium ${doseString(byName.Atracurium.finalLow, byName.Atracurium.finalHigh, "mg")} IV.\n\nLaryngospasm rescue: Inj. Succinylcholine ${doseString(byName.Succinylcholine.finalLow, byName.Succinylcholine.finalHigh, "mg")} IV (${byName.Succinylcholine.doseText}); if no IV access consider IM 3-4 mg/kg per emergency protocol.\n\nAirway: Cuffed ETT ${aw.cuffed} mm ID / Uncuffed ETT ${aw.uncuffed} mm ID; oral depth by 3 × ETT ID: cuffed ${fmt(aw.oralByCuffedTube, 1)} cm, uncuffed ${fmt(aw.oralByUncuffedTube, 1)} cm; age-based oral depth ${fmt(aw.oralByAge, 1)} cm; practical fixation range ${fmt(aw.practicalLow, 1)}–${fmt(aw.practicalHigh, 1)} cm at lips; nasal depth about ${fmt(aw.nasal, 1)} cm; i-gel ${aw.igel.main}.`;
       document.getElementById("caseLine").textContent = caseLine;
     }
 
