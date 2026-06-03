@@ -297,6 +297,8 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
   <aside class="sideNav" id="sideNav" aria-label="Intraoperative simulator navigation">
     <h3>Navigation</h3>
     <a href="#patientSetup"><b>👤</b>Patient setup</a>
+    <a href="#ebvReference"><b>🩸</b>EBV reference</a>
+    <a href="#bloodLossMopCount"><b>🧽</b>Mop count</a>
     <a href="#aiImportSec"><b>🤖</b>AI import</a>
     <a href="#calcParams"><b>🧮</b>Calculated parameters</a>
     <a href="#ioMonitor"><b>💧</b>Hourly I/O</a>
@@ -378,11 +380,17 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
         <div><label>EBV Category</label>
           <select id="ebvCat">
             <option value="auto">Auto (by age/sex)</option>
-            <option value="adultMale">Adult Male (75 mL/kg)</option>
-            <option value="adultFemale">Adult Female (65 mL/kg)</option>
-            <option value="child">Child (80 mL/kg)</option>
-            <option value="infant">Infant (85 mL/kg)</option>
-            <option value="neonate">Neonate (90 mL/kg)</option>
+            <option value="prematureInfant">Premature infant (95 mL/kg)</option>
+            <option value="termNewborn">Term newborn (85 mL/kg)</option>
+            <option value="infantUnder1">Infant <1 yr (77.5 mL/kg)</option>
+            <option value="child1to12">Child 1-12 yr (72.5 mL/kg)</option>
+            <option value="adolescent12to18">Adolescent 12-18 yr (70 mL/kg)</option>
+            <option value="adultMale">Adult male (75 mL/kg)</option>
+            <option value="adultFemale">Adult female (65 mL/kg)</option>
+            <option value="adultBmi30">Adult BMI 30 (60 mL/kg)</option>
+            <option value="adultBmi40">Adult BMI 40 (55 mL/kg)</option>
+            <option value="adultBmi50">Adult BMI 50 (50 mL/kg)</option>
+            <option value="adultBmi60">Adult BMI 60 (45 mL/kg)</option>
           </select>
         </div>
         <div><label>Anaesthesia Type</label>
@@ -402,6 +410,38 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
 
 
 </div><!-- /grid2 -->
+
+<!-- ══ ESTIMATED BLOOD VOLUME REFERENCE ══ -->
+<div class="sec-title" id="ebvReference">Estimated Blood Volume Reference</div>
+<div class="card">
+  <div class="cardhead"><span class="icon">🩸</span><h2>Estimated Blood Volume by Patient Category</h2><span class="badge red">mL/kg</span></div>
+  <div class="cardbody">
+    <div class="fplan">
+      <div class="frow"><span class="flabel">Premature infants</span><span class="fval">90-100 mL/kg</span></div>
+      <div class="frow"><span class="flabel">Term newborns</span><span class="fval">80-90 mL/kg</span></div>
+      <div class="frow"><span class="flabel">Infants less than 1 year</span><span class="fval">75-80 mL/kg</span></div>
+      <div class="frow"><span class="flabel">1-12 years</span><span class="fval">70-75 mL/kg</span></div>
+      <div class="frow"><span class="flabel">12-18 years</span><span class="fval">70 mL/kg</span></div>
+      <div class="frow"><span class="flabel">Adult males</span><span class="fval">75 mL/kg</span></div>
+      <div class="frow"><span class="flabel">Adult females</span><span class="fval">65 mL/kg</span></div>
+      <div class="frow"><span class="flabel">Adults with BMI 30</span><span class="fval">60 mL/kg</span></div>
+      <div class="frow"><span class="flabel">Adults with BMI 40</span><span class="fval">55 mL/kg</span></div>
+      <div class="frow"><span class="flabel">Adults with BMI 50</span><span class="fval">50 mL/kg</span></div>
+      <div class="frow"><span class="flabel">Adults with BMI 60</span><span class="fval">45 mL/kg</span></div>
+    </div>
+    <div class="alert info" style="margin-top:12px;">Extracted from the supplied OpenAnesthesia MABL PDF, Table 1. Range-based calculator options use the midpoint unless a single value is listed.</div>
+  </div>
+</div>
+
+<!-- ══ BLOOD LOSS MOP COUNT REFERENCE ══ -->
+<div class="sec-title" id="bloodLossMopCount">Blood Loss Mop Count Reference</div>
+<div class="card">
+  <div class="cardhead"><span class="icon">🧽</span><h2>Visual Blood Loss by Gauze Saturation</h2><span class="badge orange">Figure 1</span></div>
+  <div class="cardbody">
+    <img src="ICU/blood_loss_mop_count.jpg" alt="Visual guide estimating blood loss by gauze size and percentage saturation" style="width:100%;max-width:760px;display:block;margin:0 auto;border-radius:12px;border:1px solid var(--border);background:#fff;">
+    <div class="alert info" style="margin-top:12px;">Extracted from the supplied OpenAnesthesia MABL PDF. Use as a visual adjunct to suction canister volume, swab weight, haemodynamics and serial Hb/Hct.</div>
+  </div>
+</div>
 
 <!-- ══ AI PATIENT IMPORT ══ -->
 <div class="sec-title" id="aiImportSec">AI Patient Detail Import</div>
@@ -806,7 +846,7 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
 
 <!-- ══ FOOTER NOTE ══ -->
 <div class="alert info" style="margin-top:20px;font-size:11px;">
-  <strong>Reference:</strong> Holliday-Segar 4/2/1 mL/kg/hr maintenance. MABL = EBV × (Hb₀ − HbT) / Hb₀. EBV per age/sex from Miller's Anaesthesia (9th ed). Fasting deficit = maintenance × NPO hours. Third-space: minimal 1, moderate 4, major 8 mL/kg/hr. Sodium bicarbonate: mEq = 0.3 × kg × base deficit or 0.5 × kg × (target HCO₃⁻ − measured HCO₃⁻), commonly giving partial correction first. Respiratory compensation: Winter formula PaCO₂ = 1.5 × HCO₃⁻ + 8 ± 2 for metabolic acidosis; metabolic alkalosis expected PaCO₂ = 0.7 × HCO₃⁻ + 20 ± 5. This simulator is a decision-support tool only; clinical judgment supersedes all calculations.
+  <strong>Reference:</strong> Holliday-Segar 4/2/1 mL/kg/hr maintenance. MABL = EBV × (Hb₀ − HbT) / Hb₀. EBV values from the supplied OpenAnesthesia Maximum Allowable Blood Loss PDF, Table 1. Fasting deficit = maintenance × NPO hours. Third-space: minimal 1, moderate 4, major 8 mL/kg/hr. Sodium bicarbonate: mEq = 0.3 × kg × base deficit or 0.5 × kg × (target HCO₃⁻ − measured HCO₃⁻), commonly giving partial correction first. Respiratory compensation: Winter formula PaCO₂ = 1.5 × HCO₃⁻ + 8 ± 2 for metabolic acidosis; metabolic alkalosis expected PaCO₂ = 0.7 × HCO₃⁻ + 20 ± 5. This simulator is a decision-support tool only; clinical judgment supersedes all calculations.
 </div>
 
 </div><!-- /wrap -->
@@ -980,15 +1020,22 @@ function ebvMlKg(){
   const unit = document.getElementById('ptAgeUnit').value;
   const sex = document.getElementById('ptSex').value;
   const ageYrs = unit==='years'?age:(unit==='months'?age/12:age/365);
+  if(cat==='prematureInfant') return 95;
+  if(cat==='termNewborn') return 85;
+  if(cat==='infantUnder1') return 77.5;
+  if(cat==='child1to12') return 72.5;
+  if(cat==='adolescent12to18') return 70;
   if(cat==='adultMale') return 75;
   if(cat==='adultFemale') return 65;
-  if(cat==='child') return 80;
-  if(cat==='infant') return 85;
-  if(cat==='neonate') return 90;
+  if(cat==='adultBmi30') return 60;
+  if(cat==='adultBmi40') return 55;
+  if(cat==='adultBmi50') return 50;
+  if(cat==='adultBmi60') return 45;
   // auto
-  if(ageYrs<0.08) return 90;
-  if(ageYrs<1) return 85;
-  if(ageYrs<12) return 80;
+  if(ageYrs<0.08) return 85;
+  if(ageYrs<1) return 77.5;
+  if(ageYrs<12) return 72.5;
+  if(ageYrs<18) return 70;
   return sex==='female'?65:75;
 }
 
@@ -1356,7 +1403,7 @@ const navObserver = new IntersectionObserver(entries=>{
     document.querySelectorAll('.sideNav a').forEach(a=>a.classList.toggle('active', a.getAttribute('href') === '#'+entry.target.id));
   });
 },{rootMargin:'-25% 0px -65% 0px',threshold:0.01});
-['patientSetup','calcParams','ioMonitor','drugLogSec','infusionConverterSec','drugSearchSec','bicarbCalcSec','abgCompSec','decisionSupport'].forEach(id=>{const el=document.getElementById(id);if(el)navObserver.observe(el);});
+['patientSetup','ebvReference','bloodLossMopCount','calcParams','ioMonitor','drugLogSec','infusionConverterSec','drugSearchSec','bicarbCalcSec','abgCompSec','decisionSupport'].forEach(id=>{const el=document.getElementById(id);if(el)navObserver.observe(el);});
 
 function infusionDoseDrugs(){
   const seen=new Set();
