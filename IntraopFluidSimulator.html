@@ -273,7 +273,20 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
 .refResult,.infPreset{border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.045);padding:12px;transition:all .16s}.refResult:hover,.infPreset:hover{border-color:rgba(255,255,255,.26);background:rgba(255,255,255,.075)}
 .refName{font-size:15px;font-weight:900;color:#fff;text-transform:capitalize}.refMeta{font-size:11px;color:var(--accent2);font-family:var(--font-mono);margin:4px 0 6px}.refText{font-size:12px;color:#d4d4d8;line-height:1.5}.refActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.microBtn{height:30px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:#fff;font-size:11px;font-weight:800;padding:0 10px;cursor:pointer}.microBtn:hover{background:#fff;color:#000}
 .convOut{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}.convKpi{border:1px solid var(--border);background:rgba(255,255,255,.055);border-radius:16px;padding:12px}.convKpi b{display:block;font-size:22px;letter-spacing:-.04em}.convKpi span{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}.hintLine{font-size:11px;color:var(--muted);line-height:1.45;margin-top:9px}.quickFill{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.referenceGrid{display:grid;grid-template-columns:minmax(350px,.92fr) minmax(390px,1.08fr);gap:14px;align-items:start}
+.referenceGrid .sec-title{margin-top:20px}
+.refCompact.card{border-radius:16px}
+.refCompact .cardhead{padding:10px 14px;min-height:48px}
+.refCompact .cardhead h2{font-size:13px;line-height:1.2}
+.refCompact .cardbody{padding:12px 14px}
+.refCompact .fplan{gap:4px}
+.refCompact .frow{border-radius:8px;padding:6px 10px}
+.refCompact .frow .flabel{font-size:11px}
+.refCompact .frow .fval{font-size:12px;white-space:nowrap}
+.refCompact .alert{font-size:10.5px;line-height:1.45;padding:8px 10px}
+.mopRefImage{width:100%;max-width:620px;display:block;margin:0 auto;border-radius:10px;border:1px solid var(--border);background:#fff}
 @media(max-width:1050px){.nav-toggle{display:grid;place-items:center}.app-shell{display:block;padding:0 12px}.sideNav{position:fixed;z-index:250;top:66px;left:10px;bottom:10px;width:min(280px,88vw);transform:translateX(-115%);transition:transform .22s ease}.sideNav.open{transform:translateX(0)}.sideNavBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:220}.sideNavBackdrop.active{display:block}.searchGrid{grid-template-columns:1fr}.convOut{grid-template-columns:1fr}}
+@media(max-width:1050px){.referenceGrid{grid-template-columns:1fr}}
 
 </style>
 </head>
@@ -411,36 +424,42 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
 
 </div><!-- /grid2 -->
 
-<!-- ══ ESTIMATED BLOOD VOLUME REFERENCE ══ -->
-<div class="sec-title" id="ebvReference">Estimated Blood Volume Reference</div>
-<div class="card">
-  <div class="cardhead"><span class="icon">🩸</span><h2>Estimated Blood Volume by Patient Category</h2><span class="badge red">mL/kg</span></div>
-  <div class="cardbody">
-    <div class="fplan">
-      <div class="frow"><span class="flabel">Premature infants</span><span class="fval">90-100 mL/kg</span></div>
-      <div class="frow"><span class="flabel">Term newborns</span><span class="fval">80-90 mL/kg</span></div>
-      <div class="frow"><span class="flabel">Infants less than 1 year</span><span class="fval">75-80 mL/kg</span></div>
-      <div class="frow"><span class="flabel">1-12 years</span><span class="fval">70-75 mL/kg</span></div>
-      <div class="frow"><span class="flabel">12-18 years</span><span class="fval">70 mL/kg</span></div>
-      <div class="frow"><span class="flabel">Adult males</span><span class="fval">75 mL/kg</span></div>
-      <div class="frow"><span class="flabel">Adult females</span><span class="fval">65 mL/kg</span></div>
-      <div class="frow"><span class="flabel">Adults with BMI 30</span><span class="fval">60 mL/kg</span></div>
-      <div class="frow"><span class="flabel">Adults with BMI 40</span><span class="fval">55 mL/kg</span></div>
-      <div class="frow"><span class="flabel">Adults with BMI 50</span><span class="fval">50 mL/kg</span></div>
-      <div class="frow"><span class="flabel">Adults with BMI 60</span><span class="fval">45 mL/kg</span></div>
+<div class="referenceGrid">
+  <section>
+    <!-- ══ ESTIMATED BLOOD VOLUME REFERENCE ══ -->
+    <div class="sec-title" id="ebvReference">Estimated Blood Volume Reference</div>
+    <div class="card refCompact">
+      <div class="cardhead"><span class="icon">🩸</span><h2>Estimated Blood Volume by Patient Category</h2><span class="badge red">mL/kg</span></div>
+      <div class="cardbody">
+        <div class="fplan">
+          <div class="frow"><span class="flabel">Premature infants</span><span class="fval">90-100 mL/kg</span></div>
+          <div class="frow"><span class="flabel">Term newborns</span><span class="fval">80-90 mL/kg</span></div>
+          <div class="frow"><span class="flabel">Infants less than 1 year</span><span class="fval">75-80 mL/kg</span></div>
+          <div class="frow"><span class="flabel">1-12 years</span><span class="fval">70-75 mL/kg</span></div>
+          <div class="frow"><span class="flabel">12-18 years</span><span class="fval">70 mL/kg</span></div>
+          <div class="frow"><span class="flabel">Adult males</span><span class="fval">75 mL/kg</span></div>
+          <div class="frow"><span class="flabel">Adult females</span><span class="fval">65 mL/kg</span></div>
+          <div class="frow"><span class="flabel">Adults with BMI 30</span><span class="fval">60 mL/kg</span></div>
+          <div class="frow"><span class="flabel">Adults with BMI 40</span><span class="fval">55 mL/kg</span></div>
+          <div class="frow"><span class="flabel">Adults with BMI 50</span><span class="fval">50 mL/kg</span></div>
+          <div class="frow"><span class="flabel">Adults with BMI 60</span><span class="fval">45 mL/kg</span></div>
+        </div>
+        <div class="alert info" style="margin-top:10px;">OpenAnesthesia MABL PDF, Table 1. Range options use midpoints.</div>
+      </div>
     </div>
-    <div class="alert info" style="margin-top:12px;">Extracted from the supplied OpenAnesthesia MABL PDF, Table 1. Range-based calculator options use the midpoint unless a single value is listed.</div>
-  </div>
-</div>
+  </section>
 
-<!-- ══ BLOOD LOSS MOP COUNT REFERENCE ══ -->
-<div class="sec-title" id="bloodLossMopCount">Blood Loss Mop Count Reference</div>
-<div class="card">
-  <div class="cardhead"><span class="icon">🧽</span><h2>Visual Blood Loss by Gauze Saturation</h2><span class="badge orange">Figure 1</span></div>
-  <div class="cardbody">
-    <img src="ICU/blood_loss_mop_count.jpg" alt="Visual guide estimating blood loss by gauze size and percentage saturation" style="width:100%;max-width:760px;display:block;margin:0 auto;border-radius:12px;border:1px solid var(--border);background:#fff;">
-    <div class="alert info" style="margin-top:12px;">Extracted from the supplied OpenAnesthesia MABL PDF. Use as a visual adjunct to suction canister volume, swab weight, haemodynamics and serial Hb/Hct.</div>
-  </div>
+  <section>
+    <!-- ══ BLOOD LOSS MOP COUNT REFERENCE ══ -->
+    <div class="sec-title" id="bloodLossMopCount">Blood Loss Mop Count Reference</div>
+    <div class="card refCompact">
+      <div class="cardhead"><span class="icon">🧽</span><h2>Visual Blood Loss by Gauze Saturation</h2><span class="badge orange">Figure 1</span></div>
+      <div class="cardbody">
+        <img class="mopRefImage" src="ICU/blood_loss_mop_count.jpg" alt="Visual guide estimating blood loss by gauze size and percentage saturation">
+        <div class="alert info" style="margin-top:10px;">Use as a visual adjunct to suction canister volume, swab weight, haemodynamics and serial Hb/Hct.</div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <!-- ══ AI PATIENT IMPORT ══ -->
