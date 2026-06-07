@@ -312,6 +312,7 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
     <a href="#patientSetup"><b>👤</b>Patient setup</a>
     <a href="#ebvReference"><b>🩸</b>EBV reference</a>
     <a href="#bloodLossMopCount"><b>🧽</b>Mop count</a>
+    <a href="#qblSimulator"><b>🩸</b>QBL simulator</a>
     <a href="#aiImportSec"><b>🤖</b>AI import</a>
     <a href="#calcParams"><b>🧮</b>Calculated parameters</a>
     <a href="#ioMonitor"><b>💧</b>Hourly I/O</a>
@@ -822,6 +823,54 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
   </div>
 </div>
 
+
+<!-- ══ QUANTIFIED BLOOD LOSS / QBL ══ -->
+<div class="sec-title" id="qblSimulator">Quantified Blood Loss / QBL Simulator</div>
+<div class="grid2">
+  <div class="card">
+    <div class="cardhead"><span class="icon">🩸</span><h2>QBL Calculator</h2><span class="badge red">Gravimetric + suction audit</span></div>
+    <div class="cardbody">
+      <div class="rowInline3">
+        <div><label>Canister volume (mL)</label><input id="qblCanister" type="number" min="0" placeholder="e.g. 1500" oninput="calcQBL()"></div>
+        <div><label>Saline poured (mL)</label><input id="qblPoured" type="number" min="0" placeholder="e.g. 1000" oninput="calcQBL()"></div>
+        <div><label>Saline unused/returned (mL)</label><input id="qblUnused" type="number" min="0" placeholder="e.g. 400" oninput="calcQBL()"></div>
+      </div>
+      <div class="rowInline3">
+        <div><label>Soiled sponges weight (g)</label><input id="qblSoiledWt" type="number" min="0" placeholder="Total wet/soiled" oninput="calcQBL()"></div>
+        <div><label>Dry / wet baseline weight (g)</label><input id="qblDryWt" type="number" min="0" placeholder="Dry or pre-wet baseline" oninput="calcQBL()"></div>
+        <div><label>Other hidden blood (mL)</label><input id="qblHidden" type="number" min="0" placeholder="Drapes/floor/kick bucket" oninput="calcQBL()"></div>
+      </div>
+      <div class="convOut">
+        <div class="convKpi"><b id="qblSuctionBlood">—</b><span>Net suction blood</span></div>
+        <div class="convKpi"><b id="qblSpongeBlood">—</b><span>Sponge blood</span></div>
+        <div class="convKpi"><b id="qblTotal">—</b><span>Total QBL</span></div>
+        <div class="convKpi"><b id="qblPctEbv">—</b><span>% EBV</span></div>
+      </div>
+      <div class="quickFill">
+        <button class="microBtn" onclick="loadQBLExample()">Load PDF example</button>
+        <button class="microBtn" onclick="copyQBLToEBL()">Send QBL → measured EBL</button>
+        <button class="microBtn" onclick="copyQBLToFirstHour()">Send QBL → first I/O EBL</button>
+        <button class="microBtn" onclick="clearQBL()">Clear QBL</button>
+      </div>
+      <div id="qblClassBox" class="alert info" style="margin-top:10px;">Enter QBL values. Formula: total QBL = (canister − irrigation introduced) + (soiled sponges − baseline weight) + hidden blood.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span class="icon">📋</span><h2>QBL Reference Matrix</h2></div>
+    <div class="cardbody">
+      <div class="fplan">
+        <div class="frow"><span class="flabel">Small gauze / 4×4, 10×10 cm</span><span class="fval" style="font-size:12px;">50% 5 mL · 100% 10 mL · dripping 13 mL</span></div>
+        <div class="frow"><span class="flabel">Abdominal mop, 30×30 cm</span><span class="fval" style="font-size:12px;">50% 50 mL · 100% 100 mL · dripping 130 mL</span></div>
+        <div class="frow"><span class="flabel">Large laparotomy pad, ≈45×45 cm</span><span class="fval" style="font-size:12px;">50% ~75 mL · 100% ~150 mL · dripping ~180 mL</span></div>
+        <div class="frow highlight"><span class="flabel">Wet-baseline trap</span><span class="fval" style="font-size:12px;">Use wet baseline if mops were pre-wetted</span></div>
+      </div>
+      <div class="alert warn" style="margin-top:10px;">QBL should be trended every 15 min. If calculated QBL is low but patient has tachycardia, narrowing pulse pressure, MAP &lt;65 mmHg or poor urine output, search for hidden haemorrhage.</div>
+      <div class="alert info" style="margin-top:8px;">ATLS haemorrhage classes are scaled here to the patient’s calculated EBV, not fixed to a 70 kg adult.</div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ CLINICAL DECISION SUPPORT ══ -->
 <div class="sec-title" id="decisionSupport">Clinical Decision Support</div>
 <div class="grid3">
@@ -866,7 +915,7 @@ input:focus,select:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255
 
 <!-- ══ FOOTER NOTE ══ -->
 <div class="alert info" style="margin-top:20px;font-size:11px;">
-  <strong>Reference:</strong> Holliday-Segar 4/2/1 mL/kg/hr maintenance. MABL = EBV × (Hb₀ − HbT) / Hb₀. EBV values from the supplied OpenAnesthesia Maximum Allowable Blood Loss PDF, Table 1. Fasting deficit = maintenance × NPO hours. Third-space: minimal 1, moderate 4, moderate-high 6, major 8 mL/kg/hr. Sodium bicarbonate: mEq = 0.3 × kg × base deficit or 0.5 × kg × (target HCO₃⁻ − measured HCO₃⁻), commonly giving partial correction first. Respiratory compensation: Winter formula PaCO₂ = 1.5 × HCO₃⁻ + 8 ± 2 for metabolic acidosis; metabolic alkalosis expected PaCO₂ = 0.7 × HCO₃⁻ + 20 ± 5. This simulator is a decision-support tool only; clinical judgment supersedes all calculations.
+  <strong>Reference:</strong> Holliday-Segar 4/2/1 mL/kg/hr maintenance. MABL = EBV × (Hb₀ − HbT) / Hb₀. EBV values from the supplied OpenAnesthesia Maximum Allowable Blood Loss PDF, Table 1. Fasting deficit = maintenance × NPO hours. Third-space: minimal 1, moderate 4, moderate-high 6, major 8 mL/kg/hr. Sodium bicarbonate: mEq = 0.3 × kg × base deficit or 0.5 × kg × (target HCO₃⁻ − measured HCO₃⁻), commonly giving partial correction first. Respiratory compensation: Winter formula PaCO₂ = 1.5 × HCO₃⁻ + 8 ± 2 for metabolic acidosis; metabolic alkalosis expected PaCO₂ = 0.7 × HCO₃⁻ + 20 ± 5. QBL added from supplied KarthikMD Intraoperative QBL Reference: 1 g fluid weight = 1 mL blood; net suction blood = canister volume − irrigation introduced; total QBL = (canister − irrigation) + (soiled sponges − baseline weight); QBL interpretation should be body-weight/EBV adjusted and clinically correlated. This simulator is a decision-support tool only; clinical judgment supersedes all calculations.
 </div>
 
 </div><!-- /wrap -->
@@ -1423,7 +1472,66 @@ const navObserver = new IntersectionObserver(entries=>{
     document.querySelectorAll('.sideNav a').forEach(a=>a.classList.toggle('active', a.getAttribute('href') === '#'+entry.target.id));
   });
 },{rootMargin:'-25% 0px -65% 0px',threshold:0.01});
-['patientSetup','ebvReference','bloodLossMopCount','calcParams','ioMonitor','drugLogSec','infusionConverterSec','drugSearchSec','bicarbCalcSec','abgCompSec','decisionSupport'].forEach(id=>{const el=document.getElementById(id);if(el)navObserver.observe(el);});
+
+function qnum(id){return parseFloat(document.getElementById(id)?.value)||0;}
+function currentEBV(){
+  if(window.caseParams && Number.isFinite(caseParams.ebv) && caseParams.ebv>0) return caseParams.ebv;
+  const wt=parseFloat(document.getElementById('ptWt')?.value)||0;
+  if(!wt) return 0;
+  const sex=document.getElementById('ptSex')?.value||'male';
+  return wt*(sex==='female'?65:75);
+}
+function haemClassFromPct(pct){
+  if(!Number.isFinite(pct) || pct<=0) return {cls:'info',label:'No class',action:'Enter QBL values.'};
+  if(pct<15) return {cls:'ok',label:'Class I — mild (<15% EBV)',action:'Maintenance crystalloid; repeat QBL q15 min.'};
+  if(pct<30) return {cls:'warn',label:'Class II — moderate (15–30% EBV)',action:'Resuscitate; crossmatch PRBC; secure haemostasis.'};
+  if(pct<40) return {cls:'danger',label:'Class III — severe (30–40% EBV)',action:'Activate MTP; warm fluids; PRBC:FFP:platelets balanced resuscitation.'};
+  return {cls:'danger',label:'Class IV — life-threatening (>40% EBV)',action:'Full MTP and immediate surgical control.'};
+}
+function calcQBL(){
+  const can=qnum('qblCanister'), poured=qnum('qblPoured'), unused=qnum('qblUnused');
+  const soiled=qnum('qblSoiledWt'), dry=qnum('qblDryWt'), hidden=qnum('qblHidden');
+  const irrigation=Math.max(0,poured-unused);
+  const suction=Math.max(0,can-irrigation);
+  const sponge=Math.max(0,soiled-dry);
+  const total=suction+sponge+hidden;
+  const ebv=currentEBV();
+  const pct=ebv>0?(total/ebv*100):NaN;
+  const set=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=val;};
+  set('qblSuctionBlood', `${Math.round(suction)} mL`);
+  set('qblSpongeBlood', `${Math.round(sponge)} mL`);
+  set('qblTotal', `${Math.round(total)} mL`);
+  set('qblPctEbv', Number.isFinite(pct)?`${pct.toFixed(1)}%`:'—');
+  const h=haemClassFromPct(pct);
+  const box=document.getElementById('qblClassBox');
+  if(box){
+    box.className=`alert ${h.cls}`;
+    box.textContent=`${h.label}. ${h.action} Net irrigation introduced: ${Math.round(irrigation)} mL. EBV used: ${ebv?Math.round(ebv)+' mL':'enter/start case for EBV'}.`;
+  }
+  return {total,suction,sponge,pct,ebv};
+}
+function loadQBLExample(){
+  document.getElementById('qblCanister').value=1500;
+  document.getElementById('qblPoured').value=1000;
+  document.getElementById('qblUnused').value=400;
+  document.getElementById('qblSoiledWt').value='';
+  document.getElementById('qblDryWt').value='';
+  document.getElementById('qblHidden').value='';
+  calcQBL();
+}
+function clearQBL(){['qblCanister','qblPoured','qblUnused','qblSoiledWt','qblDryWt','qblHidden'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});calcQBL();}
+function copyQBLToEBL(){
+  const q=calcQBL();
+  const el=document.getElementById('measuredEBL');
+  if(el){el.value=Math.round(q.total);calcBalance();}
+}
+function copyQBLToFirstHour(){
+  const q=calcQBL();
+  const el=document.getElementById('hr0_ebl');
+  if(el){el.value=Math.round(q.total);calcBalance();}
+}
+
+['patientSetup','ebvReference','bloodLossMopCount','qblSimulator','calcParams','ioMonitor','drugLogSec','infusionConverterSec','drugSearchSec','bicarbCalcSec','abgCompSec','decisionSupport'].forEach(id=>{const el=document.getElementById(id);if(el)navObserver.observe(el);});
 
 function infusionDoseDrugs(){
   const seen=new Set();
