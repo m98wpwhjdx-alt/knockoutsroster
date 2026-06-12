@@ -7,22 +7,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500;700;800&amp;display=swap" rel="stylesheet"/>
 <style data-purpose="custom-animations-and-theme">
     :root {
-      --bg: #050505;
-      --text: #F8FAFC;
-      --muted: #AAB4C8;
-      --line: rgba(255, 255, 255, 0.12);
-      --cyan: #39D7FF;
-      --violet: #9B7CFF;
-      --orange: #FF8B2D;
-      --amber: #FFC44D;
-      --glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-      --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-      --glass-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      --bg: #000000;
+      --text: #F7F7F4;
+      --muted: #B8B8B0;
+      --line: rgba(255, 255, 255, 0.14);
+      --cyan: #CED3FF;
+      --violet: #878DCA;
+      --pink: #F1F1EC;
+      --amber: #FACC15;
+      --glass-bg: linear-gradient(150deg, rgba(8, 8, 8, 0.94), rgba(28, 28, 28, 0.88));
+      --glass-border: 1px solid rgba(255, 255, 255, 0.12);
+      --glass-shadow: 0 28px 90px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.07);
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      background-color: var(--bg);
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+        radial-gradient(circle at 50% -25%, rgba(34,211,238,.10), transparent 34%),
+        #000;
+      background-size: 42px 42px, 42px 42px, 100% 100%, 100% 100%;
       color: var(--text);
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
@@ -34,43 +39,34 @@
       z-index: -2;
       overflow: hidden;
       pointer-events: none;
-      background:
-        radial-gradient(circle at 50% -10%, rgba(255,139,45,.18), transparent 34%),
-        radial-gradient(circle at 90% 80%, rgba(57,215,255,.12), transparent 32%),
-        #050505;
+      background: #000;
     }
     .blob {
-      position: absolute;
-      filter: blur(58px) saturate(1.35);
-      border-radius: 9999px;
-      opacity: 0.68;
-      mix-blend-mode: screen;
-      will-change: transform, border-radius;
-      animation: float 14s ease-in-out infinite alternate, morph 9s ease-in-out infinite;
+      display: none;
     }
     .blob-1 {
       top: -12%; left: -12%; width: 55vw; height: 55vw;
       min-width: 420px; min-height: 420px;
-      background: radial-gradient(circle at 35% 35%, #ffcf6e 0%, var(--orange) 28%, rgba(255,139,45,.35) 52%, transparent 72%);
+      background: radial-gradient(circle at 35% 35%, rgba(245,245,240,.34) 0%, rgba(135,141,202,.26) 42%, transparent 72%);
       animation-delay: 0s, -2s;
     }
     .blob-2 {
       bottom: -24%; right: -14%; width: 64vw; height: 64vw;
       min-width: 460px; min-height: 460px;
-      background: radial-gradient(circle at 40% 40%, #79f4ff 0%, #3860FF 34%, rgba(56,96,255,.35) 56%, transparent 74%);
+      background: radial-gradient(circle at 40% 40%, #f2f2ee 0%, #9ca1d8 34%, rgba(156,161,216,.25) 56%, transparent 74%);
       animation-delay: -4s, -6s;
     }
     .blob-3 {
       top: 38%; left: 25%; width: 42vw; height: 42vw;
       min-width: 360px; min-height: 360px;
-      background: radial-gradient(circle at 50% 45%, var(--amber) 0%, rgba(255,139,45,.46) 44%, transparent 72%);
+      background: radial-gradient(circle at 50% 45%, rgba(255,255,255,.30) 0%, rgba(135,141,202,.24) 44%, transparent 72%);
       opacity: 0.42;
       animation-delay: -8s, -4s;
     }
     .blob-4 {
       top: 10%; right: 10%; width: 34vw; height: 34vw;
       min-width: 280px; min-height: 280px;
-      background: radial-gradient(circle at 40% 40%, rgba(155,124,255,.95), rgba(57,215,255,.32) 48%, transparent 72%);
+      background: radial-gradient(circle at 40% 40%, rgba(198,202,242,.60), rgba(255,255,255,.18) 48%, transparent 72%);
       opacity: .36;
       animation-delay: -10s, -1s;
     }
@@ -79,7 +75,7 @@
       inset: 0;
       z-index: -1;
       pointer-events: none;
-      opacity: .11;
+      opacity: .055;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.62'/%3E%3C/svg%3E");
     }
     @keyframes float {
@@ -97,8 +93,8 @@
       background: var(--glass-bg);
       border: var(--glass-border);
       box-shadow: var(--glass-shadow);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      backdrop-filter: blur(28px) saturate(1.15);
+      -webkit-backdrop-filter: blur(28px) saturate(1.15);
       border-radius: 1.5rem;
       position: relative;
       overflow: hidden;
@@ -108,22 +104,30 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background: linear-gradient(120deg, rgba(255,255,255,.13), transparent 18%, transparent 72%, rgba(255,255,255,.05));
-      opacity: .55;
+      background:
+        linear-gradient(115deg, rgba(255,255,255,.10), transparent 20%, transparent 70%, rgba(206,211,255,.12)),
+        linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      background-size: 100% 100%, 220% 100%;
+      opacity: .62;
+      animation: liquidSheen 8s ease-in-out infinite;
+    }
+    @keyframes liquidSheen {
+      0%, 100% { background-position: 0 0, -120% 0; }
+      50% { background-position: 0 0, 120% 0; }
     }
     .glass-card {
-      background: rgba(10, 10, 10, 0.62);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px);
+      background: linear-gradient(160deg, rgba(28, 28, 28, 0.78), rgba(4, 4, 4, 0.92));
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      backdrop-filter: blur(16px) saturate(1.1);
       transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
       position: relative;
       overflow: hidden;
     }
     .glass-card:hover {
-      transform: translateY(-5px) scale(1.01);
-      border-color: rgba(255, 139, 45, 0.44);
-      box-shadow: 0 14px 34px rgba(255, 139, 45, 0.16), 0 0 0 1px rgba(255,255,255,.04) inset;
-      background: rgba(15, 12, 10, .72);
+      transform: translateY(-4px);
+      border-color: rgba(245, 245, 240, 0.34);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(255,255,255,.07) inset;
+      background: linear-gradient(160deg, rgba(40, 40, 40, 0.94), rgba(7, 7, 7, 0.98));
     }
     .glass-card::after {
       content: "";
@@ -131,11 +135,120 @@
       left: -60%; top: -80%;
       width: 80%; height: 220%;
       transform: rotate(22deg);
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
       opacity: 0;
       transition: opacity .3s ease, left .75s ease;
     }
     .glass-card:hover::after { left: 120%; opacity: 1; }
+    .top-nav {
+      width: min(100%, 1160px);
+      margin: 0 auto;
+      min-height: 4.8rem;
+      border-radius: 1.8rem;
+      background: rgba(0, 0, 0, .86);
+      border: 1px solid rgba(255,255,255,.055);
+      box-shadow: 0 24px 80px rgba(0,0,0,.86), inset 0 1px 0 rgba(255,255,255,.04);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+    .nav-link {
+      color: rgba(255,255,255,.56);
+      font-size: .88rem;
+      font-weight: 800;
+      transition: color .2s ease, transform .2s ease;
+    }
+    .nav-link:hover {
+      color: rgba(255,255,255,.92);
+      transform: translateY(-1px);
+    }
+    .hero-stage {
+      min-height: clamp(620px, 74vh, 820px);
+      display: grid;
+      align-content: start;
+      justify-items: center;
+      text-align: center;
+      padding-top: clamp(1.4rem, 3.4vw, 2.8rem);
+    }
+    .hero-title {
+      max-width: 1040px;
+      font-size: 8rem;
+      line-height: .88;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+    .hero-title .gradient-word {
+      background: linear-gradient(95deg, #d8fbff 0%, #9bc5dc 34%, #907a9e 62%, #fb8fb3 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-copy {
+      max-width: 680px;
+      color: rgba(255,255,255,.66);
+      text-shadow: 0 1px 24px rgba(255,255,255,.08);
+    }
+    .hero-tools {
+      width: min(100%, 790px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 180px;
+      gap: .8rem;
+    }
+    .search-shell {
+      min-height: 3.9rem;
+      border-radius: .9rem;
+      background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
+      border: 1px solid rgba(255,255,255,.11);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 18px 60px rgba(0,0,0,.38);
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: 0 1rem;
+    }
+    .search-shell input {
+      background: transparent !important;
+      border: 0 !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+      min-height: auto !important;
+    }
+    .hero-button {
+      min-height: 3.9rem;
+      border-radius: .9rem;
+      background: rgba(255,255,255,.94);
+      color: #050505;
+      font-weight: 900;
+      box-shadow: 0 18px 50px rgba(255,255,255,.12);
+      transition: transform .2s ease, background .2s ease;
+    }
+    .hero-button:hover {
+      transform: translateY(-1px);
+      background: #fff;
+    }
+    .hero-actions {
+      width: min(100%, 760px);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: .65rem;
+    }
+    .hero-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.105);
+      background: rgba(255,255,255,.055);
+      color: rgba(255,255,255,.66);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055);
+    }
+    .feature-panel {
+      max-width: 920px;
+      margin-left: auto;
+      margin-right: auto;
+      transform: translateY(-5.5rem);
+      margin-bottom: -4.5rem;
+      border-radius: 1.6rem;
+      background: linear-gradient(160deg, rgba(35,35,35,.88), rgba(12,12,12,.96));
+      border-color: rgba(255,255,255,.10);
+      box-shadow: 0 34px 90px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.08);
+    }
     .fade-up {
       opacity: 0;
       transform: translateY(22px);
@@ -146,32 +259,23 @@
     .delay-200 { animation-delay: 200ms; }
     .delay-300 { animation-delay: 300ms; }
     .orb-card {
-      position: absolute;
-      inset: auto -8rem -9rem auto;
-      width: 23rem;
-      height: 23rem;
-      border-radius: 44% 56% 39% 61% / 49% 40% 60% 51%;
-      background: radial-gradient(circle at 35% 35%, rgba(255,196,77,.82), rgba(255,139,45,.44) 38%, rgba(57,215,255,.24) 62%, transparent 78%);
-      filter: blur(4px);
-      opacity: .45;
-      animation: slowSpin 15s linear infinite, morph 8s ease-in-out infinite;
-      pointer-events: none;
+      display: none;
     }
     @keyframes slowSpin { to { transform: rotate(360deg); } }
     .table-container::-webkit-scrollbar { height: 6px; }
     .table-container::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 4px; }
-    .table-container::-webkit-scrollbar-thumb { background: rgba(255, 139, 45, 0.45); border-radius: 4px; }
+    .table-container::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.55); border-radius: 4px; }
     #ledger th, #ledger td { white-space: nowrap; }
     #ledger th:first-child, #ledger td:first-child {
       position: sticky;
       left: 0;
-      background: rgba(8, 10, 15, .96);
+      background: rgba(2, 6, 23, .98);
       z-index: 10;
     }
     #ledger th {
       position: sticky;
       top: 0;
-      background: rgba(20, 20, 25, 0.92);
+      background: rgba(2, 6, 23, 0.94);
       backdrop-filter: blur(8px);
       z-index: 11;
     }
@@ -194,18 +298,12 @@
       header { gap: 1rem !important; }
       header .glass-panel { padding: 1.15rem !important; }
       h1 {
-        font-size: clamp(2.2rem, 12vw, 3.45rem) !important;
+        font-size: 3.4rem !important;
         line-height: .95 !important;
-        letter-spacing: -0.065em !important;
+        letter-spacing: 0 !important;
         overflow-wrap: anywhere;
       }
-      .orb-card {
-        width: 14rem;
-        height: 14rem;
-        right: -6rem;
-        bottom: -6rem;
-        opacity: .28;
-      }
+      .orb-card { display: none; }
       section.glass-panel, footer.glass-panel { padding: 1rem !important; }
       .table-container {
         max-height: 72vh;
@@ -229,17 +327,24 @@
       .radar-frame { height: 320px !important; margin-top: .25rem; }
       input, select, button { min-height: 46px; font-size: 16px !important; }
       #cards article { padding: 1rem !important; }
+      .top-nav { border-radius: 1.2rem; min-height: auto; }
+      .hero-stage { min-height: auto; padding-top: 1rem; padding-bottom: 5.5rem; }
+      .hero-tools { grid-template-columns: 1fr; }
+      .hero-actions { justify-content: flex-start; }
+      .feature-panel { transform: translateY(-4rem); margin-bottom: -3rem; }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .hero-title { font-size: 5.8rem; }
     }
 
     .glass-collapse {
       position: relative;
       overflow: hidden;
       background:
-        radial-gradient(circle at 18% 20%, rgba(255, 139, 45, .28), transparent 38%),
-        radial-gradient(circle at 90% 76%, rgba(57, 215, 255, .20), transparent 42%),
-        linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.025));
-      border: 1px solid rgba(255,255,255,.16);
-      box-shadow: 0 22px 52px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.10);
+        linear-gradient(135deg, rgba(34, 211, 238, .10), transparent 34%),
+        linear-gradient(145deg, rgba(15,23,42,.92), rgba(2,6,23,.84));
+      border: 1px solid rgba(148,163,184,.18);
+      box-shadow: 0 24px 64px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.08);
       backdrop-filter: blur(22px) saturate(1.25);
       -webkit-backdrop-filter: blur(22px) saturate(1.25);
       border-radius: 1.35rem;
@@ -247,8 +352,8 @@
     }
     .glass-collapse:hover {
       transform: translateY(-3px);
-      border-color: rgba(255,255,255,.28);
-      box-shadow: 0 28px 66px rgba(0,0,0,.38), 0 0 30px rgba(57,215,255,.08), inset 0 1px 0 rgba(255,255,255,.14);
+      border-color: rgba(216,219,247,.28);
+      box-shadow: 0 28px 72px rgba(0,0,0,.62), 0 0 34px rgba(216,219,247,.08), inset 0 1px 0 rgba(255,255,255,.12);
     }
     .glass-collapse summary {
       list-style: none;
@@ -269,14 +374,14 @@
       border-radius: 999px;
       display: grid;
       place-items: center;
-      background: rgba(255,255,255,.09);
-      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(15,23,42,.86);
+      border: 1px solid rgba(148,163,184,.20);
       color: rgba(255,255,255,.82);
       transition: transform .25s ease, background .25s ease;
     }
     .glass-collapse[open] summary::after {
       transform: translateY(-50%) rotate(180deg);
-      background: rgba(255,139,45,.18);
+      background: rgba(216,219,247,.14);
     }
     .glass-collapse .collapse-body {
       animation: fadeUp .28s ease forwards;
@@ -286,6 +391,186 @@
       z-index: 1;
     }
 
+    /* Reference palette: charcoal, black, white, silver, and soft periwinkle. */
+    .text-cyan-100, .text-cyan-200, .text-cyan-300, .text-cyan-400,
+    .text-blue-200, .text-blue-300, .text-blue-400,
+    .text-violet-200, .text-violet-300, .text-violet-400,
+    .text-purple-400, .text-fuchsia-200, .text-fuchsia-300,
+    .group:hover .group-hover\:text-cyan-300 {
+      color: #D8DBF7 !important;
+    }
+    .text-green-200, .text-green-400 { color: #E7E7E2 !important; }
+    .text-rose-100, .text-rose-200 { color: #F2DCDD !important; }
+    .bg-cyan-500\/5, .bg-cyan-500\/10,
+    .bg-blue-500\/5, .bg-blue-500\/10, .bg-blue-500\/15,
+    .bg-violet-500\/5, .bg-purple-500\/5,
+    .bg-fuchsia-500\/5, .bg-green-500\/5 {
+      background-color: rgba(216, 219, 247, .09) !important;
+    }
+    .bg-rose-500\/10, .bg-rose-500\/15, .bg-rose-400\/20 {
+      background-color: rgba(255, 255, 255, .10) !important;
+    }
+    .bg-blue-400\/20 {
+      background-color: rgba(216, 219, 247, .14) !important;
+    }
+    .border-cyan-400\/20, .border-cyan-400\/25, .border-cyan-400\/30, .border-cyan-400\/50,
+    .border-cyan-500\/15, .border-cyan-500\/20,
+    .border-blue-300\/30, .border-blue-400\/20, .border-blue-400\/25, .border-blue-500\/20,
+    .border-violet-400\/30, .border-violet-500\/20,
+    .border-purple-500\/20, .border-fuchsia-400\/30, .border-fuchsia-500\/20,
+    .border-green-400\/20, .border-green-500\/20 {
+      border-color: rgba(216, 219, 247, .28) !important;
+    }
+    .border-rose-300\/30, .border-rose-400\/20, .border-rose-400\/25 {
+      border-color: rgba(255, 255, 255, .22) !important;
+    }
+    .from-cyan-400 {
+      --tw-gradient-from: #F7F7F4 var(--tw-gradient-from-position) !important;
+      --tw-gradient-to: rgba(247,247,244,0) var(--tw-gradient-to-position) !important;
+      --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+    }
+    .via-blue-500 {
+      --tw-gradient-to: rgba(192,197,235,0) var(--tw-gradient-to-position) !important;
+      --tw-gradient-stops: var(--tw-gradient-from), #C0C5EB var(--tw-gradient-via-position), var(--tw-gradient-to) !important;
+    }
+    .to-purple-500, .to-violet-500 {
+      --tw-gradient-to: #7F85BD var(--tw-gradient-to-position) !important;
+    }
+    .selection\:bg-cyan-400\/30::selection {
+      background-color: rgba(216, 219, 247, .28) !important;
+    }
+
+    /* Roster and ledger palette inspired by the dark roster reference. */
+    #final-roster,
+    #ledger-section,
+    #history {
+      background:
+        radial-gradient(circle at 8% 0%, rgba(255,255,255,.055), transparent 34%),
+        linear-gradient(145deg, rgba(19,19,19,.97), rgba(8,8,8,.98));
+      border: 1px solid rgba(255,255,255,.13);
+      box-shadow: 0 34px 90px rgba(0,0,0,.58), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    #final-roster .glass-card,
+    #history .glass-collapse,
+    #previousRoster .bg-white\/5,
+    #cards .glass-card {
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255,255,255,.045), transparent 38%),
+        linear-gradient(155deg, rgba(19,19,19,.98), rgba(8,8,8,.98));
+      border-color: rgba(255,255,255,.12) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    #final-roster .glass-card:hover,
+    #cards .glass-card:hover,
+    #history .glass-collapse:hover {
+      border-color: rgba(61,231,242,.28) !important;
+      box-shadow: 0 20px 48px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    #final-roster .grid.mb-6 > .glass-card {
+      min-height: 170px;
+      padding: 1.6rem 1.5rem !important;
+      border-radius: 1.45rem !important;
+    }
+    #final-roster .grid.mb-6 {
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important;
+    }
+    #final-roster .grid.mb-6 > .glass-card:nth-child(-n+4) {
+      border-color: rgba(61,231,242,.14) !important;
+    }
+    #final-roster .grid.mb-6 > .glass-card:nth-child(5) {
+      background: linear-gradient(145deg, rgba(54,45,28,.58), rgba(12,12,9,.98));
+      border-color: rgba(250,204,21,.36) !important;
+    }
+    #final-roster .grid.mb-6 > .glass-card:nth-child(n+6) {
+      background: linear-gradient(145deg, rgba(59,34,28,.62), rgba(12,8,7,.98));
+      border-color: rgba(251,146,60,.40) !important;
+    }
+    #final-roster .grid.mb-6 > .glass-card span:first-child,
+    #cards h3 {
+      color: #F4F4F1 !important;
+    }
+    #final-roster .grid.mb-6 > .glass-card:nth-child(-n+4) .font-mono {
+      color: #38E4EF !important;
+    }
+    #final-roster .grid.mb-6 > .glass-card:nth-child(5) span:first-child,
+    #final-roster .grid.mb-6 > .glass-card:nth-child(5) .font-mono {
+      color: #FFD76A !important;
+    }
+    #final-roster .grid.mb-6 > .glass-card:nth-child(n+6) span:first-child,
+    #final-roster .grid.mb-6 > .glass-card:nth-child(n+6) .font-mono {
+      color: #FFB06A !important;
+    }
+    #final-roster .grid.mb-6 .rounded-full,
+    #previousRoster .rounded-full,
+    #cards .rounded-full:not(.bg-cyan-500\/10) {
+      background: rgba(255,255,255,.075) !important;
+      border: 1px solid rgba(255,255,255,.035);
+      color: #F5F5F2 !important;
+    }
+    #final-roster .grid.mb-6 .rounded-full {
+      display: block;
+      width: 100%;
+      white-space: nowrap;
+      padding: .65rem 1.05rem !important;
+    }
+    #final-roster > div > .grid:last-child .glass-card {
+      border-radius: 1rem !important;
+      background: rgba(255,255,255,.045);
+    }
+    #final-roster > div > .grid:last-child .glass-card:nth-child(1) {
+      border-color: rgba(74,222,128,.25) !important;
+      background: rgba(22,55,35,.28);
+    }
+    #final-roster > div > .grid:last-child .glass-card:nth-child(1) span:first-child { color: #4ADE80 !important; }
+    #final-roster > div > .grid:last-child .glass-card:nth-child(2) {
+      border-color: rgba(96,165,250,.25) !important;
+      background: rgba(30,41,71,.30);
+    }
+    #final-roster > div > .grid:last-child .glass-card:nth-child(2) span:first-child { color: #60A5FA !important; }
+    #final-roster > div > .grid:last-child .glass-card:nth-child(3) {
+      border-color: rgba(192,132,252,.28) !important;
+      background: rgba(50,30,65,.30);
+    }
+    #final-roster > div > .grid:last-child .glass-card:nth-child(3) span:first-child { color: #C084FC !important; }
+    #ledger-section .bg-cyan-500\/10 {
+      background: rgba(61,231,242,.075) !important;
+      border-color: rgba(61,231,242,.22) !important;
+      color: #B8F7FC !important;
+    }
+    #ledger-section .text-cyan-300,
+    #ledger-section .text-cyan-100,
+    #cards .text-cyan-300,
+    #cards .text-cyan-400,
+    #cards .group:hover .group-hover\:text-cyan-300 {
+      color: #38E4EF !important;
+    }
+    #ledger {
+      background: rgba(8,8,8,.72);
+    }
+    #ledger th {
+      background: rgba(12,12,12,.98) !important;
+      color: rgba(255,255,255,.66) !important;
+    }
+    #ledger td:first-child,
+    #ledger th:first-child {
+      background: rgba(10,10,10,.98) !important;
+    }
+    #ledger tbody tr:hover {
+      background: rgba(61,231,242,.055) !important;
+    }
+    #ledger td {
+      border-color: rgba(255,255,255,.07) !important;
+    }
+    #cards .glass-card {
+      border-radius: 1.45rem !important;
+    }
+    #cards .glass-card .bg-gradient-to-r {
+      background-image: linear-gradient(90deg, #39E5F2, #FFD76A, #FF9B66) !important;
+    }
+    #cards .text-amber-400 { color: #FFD76A !important; }
+    #cards .text-green-400 { color: #4ADE80 !important; }
+    #cards .text-red-400 { color: #FF8E98 !important; }
+
     @media print {
       body { background: white !important; color: black !important; }
       .bg-blobs, .grain, .no-print, .orb-card { display: none !important; }
@@ -294,7 +579,7 @@
     }
   </style>
 </head>
-<body class="antialiased selection:bg-orange-500/30">
+<body class="antialiased selection:bg-cyan-400/30">
 <div aria-hidden="true" class="bg-blobs">
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
@@ -304,19 +589,41 @@
 <div aria-hidden="true" class="grain"></div>
 
 <div class="max-w-7xl mx-auto px-3 py-4 sm:px-6 sm:py-8 lg:px-8 space-y-5 sm:space-y-8 relative z-10">
-<header class="grid lg:grid-cols-12 gap-6 items-stretch fade-up">
-  <div class="lg:col-span-12 glass-panel p-8 sm:p-12 relative group">
-    <div class="orb-card"></div>
-    <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-    <div class="relative z-10">
-      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 mb-6">Duty Equity Dashboard</span>
-      <h1 class="text-[2.35rem] sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] mb-4 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-100 to-gray-500">Knockouts of Post-Duty Era</h1>
-      <p class="text-sm sm:text-base text-gray-300 max-w-2xl leading-relaxed">A bright fresh-week view for the team: previous regular Duties and Till 7 counts are nullified, and the new count begins from the previous week with a clean, happy reset. Friday, Saturday/Sunday, ICU day-night, and leave-period counts remain unchanged.</p>
+<header class="hero-stage fade-up">
+  <nav class="top-nav flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 sm:px-7 py-4 mb-10 sm:mb-12">
+    <a class="text-xl font-black tracking-tight text-white" href="#">Knockouts</a>
+    <div class="flex flex-wrap items-center gap-4 sm:gap-7">
+      <a class="nav-link" href="#final-roster">Roster</a>
+      <a class="nav-link" href="#ledger-section">Ledger</a>
+      <a class="nav-link" href="#cards">Doctors</a>
+      <a class="nav-link" href="#history">History</a>
+    </div>
+  </nav>
+  <div class="w-full flex flex-col items-center">
+    <p class="text-xs sm:text-sm uppercase tracking-[0.18em] font-black text-white/48 mb-7">Duty Equity Dashboard</p>
+    <h1 class="hero-title font-black mb-6">
+      <span class="gradient-word">Knockouts</span> of<br class="hidden sm:block"/> Post-Duty Era
+    </h1>
+    <p class="hero-copy text-base sm:text-lg font-semibold leading-relaxed mb-9">A clean, high-contrast roster view with fresh Duties and Till 7 counts, while weekend, ICU, and leave-period history stays intact.</p>
+    <div class="hero-tools no-print mb-4">
+      <div class="search-shell">
+        <span class="text-white/45 text-xl" aria-hidden="true">⌕</span>
+        <input class="w-full text-sm font-bold text-white outline-none placeholder-white/42" id="search" placeholder="Search doctor..." type="text"/>
+      </div>
+      <button class="hero-button text-sm" onclick="document.querySelector('#cards')?.scrollIntoView({behavior:'smooth'})">Find Doctor</button>
+    </div>
+    <div class="hero-actions no-print">
+      <select class="hero-chip px-4 py-2 text-xs font-bold outline-none appearance-none cursor-pointer" id="sort">
+        <option class="bg-gray-950" value="totalLoad">Sort: total workload</option><option class="bg-gray-950" value="duties">Sort: duties</option><option class="bg-gray-950" value="friday">Sort: Friday</option><option class="bg-gray-950" value="weekend">Sort: weekend</option><option class="bg-gray-950" value="icuTotal">Sort: ICU total</option><option class="bg-gray-950" value="till7">Sort: till 7</option><option class="bg-gray-950" value="balanceScore">Sort: deviation</option>
+      </select>
+      <button class="hero-chip px-4 py-2 text-xs font-bold" onclick="downloadCsv()">Download CSV</button>
+      <button class="hero-chip px-4 py-2 text-xs font-bold" onclick="window.print()">Export PDF</button>
+      <span class="hero-chip px-4 py-2 text-xs font-bold">08 Jun - 14 Jun</span>
     </div>
   </div>
 </header>
 
-<section class="glass-panel p-6 sm:p-8 fade-up delay-100">
+<section class="glass-panel feature-panel p-6 sm:p-8 fade-up delay-100" id="final-roster">
   <div class="relative z-10">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
       <div>
@@ -330,9 +637,9 @@
       <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Tuesday</span><span class="font-mono text-xs text-cyan-400 mb-3">09 Jun</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Vamshi</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Aswin</div></div></div>
       <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Wednesday</span><span class="font-mono text-xs text-cyan-400 mb-3">10 Jun</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Aditi</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Aman</div></div></div>
       <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px]"><span class="text-sm font-bold text-gray-300">Thursday</span><span class="font-mono text-xs text-cyan-400 mb-3">11 Jun</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Manju</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Vamshi</div></div></div>
-      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px] border-amber-500/30 bg-amber-500/5"><span class="text-sm font-bold text-amber-300">Friday</span><span class="font-mono text-xs text-amber-400 mb-3">12 Jun</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Aswin</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Aman</div></div></div>
-      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px] border-orange-500/30 bg-orange-500/5"><span class="text-sm font-bold text-orange-300">Saturday</span><span class="font-mono text-xs text-orange-400 mb-3">13 Jun</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Aman</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Devendra</div></div></div>
-      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px] border-orange-500/30 bg-orange-500/5"><span class="text-sm font-bold text-orange-300">Sunday</span><span class="font-mono text-xs text-orange-400 mb-3">14 Jun</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Sudip</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Manju</div></div></div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px] border-cyan-400/30 bg-cyan-500/5"><span class="text-sm font-bold text-cyan-200">Friday</span><span class="font-mono text-xs text-cyan-300 mb-3">12 Jun</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Aswin</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Aman</div></div></div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px] border-violet-400/30 bg-violet-500/5"><span class="text-sm font-bold text-violet-200">Saturday</span><span class="font-mono text-xs text-violet-300 mb-3">13 Jun</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Aman</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Devendra</div></div></div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col min-h-[142px] border-fuchsia-400/30 bg-fuchsia-500/5"><span class="text-sm font-bold text-fuchsia-200">Sunday</span><span class="font-mono text-xs text-fuchsia-300 mb-3">14 Jun</span><div class="space-y-2 mt-auto"><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-white">24h · Sudip</div><div class="bg-white/5 rounded-full px-3 py-1.5 text-xs font-bold text-gray-300">Till 7 · Manju</div></div></div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <div class="glass-card rounded-xl p-4 flex justify-between items-center bg-green-500/5 border-green-500/20"><span class="text-xs font-bold tracking-widest text-green-400 uppercase">ICU Day</span><span class="font-bold text-white">Sharmila</span></div>
@@ -342,21 +649,12 @@
   </div>
 </section>
 
-<div class="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4 fade-up delay-200 no-print">
-  <input class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500/50 focus:border-transparent outline-none transition-all placeholder-gray-500" id="search" placeholder="Search doctor..." type="text"/>
-  <select class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500/50 outline-none appearance-none cursor-pointer" id="sort">
-    <option class="bg-gray-900" value="totalLoad">Sort: total workload</option><option class="bg-gray-900" value="duties">Sort: duties</option><option class="bg-gray-900" value="friday">Sort: Friday</option><option class="bg-gray-900" value="weekend">Sort: weekend</option><option class="bg-gray-900" value="icuTotal">Sort: ICU total</option><option class="bg-gray-900" value="till7">Sort: till 7</option><option class="bg-gray-900" value="balanceScore">Sort: deviation</option>
-  </select>
-  <button class="w-full bg-white/5 border border-white/10 text-cyan-100 font-bold rounded-xl px-4 py-3 text-sm hover:bg-cyan-500/10 hover:border-cyan-400/30 transition-colors" onclick="downloadCsv()">Download CSV</button>
-  <button class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-black font-bold rounded-xl px-4 py-3 text-sm hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(255,139,45,0.3)]" onclick="window.print()">Export / Print PDF</button>
-</div>
-
-<section class="glass-panel p-6 fade-up delay-300">
+<section class="glass-panel p-6 fade-up delay-300" id="ledger-section">
   <div class="relative z-10">
     <h2 class="text-xl font-bold tracking-tight mb-4">Detailed Duty Ledger</h2>
     <div class="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-4 mb-6 text-sm text-cyan-100"><strong class="text-cyan-300">Note:</strong> Previous Duties, Till 7, and Friday counts are nullified. Fresh counts start from the previous week. Friday count includes only 24-hour duty; Friday till-7 is included under Till 7. Sun T7 separately counts Sunday till-7 duties from 17 May 2026 onward.</div>
     <div class="table-container overflow-x-auto rounded-xl border border-white/10">
-      <table class="w-full text-left text-sm" id="ledger"><thead class="text-xs uppercase tracking-wider text-gray-400"><tr><th class="p-4 font-bold border-b border-white/10">Doctor</th><th class="p-4 font-bold border-b border-white/10">Fri</th><th class="p-4 font-bold border-b border-white/10">Sat</th><th class="p-4 font-bold border-b border-white/10">Sun</th><th class="p-4 font-bold border-b border-white/10">ICU D</th><th class="p-4 font-bold border-b border-white/10">ICU N</th><th class="p-4 font-bold border-b border-white/10">Leave Emerg.</th><th class="p-4 font-bold border-b border-white/10">Leave ICU</th><th class="p-4 font-bold border-b border-white/10">Duties</th><th class="p-4 font-bold border-b border-white/10">Till 7</th><th class="p-4 font-bold border-b border-white/10">Sun T7</th><th class="p-4 font-bold border-b border-white/10 text-orange-400">Total</th><th class="p-4 font-bold border-b border-white/10">Δ Mean</th></tr></thead><tbody class="divide-y divide-white/5 text-gray-300"></tbody></table>
+      <table class="w-full text-left text-sm" id="ledger"><thead class="text-xs uppercase tracking-wider text-gray-400"><tr><th class="p-4 font-bold border-b border-white/10">Doctor</th><th class="p-4 font-bold border-b border-white/10">Fri</th><th class="p-4 font-bold border-b border-white/10">Sat</th><th class="p-4 font-bold border-b border-white/10">Sun</th><th class="p-4 font-bold border-b border-white/10">ICU D</th><th class="p-4 font-bold border-b border-white/10">ICU N</th><th class="p-4 font-bold border-b border-white/10">Leave Emerg.</th><th class="p-4 font-bold border-b border-white/10">Leave ICU</th><th class="p-4 font-bold border-b border-white/10">Duties</th><th class="p-4 font-bold border-b border-white/10">Till 7</th><th class="p-4 font-bold border-b border-white/10">Sun T7</th><th class="p-4 font-bold border-b border-white/10 text-cyan-300">Total</th><th class="p-4 font-bold border-b border-white/10">Δ Mean</th></tr></thead><tbody class="divide-y divide-white/5 text-gray-300"></tbody></table>
     </div>
     <p class="mt-3 text-xs text-gray-500 sm:hidden">Swipe horizontally to view the complete ledger.</p>
   </div>
@@ -376,7 +674,7 @@
     <div class="p-5 space-y-5" id="drawerBody"></div>
   </aside>
 </div>
-<footer class="glass-panel p-6 sm:p-8 fade-up delay-300">
+<footer class="glass-panel p-6 sm:p-8 fade-up delay-300" id="history">
   <div class="relative z-10">
     <div class="flex flex-col sm:flex-row justify-between gap-4 mb-5"><div><h2 class="text-xl font-bold tracking-tight">Previous Rosters</h2><p class="text-xs text-gray-400">Collapsible week-wise reference cards.</p></div><div class="font-mono text-xs font-bold text-gray-300 bg-white/5 border border-white/10 px-3 py-2 rounded-full self-start">04 May 2026 – 07 Jun 2026</div></div>
     <div id="previousRoster" class="grid grid-cols-1 gap-3"></div>
@@ -421,11 +719,11 @@
     function stripLeadCount(text){return String(text||'').replace(/^\d+(?:\.\d+)?\s*/,'').trim();}
     function leaveCell(count,text,tone){const badge=tone==='icu'?'bg-blue-500/15 border-blue-400/25 text-blue-200':'bg-rose-500/15 border-rose-400/25 text-rose-200';return `<div class="flex items-center gap-2 min-w-[12rem]" title="${esc(text)}"><span class="shrink-0 inline-flex items-center justify-center min-w-6 h-6 rounded-full border text-[11px] font-black ${badge}">${fmt(count)}</span><span class="truncate text-xs">${esc(stripLeadCount(text)||'-')}</span></div>`;}
     function cardLeaveLine(label,count,text,tone){const styles=tone==='icu'?{box:'bg-blue-500/10 border-blue-400/25',chip:'bg-blue-400/20 border-blue-300/30 text-blue-100',label:'text-blue-200'}:{box:'bg-rose-500/10 border-rose-400/25',chip:'bg-rose-400/20 border-rose-300/30 text-rose-100',label:'text-rose-200'};return `<div class="flex items-center gap-2 rounded-xl border ${styles.box} px-3 py-2" title="${esc(text)}"><span class="shrink-0 inline-flex items-center justify-center min-w-7 h-7 rounded-full border ${styles.chip} font-mono text-xs font-black">${fmt(count)}</span><div class="min-w-0"><span class="block text-[10px] uppercase tracking-widest font-black ${styles.label} leading-none mb-1">${esc(label)}</span><span class="block text-xs sm:text-[13px] font-bold text-gray-100 truncate">${esc(stripLeadCount(text)||'-')}</span></div></div>`;}
-    function renderCards(){el('#cards').innerHTML=current.map((d,i)=>`<article class="glass-card p-5 rounded-2xl cursor-pointer relative group ${d.doctor===active?'border-orange-500/50 shadow-[0_0_20px_rgba(255,139,45,0.2)] bg-orange-500/5':''}" onclick="active='${esc(d.doctor)}';drawAll();renderCards();openDoctorDetails('${esc(d.doctor)}');"><div class="absolute -right-4 -top-4 w-16 h-16 bg-gradient-to-br from-orange-500/20 to-transparent rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div><div class="flex justify-between items-start mb-3 relative z-10"><h3 class="text-lg font-black tracking-tight">${esc(d.doctor)}</h3><span class="font-mono text-xs font-bold text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded">#${i+1}</span></div><div class="flex flex-wrap gap-2 mb-4 relative z-10"><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Load ${fmt(d.totalLoad)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Fri ${fmt(d.friday)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Wknd ${fmt(d.weekend)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">ICU ${fmt(d.icuTotal)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Till7 ${fmt(d.till7)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">SunT7 ${fmt(d.sundayTill7||0)}</span></div><div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mb-3 relative z-10"><div class="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 rounded-full transition-all duration-500" style="width:${Math.max(4,d.totalLoad/maxLoad*100)}%"></div></div><div class="relative z-10 space-y-2"><p class="font-bold text-sm ${cls(d.balanceScore)}">Δ ${fmt(d.balanceScore)} vs mean</p><div class="grid grid-cols-1 gap-2">${cardLeaveLine('Leave Emerg.',d.leaveEmergency,d.leaveEmergencyText,'emergency')}${cardLeaveLine('Leave ICU',d.icuLeave,d.icuLeaveText,'icu')}</div></div></article>`).join('');}
-    function renderTable(){el('#ledger tbody').innerHTML=current.map(d=>`<tr class="hover:bg-white/5 transition-colors group"><td class="p-3 border-b border-white/5 font-bold group-hover:text-orange-400 transition-colors">${esc(d.doctor)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.friday)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.saturday)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.sunday)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.dayICU)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.nightICU)}</td><td class="p-3 border-b border-white/5">${leaveCell(d.leaveEmergency,d.leaveEmergencyText,'emergency')}</td><td class="p-3 border-b border-white/5">${leaveCell(d.icuLeave,d.icuLeaveText,'icu')}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.duties)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.till7)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.sundayTill7||0)}</td><td class="p-3 border-b border-white/5 font-mono font-bold text-orange-400">${fmt(d.totalLoad)}</td><td class="p-3 border-b border-white/5 font-mono text-xs ${cls(d.balanceScore)}">${fmt(d.balanceScore)}</td></tr>`).join('');}
-    function detailMetric(label,value,tone='cyan'){const colors={cyan:'text-cyan-200 border-cyan-400/20 bg-cyan-500/10',orange:'text-orange-200 border-orange-400/20 bg-orange-500/10',green:'text-green-200 border-green-400/20 bg-green-500/10',blue:'text-blue-200 border-blue-400/20 bg-blue-500/10',rose:'text-rose-200 border-rose-400/20 bg-rose-500/10'};return `<div class="rounded-xl border ${colors[tone]||colors.cyan} p-3"><span class="block text-[10px] uppercase tracking-widest font-bold opacity-75 mb-1">${esc(label)}</span><b class="font-mono text-lg">${esc(value)}</b></div>`;}
+    function renderCards(){el('#cards').innerHTML=current.map((d,i)=>`<article class="glass-card p-5 rounded-2xl cursor-pointer relative group ${d.doctor===active?'border-cyan-400/50 shadow-[0_0_24px_rgba(216,219,247,0.20)] bg-cyan-500/5':''}" onclick="active='${esc(d.doctor)}';drawAll();renderCards();openDoctorDetails('${esc(d.doctor)}');"><div class="absolute -right-4 -top-4 w-16 h-16 bg-gradient-to-br from-cyan-400/20 to-transparent rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div><div class="flex justify-between items-start mb-3 relative z-10"><h3 class="text-lg font-black tracking-tight">${esc(d.doctor)}</h3><span class="font-mono text-xs font-bold text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded">#${i+1}</span></div><div class="flex flex-wrap gap-2 mb-4 relative z-10"><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Load ${fmt(d.totalLoad)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Fri ${fmt(d.friday)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Wknd ${fmt(d.weekend)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">ICU ${fmt(d.icuTotal)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">Till7 ${fmt(d.till7)}</span><span class="text-[10px] font-mono font-bold bg-white/5 border border-white/10 px-2 py-1 rounded-full text-gray-300">SunT7 ${fmt(d.sundayTill7||0)}</span></div><div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mb-3 relative z-10"><div class="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 rounded-full transition-all duration-500" style="width:${Math.max(4,d.totalLoad/maxLoad*100)}%"></div></div><div class="relative z-10 space-y-2"><p class="font-bold text-sm ${cls(d.balanceScore)}">Δ ${fmt(d.balanceScore)} vs mean</p><div class="grid grid-cols-1 gap-2">${cardLeaveLine('Leave Emerg.',d.leaveEmergency,d.leaveEmergencyText,'emergency')}${cardLeaveLine('Leave ICU',d.icuLeave,d.icuLeaveText,'icu')}</div></div></article>`).join('');}
+    function renderTable(){el('#ledger tbody').innerHTML=current.map(d=>`<tr class="hover:bg-white/5 transition-colors group"><td class="p-3 border-b border-white/5 font-bold group-hover:text-cyan-300 transition-colors">${esc(d.doctor)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.friday)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.saturday)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.sunday)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.dayICU)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.nightICU)}</td><td class="p-3 border-b border-white/5">${leaveCell(d.leaveEmergency,d.leaveEmergencyText,'emergency')}</td><td class="p-3 border-b border-white/5">${leaveCell(d.icuLeave,d.icuLeaveText,'icu')}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.duties)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.till7)}</td><td class="p-3 border-b border-white/5 font-mono text-xs">${fmt(d.sundayTill7||0)}</td><td class="p-3 border-b border-white/5 font-mono font-bold text-cyan-300">${fmt(d.totalLoad)}</td><td class="p-3 border-b border-white/5 font-mono text-xs ${cls(d.balanceScore)}">${fmt(d.balanceScore)}</td></tr>`).join('');}
+    function detailMetric(label,value,tone='cyan'){const colors={cyan:'text-cyan-200 border-cyan-400/20 bg-cyan-500/10',green:'text-green-200 border-green-400/20 bg-green-500/10',blue:'text-blue-200 border-blue-400/20 bg-blue-500/10',rose:'text-rose-200 border-rose-400/20 bg-rose-500/10'};return `<div class="rounded-xl border ${colors[tone]||colors.cyan} p-3"><span class="block text-[10px] uppercase tracking-widest font-bold opacity-75 mb-1">${esc(label)}</span><b class="font-mono text-lg">${esc(value)}</b></div>`;}
     function detailRow(label,value){return `<div class="flex items-start justify-between gap-4 py-2 border-b border-white/5"><span class="text-xs uppercase tracking-widest text-gray-500 font-bold">${esc(label)}</span><span class="text-sm text-gray-200 text-right">${esc(value||'-')}</span></div>`;}
-    function openDoctorDetails(name){const d=DATA.find(x=>x.doctor===name);if(!d)return;active=d.doctor;drawAll();renderCards();el('#drawerName').textContent=d.doctor;el('#drawerBody').innerHTML=`<div class="grid grid-cols-2 gap-3">${detailMetric('Total load',fmt(d.totalLoad),'orange')}${detailMetric('Delta mean',fmt(d.balanceScore),Math.abs(d.balanceScore)<1?'cyan':d.balanceScore>0?'rose':'green')}${detailMetric('Duties',fmt(d.duties),'cyan')}${detailMetric('Till 7',fmt(d.till7),'blue')}${detailMetric('Friday',fmt(d.friday),'orange')}${detailMetric('Sun T7',fmt(d.sundayTill7||0),'green')}</div><section class="rounded-2xl border border-white/10 bg-white/5 p-4"><h3 class="text-sm font-black tracking-tight mb-3">Duty Breakdown</h3>${detailRow('Saturday',fmt(d.saturday))}${detailRow('Sunday',fmt(d.sunday))}${detailRow('ICU Day',fmt(d.dayICU))}${detailRow('ICU Night',fmt(d.nightICU))}${detailRow('ICU Total',fmt(d.icuTotal))}${detailRow('Leave Emerg.',fmt(d.leaveEmergency))}${detailRow('Leave ICU',fmt(d.icuLeave))}</section><section class="rounded-2xl border border-white/10 bg-white/5 p-4"><h3 class="text-sm font-black tracking-tight mb-3">Leave Duty Dates</h3>${detailRow('Emergency',d.leaveEmergencyText)}${detailRow('ICU',d.icuLeaveText)}</section>`;const drawer=el('#doctorDrawer');drawer.classList.remove('hidden');drawer.setAttribute('aria-hidden','false');}
+    function openDoctorDetails(name){const d=DATA.find(x=>x.doctor===name);if(!d)return;active=d.doctor;drawAll();renderCards();el('#drawerName').textContent=d.doctor;el('#drawerBody').innerHTML=`<div class="grid grid-cols-2 gap-3">${detailMetric('Total load',fmt(d.totalLoad),'cyan')}${detailMetric('Delta mean',fmt(d.balanceScore),Math.abs(d.balanceScore)<1?'cyan':d.balanceScore>0?'rose':'green')}${detailMetric('Duties',fmt(d.duties),'cyan')}${detailMetric('Till 7',fmt(d.till7),'blue')}${detailMetric('Friday',fmt(d.friday),'blue')}${detailMetric('Sun T7',fmt(d.sundayTill7||0),'green')}</div><section class="rounded-2xl border border-white/10 bg-white/5 p-4"><h3 class="text-sm font-black tracking-tight mb-3">Duty Breakdown</h3>${detailRow('Saturday',fmt(d.saturday))}${detailRow('Sunday',fmt(d.sunday))}${detailRow('ICU Day',fmt(d.dayICU))}${detailRow('ICU Night',fmt(d.nightICU))}${detailRow('ICU Total',fmt(d.icuTotal))}${detailRow('Leave Emerg.',fmt(d.leaveEmergency))}${detailRow('Leave ICU',fmt(d.icuLeave))}</section><section class="rounded-2xl border border-white/10 bg-white/5 p-4"><h3 class="text-sm font-black tracking-tight mb-3">Leave Duty Dates</h3>${detailRow('Emergency',d.leaveEmergencyText)}${detailRow('ICU',d.icuLeaveText)}</section>`;const drawer=el('#doctorDrawer');drawer.classList.remove('hidden');drawer.setAttribute('aria-hidden','false');}
     function closeDoctorDetails(){const drawer=el('#doctorDrawer');drawer.classList.add('hidden');drawer.setAttribute('aria-hidden','true');}
     function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;}
     function downloadCsv(){const headers=['Doctor','Fri','Sat','Sun','ICU D','ICU N','Leave Emerg Count','Leave Emerg Dates','Leave ICU Count','Leave ICU Dates','Duties','Till 7','Sun T7','Total','Delta Mean'];const rows=current.map(d=>[d.doctor,fmt(d.friday),fmt(d.saturday),fmt(d.sunday),fmt(d.dayICU),fmt(d.nightICU),fmt(d.leaveEmergency),d.leaveEmergencyText,fmt(d.icuLeave),d.icuLeaveText,fmt(d.duties),fmt(d.till7),fmt(d.sundayTill7||0),fmt(d.totalLoad),fmt(d.balanceScore)]);const csv=[headers,...rows].map(row=>row.map(csvCell).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='knockouts-duty-ledger.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}
@@ -473,7 +771,7 @@
     function fit(c){const r=c.parentElement.getBoundingClientRect(),dpr=window.devicePixelRatio||1;c.width=r.width*dpr;c.height=r.height*dpr;const x=c.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);return [x,r.width,r.height];}
     function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
     let frameT=0;
-    function drawBar(){const c=el('#bar');if(!c)return;const [ctx,w,h]=fit(c);frameT+=0.015;ctx.clearRect(0,0,w,h);const pad=40,bw=(w-pad*1.5)/DATA.length*0.7,gap=(w-pad*1.5)/DATA.length*0.3;ctx.font='600 10px Inter';ctx.fillStyle='rgba(255,255,255,0.4)';ctx.textAlign='right';ctx.textBaseline='middle';for(let i=0;i<=4;i++){let y=h-pad-(h-pad*1.5)*i/4;ctx.fillStyle='rgba(255,255,255,0.05)';ctx.fillRect(pad,y,w-pad,1);ctx.fillStyle='rgba(255,255,255,0.4)';ctx.fillText(fmt(maxLoad*i/4),pad-10,y);}let meanY=h-pad-(h-pad*1.5)*(mean/maxLoad);ctx.strokeStyle='rgba(155, 124, 255, 0.7)';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad,meanY);ctx.lineTo(w,meanY);ctx.stroke();ctx.setLineDash([]);DATA.forEach((d,i)=>{let x=pad+i*(bw+gap)+gap/2,y=h-pad-(h-pad*1.5)*d.totalLoad/maxLoad;let grad=ctx.createLinearGradient(0,y,0,h-pad);let isActive=d.doctor===active;const shimmer=(Math.sin(frameT+i*.5)+1)/2;grad.addColorStop(0,isActive?'#FF8B2D':`rgba(${57+shimmer*80},${215},255,1)`);grad.addColorStop(1,isActive?'rgba(255,139,45,0.22)':'rgba(57,215,255,0.18)');ctx.fillStyle=grad;roundRect(ctx,x,y,bw,h-pad-y,5);if(isActive){ctx.shadowColor='rgba(255,139,45,0.65)';ctx.shadowBlur=18;}ctx.fill();ctx.shadowBlur=0;ctx.save();ctx.translate(x+bw/2,h-pad+15);ctx.rotate(-Math.PI/4);ctx.fillStyle=isActive?'#FFF':'rgba(255,255,255,0.6)';ctx.textAlign='right';ctx.textBaseline='middle';ctx.font=isActive?'bold 10px Inter':'600 10px Inter';ctx.fillText(d.doctor.replace('Dr. ',''),0,0);ctx.restore();});}
+    function drawBar(){const c=el('#bar');if(!c)return;const [ctx,w,h]=fit(c);frameT+=0.015;ctx.clearRect(0,0,w,h);const pad=40,bw=(w-pad*1.5)/DATA.length*0.7,gap=(w-pad*1.5)/DATA.length*0.3;ctx.font='600 10px Inter';ctx.fillStyle='rgba(255,255,255,0.4)';ctx.textAlign='right';ctx.textBaseline='middle';for(let i=0;i<=4;i++){let y=h-pad-(h-pad*1.5)*i/4;ctx.fillStyle='rgba(255,255,255,0.05)';ctx.fillRect(pad,y,w-pad,1);ctx.fillStyle='rgba(255,255,255,0.4)';ctx.fillText(fmt(maxLoad*i/4),pad-10,y);}let meanY=h-pad-(h-pad*1.5)*(mean/maxLoad);ctx.strokeStyle='rgba(216, 219, 247, 0.55)';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad,meanY);ctx.lineTo(w,meanY);ctx.stroke();ctx.setLineDash([]);DATA.forEach((d,i)=>{let x=pad+i*(bw+gap)+gap/2,y=h-pad-(h-pad*1.5)*d.totalLoad/maxLoad;let grad=ctx.createLinearGradient(0,y,0,h-pad);let isActive=d.doctor===active;const shimmer=(Math.sin(frameT+i*.5)+1)/2;grad.addColorStop(0,isActive?'#D8DBF7':`rgba(${200+shimmer*34},${202+shimmer*32},${224+shimmer*24},1)`);grad.addColorStop(1,isActive?'rgba(127,133,189,0.24)':'rgba(216,219,247,0.18)');ctx.fillStyle=grad;roundRect(ctx,x,y,bw,h-pad-y,5);if(isActive){ctx.shadowColor='rgba(216,219,247,0.46)';ctx.shadowBlur=18;}ctx.fill();ctx.shadowBlur=0;ctx.save();ctx.translate(x+bw/2,h-pad+15);ctx.rotate(-Math.PI/4);ctx.fillStyle=isActive?'#FFF':'rgba(255,255,255,0.6)';ctx.textAlign='right';ctx.textBaseline='middle';ctx.font=isActive?'bold 10px Inter':'600 10px Inter';ctx.fillText(d.doctor.replace('Dr. ',''),0,0);ctx.restore();});}
     function drawRadar(){
       const c=el('#radar'); if(!c) return;
       const [ctx,w,h]=fit(c); ctx.clearRect(0,0,w,h);
@@ -518,11 +816,11 @@
       });
       ctx.closePath();
       const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
-      grad.addColorStop(0,'rgba(255,139,45,0.70)');
-      grad.addColorStop(1,'rgba(57,215,255,0.14)');
+      grad.addColorStop(0,'rgba(216,219,247,0.56)');
+      grad.addColorStop(1,'rgba(216,219,247,0.14)');
       ctx.fillStyle=grad; ctx.fill();
-      ctx.strokeStyle='#FF8B2D'; ctx.lineWidth=isMobile?2.5:2;
-      ctx.shadowColor='rgba(255,139,45,.35)'; ctx.shadowBlur=isMobile?10:14; ctx.stroke(); ctx.shadowBlur=0;
+      ctx.strokeStyle='#D8DBF7'; ctx.lineWidth=isMobile?2.5:2;
+      ctx.shadowColor='rgba(216,219,247,.30)'; ctx.shadowBlur=isMobile?10:14; ctx.stroke(); ctx.shadowBlur=0;
       vals.forEach((v,i)=>{
         const a=-Math.PI/2+i*2*Math.PI/labels.length, rr=R*(v/maxes[i]);
         ctx.beginPath(); ctx.arc(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr,isMobile?2.6:2.2,0,Math.PI*2);
